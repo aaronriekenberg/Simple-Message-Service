@@ -1,7 +1,6 @@
 package org.aaron.sms.testapp;
 
 import java.util.ArrayList;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSConnectionListener;
@@ -12,8 +11,6 @@ public class SMSTestSender implements Runnable {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSTestSender.class);
-
-	private final AtomicBoolean smsConnectionClosed = new AtomicBoolean(false);
 
 	private final String topicName;
 
@@ -44,7 +41,6 @@ public class SMSTestSender implements Runnable {
 				@Override
 				public void handleConnectionClosed() {
 					log.info("handleConnectionClosed");
-					// smsConnectionClosed.set(true);
 				}
 			});
 
@@ -52,11 +48,6 @@ public class SMSTestSender implements Runnable {
 
 			final byte[] buffer = new byte[5000];
 			while (true) {
-				if (smsConnectionClosed.get()) {
-					smsConnection.destroy();
-					break;
-				}
-
 				smsConnection.writeToTopic(topicName, buffer);
 				Thread.sleep(1);
 			}

@@ -3,7 +3,6 @@ package org.aaron.sms.testapp;
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.aaron.sms.api.SMSConnection;
@@ -17,8 +16,6 @@ public class SMSTestReceiver implements Runnable {
 			.getLogger(SMSTestReceiver.class);
 
 	private static final Timer timer = new Timer(true);
-
-	private final AtomicBoolean smsConnectionClosed = new AtomicBoolean(false);
 
 	private final AtomicInteger messagesReceived = new AtomicInteger(0);
 
@@ -60,7 +57,6 @@ public class SMSTestReceiver implements Runnable {
 				@Override
 				public void handleConnectionClosed() {
 					log.info("handleConnectionClosed");
-					// smsConnectionClosed.set(true);
 				}
 			});
 
@@ -70,10 +66,6 @@ public class SMSTestReceiver implements Runnable {
 
 			while (true) {
 				Thread.sleep(1000);
-				if (smsConnectionClosed.get()) {
-					smsConnection.destroy();
-					break;
-				}
 			}
 		} catch (Exception e) {
 			log.warn("main", e);
