@@ -1,4 +1,4 @@
-Simple-Message-Service
+Simple Message Service
 ======================
 
 Simple Message Service (SMS) is a simple, high performance message service loosely based on a few ideas from JMS.
