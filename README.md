@@ -3,7 +3,7 @@ Simple Message Service
 
 Simple Message Service (SMS) is a simple, high performance message service loosely based on a few ideas from JMS.
 
-* SMS supports topics only with semantics similar to JMS.
+* SMS supports topics only (no queues).  SMS topics have semantics similar to JMS.
 * No attempts are made at reliability beyond what is provided by the TCP connections between the broker and clients.  For many problems this is sufficient.
 * No form of persistence to disk or durability is provided.
 * A broker accepts TCP connections from clients and routes messages between them.
