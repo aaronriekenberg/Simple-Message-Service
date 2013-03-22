@@ -5,14 +5,15 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class SMSBrokerMain {
 
 	public static void main(String[] args) {
-		new ClassPathXmlApplicationContext(
+		final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				"META-INF/spring/sms-broker-spring.xml");
-
+		final SMSBrokerTCPServer brokerTCPServer = context
+				.getBean(SMSBrokerTCPServer.class);
 		while (true) {
 			try {
-				Thread.sleep(1000);
+				brokerTCPServer.awaitBrokerDestroyed();
+				break;
 			} catch (InterruptedException e) {
-
 			}
 		}
 	}

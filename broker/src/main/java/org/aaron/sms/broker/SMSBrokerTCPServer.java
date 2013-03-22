@@ -1,6 +1,7 @@
 package org.aaron.sms.broker;
 
 import java.net.InetSocketAddress;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -40,6 +41,8 @@ public class SMSBrokerTCPServer {
 	private final ChannelGroup allChannels = new DefaultChannelGroup();
 
 	private final ExecutorService executor = Executors.newCachedThreadPool();
+
+	private final CountDownLatch destroyedLatch = new CountDownLatch(1);
 
 	private ServerSocketChannelFactory serverSocketChannelFactory = null;
 
@@ -150,6 +153,12 @@ public class SMSBrokerTCPServer {
 		serverSocketChannelFactory.releaseExternalResources();
 
 		executor.shutdown();
+
+		destroyedLatch.countDown();
+	}
+
+	public void awaitBrokerDestroyed() throws InterruptedException {
+		destroyedLatch.await();
 	}
 
 	private void processIncomingMessage(Channel channel,
