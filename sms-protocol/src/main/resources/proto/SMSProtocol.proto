@@ -1,0 +1,34 @@
+package sms.protocol.protobuf;
+
+option java_package = "org.aaron.sms.protocol.protobuf";
+option java_outer_classname = "SMSProtocol";
+
+message ClientToBrokerMessage {
+
+  enum ClientToBrokerMessageType {
+    CLIENT_SUBSCRIBE_TO_TOPIC = 0;
+    CLIENT_UNSUBSCRIBE_FROM_TOPIC = 1;
+    CLIENT_SEND_MESSAGE_TO_TOPIC = 2;
+  }
+  
+  required ClientToBrokerMessageType messageType = 1;
+  
+  required string topicName = 2;
+  
+  optional bytes messagePayload = 3;
+  
+}
+
+message BrokerToClientMessage {
+
+  enum BrokerToClientMessageType {
+    BROKER_TOPIC_MESSAGE_PUBLISH = 0;
+  }
+  
+  required BrokerToClientMessageType messageType = 1;
+  
+  required string topicName = 2;
+  
+  optional bytes messagePayload = 3;
+
+}
