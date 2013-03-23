@@ -12,4 +12,4 @@ Simple Message Service (SMS) is a simple, high performance message service loose
 * Google Protocol Buffers are used to define the message format between the client api and the broker.  This means messages have very little overhead above their payload.  It also means writing a non-Java client api should be easy.
 * SMS is fast due to the above decisions.  
 * A Core i5 2500K can easily handle a broker, 50 writers each writing 5KB messages to different topics at 1000 messages/second, and 50 readers each subscribing to one of these topics.  During this test the SMS broker is using a pool of only 8 threads and uses less than 150 MB of heap space.  
-* A test of the same size with ActiveMQ creates ~175 broker threads and uses > 500 MB of heap space (using the NIO transport and non-persistent producers).
+* A test of the same size with ActiveMQ creates ~175 broker threads and the broker uses > 500 MB of heap space (using the NIO transport and non-persistent producers).
