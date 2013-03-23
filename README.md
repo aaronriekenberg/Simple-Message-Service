@@ -6,7 +6,7 @@ Simple Message Service (SMS) is a simple, high performance message service loose
 * SMS supports topics only (no queues).  SMS topics have semantics similar to JMS.
 * A broker accepts TCP connections from clients and routes messages between them.
 * A high-level Java API is provided (SMSConnection) to connect to the broker, subscribe to topics, and send messages to topics.  The API is able to automatically reconnect to the broker if the TCP connection is lost.
-* No attempts are made at reliability beyond what is provided by the TCP connections between the broker and clients.  For many problems this is sufficient.
+* No attempts are made at reliability beyond what is provided by the TCP connections between the broker and clients.  If the connection is up, messages will be delivered in order without loss.  If a connection goes down, messages will get lost.  For many problems this is sufficient.
 * No form of persistence to disk or durability is provided.
 * Netty is used to manage TCP connections in the client API (SMSConnection) and in the broker.  This allows the broker code to be tiny: Netty's ChannelGroup provides the basic function of a topic out of the box.  Netty gives the broker a fixed size thread pool that defaults to 2x the number of processors.
 * Google Protocol Buffers are used to define the message format between the client api and the broker.  This means messages have very little overhead above their payload.  It also means writing a non-Java client api should be easy.
