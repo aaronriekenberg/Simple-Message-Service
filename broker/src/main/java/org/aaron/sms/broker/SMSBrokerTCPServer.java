@@ -25,7 +25,6 @@ import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
 import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
 import org.jboss.netty.handler.codec.frame.LengthFieldPrepender;
 import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
-import org.jboss.netty.handler.codec.protobuf.ProtobufEncoder;
 import org.jboss.netty.handler.logging.LoggingHandler;
 import org.jboss.netty.logging.InternalLogLevel;
 import org.jboss.netty.logging.InternalLoggerFactory;
@@ -109,22 +108,25 @@ public class SMSBrokerTCPServer {
 
 		@Override
 		public ChannelPipeline getPipeline() throws Exception {
-			return Channels.pipeline(
+			return Channels
+					.pipeline(
+							new LoggingHandler(InternalLogLevel.DEBUG),
 
-			new LoggingHandler(InternalLogLevel.DEBUG),
+							new LengthFieldPrepender(
+									SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES),
 
-			new LengthFieldPrepender(
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES),
+							new LengthFieldBasedFrameDecoder(
+									SMSProtocolConstants.MAX_MESSAGE_LENGTH_BYTES,
+									0,
+									SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES,
+									0,
+									SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES),
 
-			new LengthFieldBasedFrameDecoder(
-					SMSProtocolConstants.MAX_MESSAGE_LENGTH_BYTES, 0,
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES, 0,
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES),
+							new ProtobufDecoder(
+									SMSProtocol.ClientToServerMessage
+											.getDefaultInstance()),
 
-			new ProtobufEncoder(), new ProtobufDecoder(
-					SMSProtocol.ClientToServerMessage.getDefaultInstance()),
-
-			new ClientHandler());
+							new ClientHandler());
 		}
 	}
 
