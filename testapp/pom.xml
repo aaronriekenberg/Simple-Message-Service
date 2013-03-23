@@ -15,7 +15,7 @@
 	<artifactId>testapp</artifactId>
 	<packaging>jar</packaging>
 
-	<name>ORG :: AARON :: SMS :: TESTAPP</name>
+	<name>Simple Message Service Test App</name>
 
 	<dependencies>
 		<dependency>

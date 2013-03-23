@@ -15,7 +15,7 @@
 	<artifactId>broker</artifactId>
 	<packaging>jar</packaging>
 
-	<name>ORG :: AARON :: SMS :: BROKER</name>
+	<name>Simple Message Service Broker</name>
 
 	<dependencies>
 		<dependency>

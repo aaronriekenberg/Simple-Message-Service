@@ -15,7 +15,7 @@
 	<artifactId>entities</artifactId>
 	<packaging>jar</packaging>
 
-	<name>ORG :: AARON :: SMS :: ENTITIES</name>
+	<name>Simple Message Service Entities</name>
 
 	<dependencies>
 		<dependency>

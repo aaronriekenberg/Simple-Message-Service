@@ -15,7 +15,7 @@
 	<artifactId>api</artifactId>
 	<packaging>jar</packaging>
 
-	<name>ORG :: AARON :: SMS :: API</name>
+	<name>Simple Message Service API</name>
 
 	<dependencies>
 		<dependency>

@@ -10,8 +10,7 @@
 	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
-	<name>ORG :: AARON :: SMS :: PARENT</name>
-
+	<name>Simple Message Service</name>
 
 	<properties>
 		<sms.version>1.0-SNAPSHOT</sms.version>
