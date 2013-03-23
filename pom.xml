@@ -7,7 +7,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.aaron.sms</groupId>
-	<artifactId>parent</artifactId>
+	<artifactId>sms-parent</artifactId>
 	<packaging>pom</packaging>
 	<version>1.0-SNAPSHOT</version>
 	<name>Simple Message Service</name>
@@ -105,10 +105,10 @@
 	</build>
 
 	<modules>
-		<module>entities</module>
-		<module>api</module>
-		<module>broker</module>
-		<module>examples</module>
+		<module>sms-protocol</module>
+		<module>sms-api</module>
+		<module>sms-broker</module>
+		<module>sms-examples</module>
 	</modules>
 
 </project>
