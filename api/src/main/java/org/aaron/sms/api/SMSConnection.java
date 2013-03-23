@@ -348,6 +348,9 @@ public class SMSConnection {
 	/**
 	 * Write a message to a topic asynchronously.
 	 * 
+	 * This method makes a copy of the message, so it is safe for the client to
+	 * to reuse it.
+	 * 
 	 * If this SMSConnection is not currently connected to an SMS Broker, the
 	 * message will be silently dropped.
 	 * 
