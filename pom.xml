@@ -108,7 +108,7 @@
 		<module>entities</module>
 		<module>api</module>
 		<module>broker</module>
-		<module>testapp</module>
+		<module>examples</module>
 	</modules>
 
 </project>

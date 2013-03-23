@@ -12,10 +12,10 @@
 		<version>1.0-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>testapp</artifactId>
+	<artifactId>examples</artifactId>
 	<packaging>jar</packaging>
 
-	<name>Simple Message Service Test App</name>
+	<name>Simple Message Service Examples</name>
 
 	<dependencies>
 		<dependency>

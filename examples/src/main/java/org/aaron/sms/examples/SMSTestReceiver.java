@@ -1,4 +1,4 @@
-package org.aaron.sms.testapp;
+package org.aaron.sms.examples;
 
 /*
  * #%L
