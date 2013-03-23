@@ -2,7 +2,7 @@ package org.aaron.sms.examples;
 
 /*
  * #%L
- * Simple Message Service Test App
+ * Simple Message Service Examples
  * %%
  * Copyright (C) 2013 Aaron Riekenberg
  * %%
