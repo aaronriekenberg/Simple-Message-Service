@@ -114,9 +114,8 @@ public class SMSBrokerTCPServer {
 		public void messageReceived(ChannelHandlerContext ctx,
 				MessageEvent event) {
 			try {
-				log.debug(
-						"messageReceived from {} message = '{}'"
-								+ event.getChannel(), event.getMessage());
+				log.debug("messageReceived from {} message = '{}'",
+						event.getChannel(), event.getMessage());
 				processIncomingMessage(event.getChannel(),
 						(SMSProtocol.ClientToBrokerMessage) event.getMessage());
 			} catch (Exception e) {
