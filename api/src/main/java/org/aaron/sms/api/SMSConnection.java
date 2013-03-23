@@ -377,23 +377,35 @@ public class SMSConnection {
 	}
 
 	private void fireConnectionOpen() {
-		final SMSConnectionListener localListener = listener.get();
-		if (localListener != null) {
-			localListener.handleConnectionOpen();
+		try {
+			final SMSConnectionListener localListener = listener.get();
+			if (localListener != null) {
+				localListener.handleConnectionOpen();
+			}
+		} catch (Exception e) {
+			log.warn("fireConnectionOpen", e);
 		}
 	}
 
 	private void fireConnectionClosed() {
-		final SMSConnectionListener localListener = listener.get();
-		if (localListener != null) {
-			localListener.handleConnectionClosed();
+		try {
+			final SMSConnectionListener localListener = listener.get();
+			if (localListener != null) {
+				localListener.handleConnectionClosed();
+			}
+		} catch (Exception e) {
+			log.warn("fireConnectionClosed", e);
 		}
 	}
 
 	private void fireMessageReceived(String topicName, byte[] message) {
-		final SMSConnectionListener localListener = listener.get();
-		if (localListener != null) {
-			localListener.handleIncomingMessage(topicName, message);
+		try {
+			final SMSConnectionListener localListener = listener.get();
+			if (localListener != null) {
+				localListener.handleIncomingMessage(topicName, message);
+			}
+		} catch (Exception e) {
+			log.warn("fireMessageReceived", e);
 		}
 	}
 }
