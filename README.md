@@ -10,4 +10,4 @@ Simple Message Service (SMS) is a simple, high performance message service loose
 * No form of persistence to disk or durability is provided.
 * Netty is used to manage TCP connections in the client API (SMSConnection) and in the broker.  This allows the broker code to be tiny: Netty's ChannelGroup provides the basic function of a topic out of the box.
 * Google Protocol Buffers are used to define the message format between the client api and the broker.  This means messages have very little overhead above their payload.  It also means writing a non-Java client api should be easy.
-* SMS is fast due to the above decisions.  A Core i5 2500K can easily handle a broker, 30 writers each writing 5KB messages to different topics at 1000 messages/second, and 30 readers each subscribing to a different topic.
+* SMS is fast due to the above decisions.  A Core i5 2500K can easily handle a broker, 50 writers each writing 5KB messages to different topics at 1000 messages/second, and 50 readers each subscribing to a different topic.
