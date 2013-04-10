@@ -341,7 +341,7 @@ public class SMSConnection {
 	public void writeToTopic(String topicName, byte[] message) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
-		checkNotNull(message);
+		checkNotNull(message, "message is null");
 		checkState(started.get(), "not started");
 
 		connectedChannels.write(SMSProtocol.ClientToBrokerMessage
