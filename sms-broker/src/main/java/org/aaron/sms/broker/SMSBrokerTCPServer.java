@@ -98,9 +98,7 @@ public class SMSBrokerTCPServer {
 
 		@Override
 		public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-			if (log.isDebugEnabled()) {
-				log.debug("exceptionCaught " + e.getChannel(), e.getCause());
-			}
+			log.debug("exceptionCaught {}", e.getChannel(), e.getCause());
 			e.getChannel().close();
 		}
 
