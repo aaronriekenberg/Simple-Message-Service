@@ -147,17 +147,7 @@ public class SMSConnection {
 			if (haveBeenConnected.get()) {
 				fireConnectionClosed();
 			}
-
-			scheduledExecutorService.schedule(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						reconnect();
-					} catch (Exception e) {
-						log.warn("run", e);
-					}
-				}
-			}, 1, TimeUnit.SECONDS);
+			reconnectAfterDelay();
 		}
 
 		@Override
@@ -265,6 +255,23 @@ public class SMSConnection {
 				brokerAddress, brokerPort));
 		clientBootstrap.setOption("connectTimeoutMillis", 1000);
 		clientBootstrap.connect();
+	}
+
+	private void reconnectAfterDelay() {
+		if (!started.get()) {
+			return;
+		}
+
+		scheduledExecutorService.schedule(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					reconnect();
+				} catch (Exception e) {
+					log.warn("run", e);
+				}
+			}
+		}, 1, TimeUnit.SECONDS);
 	}
 
 	private void resubscribeToTopics() {
