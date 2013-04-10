@@ -26,6 +26,10 @@ package org.aaron.sms.api;
  * #L%
  */
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+import static com.google.common.base.Preconditions.checkState;
+
 import java.net.InetSocketAddress;
 import java.util.Collections;
 import java.util.HashSet;
@@ -220,7 +224,8 @@ public class SMSConnection {
 	 * @param serverPort
 	 */
 	public SMSConnection(String brokerAddress, int brokerPort) {
-		this.brokerAddress = brokerAddress;
+		this.brokerAddress = checkNotNull(brokerAddress,
+				"brokerAddress is null");
 		this.brokerPort = brokerPort;
 	}
 
@@ -229,27 +234,19 @@ public class SMSConnection {
 	 * SMSConnectionListener may be registered at a time.
 	 * 
 	 * @param listener
-	 * @throws SMSException
-	 *             if listener is null
 	 */
-	public void setListener(SMSConnectionListener listener) throws SMSException {
-		if (listener == null) {
-			throw new SMSException("listener is null");
-		}
+	public void setListener(SMSConnectionListener listener) {
+		checkNotNull(listener, "listener is null");
+
 		this.listener.set(listener);
 	}
 
 	/**
 	 * Start the SMSConnection. Initiates a connection attempt to the SMS
 	 * Broker.
-	 * 
-	 * @throws SMSException
-	 *             if the SMSConnection is already started
 	 */
-	public void start() throws SMSException {
-		if (!started.compareAndSet(false, true)) {
-			throw new SMSException("already started");
-		}
+	public void start() {
+		checkState(started.compareAndSet(false, true), "already started");
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
@@ -293,20 +290,11 @@ public class SMSConnection {
 	 * 
 	 * @param topicName
 	 *            topic name
-	 * @throws SMSException
-	 *             if topicName is null or empty, or if this SMSConnection has
-	 *             not been started
 	 */
-	public void subscribeToTopic(String topicName) throws SMSException {
-		if (topicName == null) {
-			throw new NullPointerException("topicName is null");
-		}
-		if (topicName.isEmpty()) {
-			throw new IllegalArgumentException("topicName is empty");
-		}
-		if (!started.get()) {
-			throw new SMSException("not started");
-		}
+	public void subscribeToTopic(String topicName) {
+		checkNotNull(topicName, "topicName is null");
+		checkArgument(topicName.length() > 0, "topicName is empty");
+		checkState(started.get(), "not started");
 
 		subscribedTopics.add(topicName);
 		connectedChannels.write(SMSProtocol.ClientToBrokerMessage
@@ -321,20 +309,11 @@ public class SMSConnection {
 	 * 
 	 * @param topicName
 	 *            topic name
-	 * @throws SMSException
-	 *             if topicName is null or empty, or if this SMSConnection has
-	 *             not been started
 	 */
-	public void unsubscribeFromTopic(String topicName) throws SMSException {
-		if (topicName == null) {
-			throw new NullPointerException("topicName is null");
-		}
-		if (topicName.isEmpty()) {
-			throw new IllegalArgumentException("topicName is empty");
-		}
-		if (!started.get()) {
-			throw new SMSException("not started");
-		}
+	public void unsubscribeFromTopic(String topicName) {
+		checkNotNull(topicName, "topicName is null");
+		checkArgument(topicName.length() > 0, "topicName is empty");
+		checkState(started.get(), "not started");
 
 		subscribedTopics.remove(topicName);
 		connectedChannels
@@ -356,26 +335,14 @@ public class SMSConnection {
 	 * 
 	 * @param topicName
 	 *            topic name
-	 * @param messageClientToServerMessage
+	 * @param message
 	 *            message payload
-	 * @throws SMSException
-	 *             if topicName is null or empty, if message is null, or if this
-	 *             SMSConnection has not been started
 	 */
-	public void writeToTopic(String topicName, byte[] message)
-			throws SMSException {
-		if (topicName == null) {
-			throw new NullPointerException("topicName is null");
-		}
-		if (topicName.isEmpty()) {
-			throw new IllegalArgumentException("topicName is empty");
-		}
-		if (message == null) {
-			throw new NullPointerException("message is null");
-		}
-		if (!started.get()) {
-			throw new SMSException("not started");
-		}
+	public void writeToTopic(String topicName, byte[] message) {
+		checkNotNull(topicName, "topicName is null");
+		checkArgument(topicName.length() > 0, "topicName is empty");
+		checkNotNull(message);
+		checkState(started.get(), "not started");
 
 		connectedChannels.write(SMSProtocol.ClientToBrokerMessage
 				.newBuilder()
