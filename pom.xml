@@ -21,7 +21,7 @@
 		<sms.version>1.0-SNAPSHOT</sms.version>
 
 		<log4j.version>1.2.17</log4j.version>
-		<netty.version>3.6.3.Final</netty.version>
+		<netty.version>3.6.5.Final</netty.version>
 		<protobuf.version>2.4.1</protobuf.version>
 		<slf4j.version>1.6.6</slf4j.version>
 		<spring.version>3.2.2.RELEASE</spring.version>
