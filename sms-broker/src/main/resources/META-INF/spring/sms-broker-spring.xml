@@ -43,7 +43,6 @@
 	<bean
 		id="topicContainer"
 		class="org.aaron.sms.broker.SMSTopicContainer"
-		destroy-method="destroy">
-	</bean>
+		destroy-method="destroy" />
 
 </beans>
