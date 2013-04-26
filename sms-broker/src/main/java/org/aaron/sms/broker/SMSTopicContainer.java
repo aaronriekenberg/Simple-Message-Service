@@ -41,8 +41,8 @@ public class SMSTopicContainer {
 
 	private final ConcurrentHashMap<String, SMSTopic> topicNameToInfo = new ConcurrentHashMap<String, SMSTopic>();
 
-	public void init() {
-		log.info("init");
+	public SMSTopicContainer() {
+
 	}
 
 	public void destroy() {

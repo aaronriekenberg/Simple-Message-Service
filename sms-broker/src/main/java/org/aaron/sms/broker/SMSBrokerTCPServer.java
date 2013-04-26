@@ -69,13 +69,9 @@ public class SMSBrokerTCPServer {
 
 	private final CountDownLatch destroyedLatch = new CountDownLatch(1);
 
-	private ServerSocketChannelFactory serverSocketChannelFactory = null;
+	private final ServerSocketChannelFactory serverSocketChannelFactory;
 
-	private SMSTopicContainer topicContainer = null;
-
-	private String listenAddress = "0.0.0.0";
-
-	private int listenPort = 10001;
+	private final SMSTopicContainer topicContainer;
 
 	private class ClientHandler extends SimpleChannelUpstreamHandler {
 
@@ -153,8 +149,9 @@ public class SMSBrokerTCPServer {
 		}
 	}
 
-	public void init() {
-		log.info("init");
+	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
+			String listenAddress, int listenPort) {
+		this.topicContainer = topicContainer;
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
@@ -216,18 +213,6 @@ public class SMSBrokerTCPServer {
 		}
 
 		}
-	}
-
-	public void setListenAddress(String listenAddress) {
-		this.listenAddress = listenAddress;
-	}
-
-	public void setListenPort(int listenPort) {
-		this.listenPort = listenPort;
-	}
-
-	public void setTopicContainer(SMSTopicContainer topicContainer) {
-		this.topicContainer = topicContainer;
 	}
 
 }
