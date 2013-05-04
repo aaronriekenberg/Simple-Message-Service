@@ -39,7 +39,7 @@ public class SMSTopicContainer {
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSTopicContainer.class);
 
-	private final ConcurrentHashMap<String, SMSTopic> topicNameToInfo = new ConcurrentHashMap<String, SMSTopic>();
+	private final ConcurrentHashMap<String, SMSTopic> topicNameToInfo = new ConcurrentHashMap<>();
 
 	public SMSTopicContainer() {
 
