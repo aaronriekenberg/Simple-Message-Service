@@ -110,7 +110,7 @@ public class SMSConnection {
 
 	private final AtomicBoolean started = new AtomicBoolean(false);
 
-	private final AtomicReference<SMSConnectionListener> listener = new AtomicReference<SMSConnectionListener>();
+	private final AtomicReference<SMSConnectionListener> listener = new AtomicReference<>();
 
 	private final String brokerAddress;
 
