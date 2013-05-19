@@ -30,6 +30,7 @@ import java.net.InetSocketAddress;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.aaron.sms.protocol.SMSProtocolConstants;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
@@ -66,6 +67,8 @@ public class SMSBrokerTCPServer {
 	private final ChannelGroup allChannels = new DefaultChannelGroup();
 
 	private final ExecutorService executor = Executors.newCachedThreadPool();
+
+	private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
 	private final CountDownLatch destroyedLatch = new CountDownLatch(1);
 
@@ -176,11 +179,17 @@ public class SMSBrokerTCPServer {
 
 		executor.shutdown();
 
+		destroyed.set(true);
+
 		destroyedLatch.countDown();
 	}
 
-	public void awaitBrokerDestroyed() throws InterruptedException {
+	public void awaitDestroyed() throws InterruptedException {
 		destroyedLatch.await();
+	}
+
+	public boolean isDestroyed() {
+		return destroyed.get();
 	}
 
 	private void processIncomingMessage(Channel channel,
