@@ -24,7 +24,7 @@
 		<netty.version>3.6.6.Final</netty.version>
 		<protobuf.version>2.4.1</protobuf.version>
 		<slf4j.version>1.7.5</slf4j.version>
-		<spring.version>3.2.2.RELEASE</spring.version>
+		<spring.version>3.2.3.RELEASE</spring.version>
 	</properties>
 
 	<dependencyManagement>
