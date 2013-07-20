@@ -26,15 +26,17 @@ package org.aaron.sms.broker;
  * #L%
  */
 
+import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.util.concurrent.GlobalEventExecutor;
+
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
-import org.jboss.netty.buffer.ChannelBuffers;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
 
 class SMSTopic {
 
-	private final ChannelGroup channelGroup = new DefaultChannelGroup();
+	private final ChannelGroup channelGroup = new DefaultChannelGroup(
+			GlobalEventExecutor.INSTANCE);
 
 	public SMSTopic() {
 
@@ -49,6 +51,6 @@ class SMSTopic {
 	}
 
 	public void write(SMSProtocol.BrokerToClientMessage message) {
-		channelGroup.write(ChannelBuffers.wrappedBuffer(message.toByteArray()));
+		channelGroup.flushAndWrite(message);
 	}
 }

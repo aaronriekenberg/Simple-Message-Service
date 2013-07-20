@@ -36,468 +36,90 @@ public final class SMSProtocol {
   }
   public interface ClientToBrokerMessageOrBuilder
       extends com.google.protobuf.MessageOrBuilder {
-    
+
     // required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;
+    /**
+     * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+     */
     boolean hasMessageType();
+    /**
+     * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+     */
     org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType getMessageType();
-    
+
     // required string topicName = 2;
+    /**
+     * <code>required string topicName = 2;</code>
+     */
     boolean hasTopicName();
-    String getTopicName();
-    
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    java.lang.String getTopicName();
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getTopicNameBytes();
+
     // optional bytes messagePayload = 3;
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
     boolean hasMessagePayload();
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
     com.google.protobuf.ByteString getMessagePayload();
   }
+  /**
+   * Protobuf type {@code sms.protocol.protobuf.ClientToBrokerMessage}
+   */
   public static final class ClientToBrokerMessage extends
       com.google.protobuf.GeneratedMessage
       implements ClientToBrokerMessageOrBuilder {
     // Use ClientToBrokerMessage.newBuilder() to construct.
-    private ClientToBrokerMessage(Builder builder) {
+    private ClientToBrokerMessage(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
       super(builder);
+      this.unknownFields = builder.getUnknownFields();
     }
-    private ClientToBrokerMessage(boolean noInit) {}
-    
+    private ClientToBrokerMessage(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
     private static final ClientToBrokerMessage defaultInstance;
     public static ClientToBrokerMessage getDefaultInstance() {
       return defaultInstance;
     }
-    
+
     public ClientToBrokerMessage getDefaultInstanceForType() {
       return defaultInstance;
     }
-    
-    public static final com.google.protobuf.Descriptors.Descriptor
-        getDescriptor() {
-      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor;
-    }
-    
-    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-        internalGetFieldAccessorTable() {
-      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_fieldAccessorTable;
-    }
-    
-    public enum ClientToBrokerMessageType
-        implements com.google.protobuf.ProtocolMessageEnum {
-      CLIENT_SUBSCRIBE_TO_TOPIC(0, 0),
-      CLIENT_UNSUBSCRIBE_FROM_TOPIC(1, 1),
-      CLIENT_SEND_MESSAGE_TO_TOPIC(2, 2),
-      ;
-      
-      public static final int CLIENT_SUBSCRIBE_TO_TOPIC_VALUE = 0;
-      public static final int CLIENT_UNSUBSCRIBE_FROM_TOPIC_VALUE = 1;
-      public static final int CLIENT_SEND_MESSAGE_TO_TOPIC_VALUE = 2;
-      
-      
-      public final int getNumber() { return value; }
-      
-      public static ClientToBrokerMessageType valueOf(int value) {
-        switch (value) {
-          case 0: return CLIENT_SUBSCRIBE_TO_TOPIC;
-          case 1: return CLIENT_UNSUBSCRIBE_FROM_TOPIC;
-          case 2: return CLIENT_SEND_MESSAGE_TO_TOPIC;
-          default: return null;
-        }
-      }
-      
-      public static com.google.protobuf.Internal.EnumLiteMap<ClientToBrokerMessageType>
-          internalGetValueMap() {
-        return internalValueMap;
-      }
-      private static com.google.protobuf.Internal.EnumLiteMap<ClientToBrokerMessageType>
-          internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<ClientToBrokerMessageType>() {
-              public ClientToBrokerMessageType findValueByNumber(int number) {
-                return ClientToBrokerMessageType.valueOf(number);
-              }
-            };
-      
-      public final com.google.protobuf.Descriptors.EnumValueDescriptor
-          getValueDescriptor() {
-        return getDescriptor().getValues().get(index);
-      }
-      public final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptorForType() {
-        return getDescriptor();
-      }
-      public static final com.google.protobuf.Descriptors.EnumDescriptor
-          getDescriptor() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDescriptor().getEnumTypes().get(0);
-      }
-      
-      private static final ClientToBrokerMessageType[] VALUES = {
-        CLIENT_SUBSCRIBE_TO_TOPIC, CLIENT_UNSUBSCRIBE_FROM_TOPIC, CLIENT_SEND_MESSAGE_TO_TOPIC, 
-      };
-      
-      public static ClientToBrokerMessageType valueOf(
-          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
-        if (desc.getType() != getDescriptor()) {
-          throw new java.lang.IllegalArgumentException(
-            "EnumValueDescriptor is not for this type.");
-        }
-        return VALUES[desc.getIndex()];
-      }
-      
-      private final int index;
-      private final int value;
-      
-      private ClientToBrokerMessageType(int index, int value) {
-        this.index = index;
-        this.value = value;
-      }
-      
-      // @@protoc_insertion_point(enum_scope:sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType)
-    }
-    
-    private int bitField0_;
-    // required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;
-    public static final int MESSAGETYPE_FIELD_NUMBER = 1;
-    private org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType messageType_;
-    public boolean hasMessageType() {
-      return ((bitField0_ & 0x00000001) == 0x00000001);
-    }
-    public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType getMessageType() {
-      return messageType_;
-    }
-    
-    // required string topicName = 2;
-    public static final int TOPICNAME_FIELD_NUMBER = 2;
-    private java.lang.Object topicName_;
-    public boolean hasTopicName() {
-      return ((bitField0_ & 0x00000002) == 0x00000002);
-    }
-    public String getTopicName() {
-      java.lang.Object ref = topicName_;
-      if (ref instanceof String) {
-        return (String) ref;
-      } else {
-        com.google.protobuf.ByteString bs = 
-            (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
-          topicName_ = s;
-        }
-        return s;
-      }
-    }
-    private com.google.protobuf.ByteString getTopicNameBytes() {
-      java.lang.Object ref = topicName_;
-      if (ref instanceof String) {
-        com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
-        topicName_ = b;
-        return b;
-      } else {
-        return (com.google.protobuf.ByteString) ref;
-      }
-    }
-    
-    // optional bytes messagePayload = 3;
-    public static final int MESSAGEPAYLOAD_FIELD_NUMBER = 3;
-    private com.google.protobuf.ByteString messagePayload_;
-    public boolean hasMessagePayload() {
-      return ((bitField0_ & 0x00000004) == 0x00000004);
-    }
-    public com.google.protobuf.ByteString getMessagePayload() {
-      return messagePayload_;
-    }
-    
-    private void initFields() {
-      messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
-      topicName_ = "";
-      messagePayload_ = com.google.protobuf.ByteString.EMPTY;
-    }
-    private byte memoizedIsInitialized = -1;
-    public final boolean isInitialized() {
-      byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
-      
-      if (!hasMessageType()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      if (!hasTopicName()) {
-        memoizedIsInitialized = 0;
-        return false;
-      }
-      memoizedIsInitialized = 1;
-      return true;
-    }
-    
-    public void writeTo(com.google.protobuf.CodedOutputStream output)
-                        throws java.io.IOException {
-      getSerializedSize();
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        output.writeEnum(1, messageType_.getNumber());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        output.writeBytes(2, getTopicNameBytes());
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        output.writeBytes(3, messagePayload_);
-      }
-      getUnknownFields().writeTo(output);
-    }
-    
-    private int memoizedSerializedSize = -1;
-    public int getSerializedSize() {
-      int size = memoizedSerializedSize;
-      if (size != -1) return size;
-    
-      size = 0;
-      if (((bitField0_ & 0x00000001) == 0x00000001)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeEnumSize(1, messageType_.getNumber());
-      }
-      if (((bitField0_ & 0x00000002) == 0x00000002)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(2, getTopicNameBytes());
-      }
-      if (((bitField0_ & 0x00000004) == 0x00000004)) {
-        size += com.google.protobuf.CodedOutputStream
-          .computeBytesSize(3, messagePayload_);
-      }
-      size += getUnknownFields().getSerializedSize();
-      memoizedSerializedSize = size;
-      return size;
-    }
-    
-    private static final long serialVersionUID = 0L;
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
     @java.lang.Override
-    protected java.lang.Object writeReplace()
-        throws java.io.ObjectStreamException {
-      return super.writeReplace();
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
     }
-    
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
-        com.google.protobuf.ByteString data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
-        com.google.protobuf.ByteString data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(byte[] data)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
-        byte[] data,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseDelimitedFrom(java.io.InputStream input)
-        throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseDelimitedFrom(
-        java.io.InputStream input,
-        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
-        com.google.protobuf.CodedInputStream input)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
-    }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
+    private ClientToBrokerMessage(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-        throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
-    }
-    
-    public static Builder newBuilder() { return Builder.create(); }
-    public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage prototype) {
-      return newBuilder().mergeFrom(prototype);
-    }
-    public Builder toBuilder() { return newBuilder(this); }
-    
-    @java.lang.Override
-    protected Builder newBuilderForType(
-        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
-      Builder builder = new Builder(parent);
-      return builder;
-    }
-    public static final class Builder extends
-        com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessageOrBuilder {
-      public static final com.google.protobuf.Descriptors.Descriptor
-          getDescriptor() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor;
-      }
-      
-      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
-          internalGetFieldAccessorTable() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_fieldAccessorTable;
-      }
-      
-      // Construct using org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.newBuilder()
-      private Builder() {
-        maybeForceBuilderInitialization();
-      }
-      
-      private Builder(BuilderParent parent) {
-        super(parent);
-        maybeForceBuilderInitialization();
-      }
-      private void maybeForceBuilderInitialization() {
-        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
-        }
-      }
-      private static Builder create() {
-        return new Builder();
-      }
-      
-      public Builder clear() {
-        super.clear();
-        messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
-        bitField0_ = (bitField0_ & ~0x00000001);
-        topicName_ = "";
-        bitField0_ = (bitField0_ & ~0x00000002);
-        messagePayload_ = com.google.protobuf.ByteString.EMPTY;
-        bitField0_ = (bitField0_ & ~0x00000004);
-        return this;
-      }
-      
-      public Builder clone() {
-        return create().mergeFrom(buildPartial());
-      }
-      
-      public com.google.protobuf.Descriptors.Descriptor
-          getDescriptorForType() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDescriptor();
-      }
-      
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage getDefaultInstanceForType() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDefaultInstance();
-      }
-      
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage build() {
-        org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(result);
-        }
-        return result;
-      }
-      
-      private org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage buildPartial() {
-        org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage result = new org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage(this);
-        int from_bitField0_ = bitField0_;
-        int to_bitField0_ = 0;
-        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
-          to_bitField0_ |= 0x00000001;
-        }
-        result.messageType_ = messageType_;
-        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
-          to_bitField0_ |= 0x00000002;
-        }
-        result.topicName_ = topicName_;
-        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
-          to_bitField0_ |= 0x00000004;
-        }
-        result.messagePayload_ = messagePayload_;
-        result.bitField0_ = to_bitField0_;
-        onBuilt();
-        return result;
-      }
-      
-      public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage) {
-          return mergeFrom((org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage)other);
-        } else {
-          super.mergeFrom(other);
-          return this;
-        }
-      }
-      
-      public Builder mergeFrom(org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage other) {
-        if (other == org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDefaultInstance()) return this;
-        if (other.hasMessageType()) {
-          setMessageType(other.getMessageType());
-        }
-        if (other.hasTopicName()) {
-          setTopicName(other.getTopicName());
-        }
-        if (other.hasMessagePayload()) {
-          setMessagePayload(other.getMessagePayload());
-        }
-        this.mergeUnknownFields(other.getUnknownFields());
-        return this;
-      }
-      
-      public final boolean isInitialized() {
-        if (!hasMessageType()) {
-          
-          return false;
-        }
-        if (!hasTopicName()) {
-          
-          return false;
-        }
-        return true;
-      }
-      
-      public Builder mergeFrom(
-          com.google.protobuf.CodedInputStream input,
-          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
-          throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
           int tag = input.readTag();
           switch (tag) {
             case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
+              done = true;
+              break;
             default: {
               if (!parseUnknownField(input, unknownFields,
                                      extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
+                done = true;
               }
               break;
             }
@@ -524,177 +146,99 @@ public final class SMSProtocol {
             }
           }
         }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
       }
-      
-      private int bitField0_;
-      
-      // required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;
-      private org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
-      public boolean hasMessageType() {
-        return ((bitField0_ & 0x00000001) == 0x00000001);
-      }
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType getMessageType() {
-        return messageType_;
-      }
-      public Builder setMessageType(org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType value) {
-        if (value == null) {
-          throw new NullPointerException();
-        }
-        bitField0_ |= 0x00000001;
-        messageType_ = value;
-        onChanged();
-        return this;
-      }
-      public Builder clearMessageType() {
-        bitField0_ = (bitField0_ & ~0x00000001);
-        messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
-        onChanged();
-        return this;
-      }
-      
-      // required string topicName = 2;
-      private java.lang.Object topicName_ = "";
-      public boolean hasTopicName() {
-        return ((bitField0_ & 0x00000002) == 0x00000002);
-      }
-      public String getTopicName() {
-        java.lang.Object ref = topicName_;
-        if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
-          topicName_ = s;
-          return s;
-        } else {
-          return (String) ref;
-        }
-      }
-      public Builder setTopicName(String value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000002;
-        topicName_ = value;
-        onChanged();
-        return this;
-      }
-      public Builder clearTopicName() {
-        bitField0_ = (bitField0_ & ~0x00000002);
-        topicName_ = getDefaultInstance().getTopicName();
-        onChanged();
-        return this;
-      }
-      void setTopicName(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000002;
-        topicName_ = value;
-        onChanged();
-      }
-      
-      // optional bytes messagePayload = 3;
-      private com.google.protobuf.ByteString messagePayload_ = com.google.protobuf.ByteString.EMPTY;
-      public boolean hasMessagePayload() {
-        return ((bitField0_ & 0x00000004) == 0x00000004);
-      }
-      public com.google.protobuf.ByteString getMessagePayload() {
-        return messagePayload_;
-      }
-      public Builder setMessagePayload(com.google.protobuf.ByteString value) {
-        if (value == null) {
-    throw new NullPointerException();
-  }
-  bitField0_ |= 0x00000004;
-        messagePayload_ = value;
-        onChanged();
-        return this;
-      }
-      public Builder clearMessagePayload() {
-        bitField0_ = (bitField0_ & ~0x00000004);
-        messagePayload_ = getDefaultInstance().getMessagePayload();
-        onChanged();
-        return this;
-      }
-      
-      // @@protoc_insertion_point(builder_scope:sms.protocol.protobuf.ClientToBrokerMessage)
     }
-    
-    static {
-      defaultInstance = new ClientToBrokerMessage(true);
-      defaultInstance.initFields();
-    }
-    
-    // @@protoc_insertion_point(class_scope:sms.protocol.protobuf.ClientToBrokerMessage)
-  }
-  
-  public interface BrokerToClientMessageOrBuilder
-      extends com.google.protobuf.MessageOrBuilder {
-    
-    // required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;
-    boolean hasMessageType();
-    org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType getMessageType();
-    
-    // required string topicName = 2;
-    boolean hasTopicName();
-    String getTopicName();
-    
-    // optional bytes messagePayload = 3;
-    boolean hasMessagePayload();
-    com.google.protobuf.ByteString getMessagePayload();
-  }
-  public static final class BrokerToClientMessage extends
-      com.google.protobuf.GeneratedMessage
-      implements BrokerToClientMessageOrBuilder {
-    // Use BrokerToClientMessage.newBuilder() to construct.
-    private BrokerToClientMessage(Builder builder) {
-      super(builder);
-    }
-    private BrokerToClientMessage(boolean noInit) {}
-    
-    private static final BrokerToClientMessage defaultInstance;
-    public static BrokerToClientMessage getDefaultInstance() {
-      return defaultInstance;
-    }
-    
-    public BrokerToClientMessage getDefaultInstanceForType() {
-      return defaultInstance;
-    }
-    
     public static final com.google.protobuf.Descriptors.Descriptor
         getDescriptor() {
-      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor;
+      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor;
     }
-    
+
     protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
         internalGetFieldAccessorTable() {
-      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_fieldAccessorTable;
+      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.class, org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.Builder.class);
     }
-    
-    public enum BrokerToClientMessageType
+
+    public static com.google.protobuf.Parser<ClientToBrokerMessage> PARSER =
+        new com.google.protobuf.AbstractParser<ClientToBrokerMessage>() {
+      public ClientToBrokerMessage parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new ClientToBrokerMessage(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<ClientToBrokerMessage> getParserForType() {
+      return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType}
+     */
+    public enum ClientToBrokerMessageType
         implements com.google.protobuf.ProtocolMessageEnum {
-      BROKER_TOPIC_MESSAGE_PUBLISH(0, 0),
+      /**
+       * <code>CLIENT_SUBSCRIBE_TO_TOPIC = 0;</code>
+       */
+      CLIENT_SUBSCRIBE_TO_TOPIC(0, 0),
+      /**
+       * <code>CLIENT_UNSUBSCRIBE_FROM_TOPIC = 1;</code>
+       */
+      CLIENT_UNSUBSCRIBE_FROM_TOPIC(1, 1),
+      /**
+       * <code>CLIENT_SEND_MESSAGE_TO_TOPIC = 2;</code>
+       */
+      CLIENT_SEND_MESSAGE_TO_TOPIC(2, 2),
       ;
-      
-      public static final int BROKER_TOPIC_MESSAGE_PUBLISH_VALUE = 0;
-      
-      
+
+      /**
+       * <code>CLIENT_SUBSCRIBE_TO_TOPIC = 0;</code>
+       */
+      public static final int CLIENT_SUBSCRIBE_TO_TOPIC_VALUE = 0;
+      /**
+       * <code>CLIENT_UNSUBSCRIBE_FROM_TOPIC = 1;</code>
+       */
+      public static final int CLIENT_UNSUBSCRIBE_FROM_TOPIC_VALUE = 1;
+      /**
+       * <code>CLIENT_SEND_MESSAGE_TO_TOPIC = 2;</code>
+       */
+      public static final int CLIENT_SEND_MESSAGE_TO_TOPIC_VALUE = 2;
+
+
       public final int getNumber() { return value; }
-      
-      public static BrokerToClientMessageType valueOf(int value) {
+
+      public static ClientToBrokerMessageType valueOf(int value) {
         switch (value) {
-          case 0: return BROKER_TOPIC_MESSAGE_PUBLISH;
+          case 0: return CLIENT_SUBSCRIBE_TO_TOPIC;
+          case 1: return CLIENT_UNSUBSCRIBE_FROM_TOPIC;
+          case 2: return CLIENT_SEND_MESSAGE_TO_TOPIC;
           default: return null;
         }
       }
-      
-      public static com.google.protobuf.Internal.EnumLiteMap<BrokerToClientMessageType>
+
+      public static com.google.protobuf.Internal.EnumLiteMap<ClientToBrokerMessageType>
           internalGetValueMap() {
         return internalValueMap;
       }
-      private static com.google.protobuf.Internal.EnumLiteMap<BrokerToClientMessageType>
+      private static com.google.protobuf.Internal.EnumLiteMap<ClientToBrokerMessageType>
           internalValueMap =
-            new com.google.protobuf.Internal.EnumLiteMap<BrokerToClientMessageType>() {
-              public BrokerToClientMessageType findValueByNumber(int number) {
-                return BrokerToClientMessageType.valueOf(number);
+            new com.google.protobuf.Internal.EnumLiteMap<ClientToBrokerMessageType>() {
+              public ClientToBrokerMessageType findValueByNumber(int number) {
+                return ClientToBrokerMessageType.valueOf(number);
               }
             };
-      
+
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
         return getDescriptor().getValues().get(index);
@@ -705,14 +249,12 @@ public final class SMSProtocol {
       }
       public static final com.google.protobuf.Descriptors.EnumDescriptor
           getDescriptor() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDescriptor().getEnumTypes().get(0);
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDescriptor().getEnumTypes().get(0);
       }
-      
-      private static final BrokerToClientMessageType[] VALUES = {
-        BROKER_TOPIC_MESSAGE_PUBLISH, 
-      };
-      
-      public static BrokerToClientMessageType valueOf(
+
+      private static final ClientToBrokerMessageType[] VALUES = values();
+
+      public static ClientToBrokerMessageType valueOf(
           com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
         if (desc.getType() != getDescriptor()) {
           throw new java.lang.IllegalArgumentException(
@@ -720,73 +262,96 @@ public final class SMSProtocol {
         }
         return VALUES[desc.getIndex()];
       }
-      
+
       private final int index;
       private final int value;
-      
-      private BrokerToClientMessageType(int index, int value) {
+
+      private ClientToBrokerMessageType(int index, int value) {
         this.index = index;
         this.value = value;
       }
-      
-      // @@protoc_insertion_point(enum_scope:sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType)
+
+      // @@protoc_insertion_point(enum_scope:sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType)
     }
-    
+
     private int bitField0_;
-    // required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;
+    // required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;
     public static final int MESSAGETYPE_FIELD_NUMBER = 1;
-    private org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType messageType_;
+    private org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType messageType_;
+    /**
+     * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+     */
     public boolean hasMessageType() {
       return ((bitField0_ & 0x00000001) == 0x00000001);
     }
-    public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType getMessageType() {
+    /**
+     * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+     */
+    public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType getMessageType() {
       return messageType_;
     }
-    
+
     // required string topicName = 2;
     public static final int TOPICNAME_FIELD_NUMBER = 2;
     private java.lang.Object topicName_;
+    /**
+     * <code>required string topicName = 2;</code>
+     */
     public boolean hasTopicName() {
       return ((bitField0_ & 0x00000002) == 0x00000002);
     }
-    public String getTopicName() {
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    public java.lang.String getTopicName() {
       java.lang.Object ref = topicName_;
-      if (ref instanceof String) {
-        return (String) ref;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
       } else {
         com.google.protobuf.ByteString bs = 
             (com.google.protobuf.ByteString) ref;
-        String s = bs.toStringUtf8();
-        if (com.google.protobuf.Internal.isValidUtf8(bs)) {
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
           topicName_ = s;
         }
         return s;
       }
     }
-    private com.google.protobuf.ByteString getTopicNameBytes() {
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTopicNameBytes() {
       java.lang.Object ref = topicName_;
-      if (ref instanceof String) {
+      if (ref instanceof java.lang.String) {
         com.google.protobuf.ByteString b = 
-            com.google.protobuf.ByteString.copyFromUtf8((String) ref);
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
         topicName_ = b;
         return b;
       } else {
         return (com.google.protobuf.ByteString) ref;
       }
     }
-    
+
     // optional bytes messagePayload = 3;
     public static final int MESSAGEPAYLOAD_FIELD_NUMBER = 3;
     private com.google.protobuf.ByteString messagePayload_;
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
     public boolean hasMessagePayload() {
       return ((bitField0_ & 0x00000004) == 0x00000004);
     }
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
     public com.google.protobuf.ByteString getMessagePayload() {
       return messagePayload_;
     }
-    
+
     private void initFields() {
-      messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType.BROKER_TOPIC_MESSAGE_PUBLISH;
+      messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
       topicName_ = "";
       messagePayload_ = com.google.protobuf.ByteString.EMPTY;
     }
@@ -794,7 +359,7 @@ public final class SMSProtocol {
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
       if (isInitialized != -1) return isInitialized == 1;
-      
+
       if (!hasMessageType()) {
         memoizedIsInitialized = 0;
         return false;
@@ -806,7 +371,7 @@ public final class SMSProtocol {
       memoizedIsInitialized = 1;
       return true;
     }
-    
+
     public void writeTo(com.google.protobuf.CodedOutputStream output)
                         throws java.io.IOException {
       getSerializedSize();
@@ -821,12 +386,12 @@ public final class SMSProtocol {
       }
       getUnknownFields().writeTo(output);
     }
-    
+
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
       if (size != -1) return size;
-    
+
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
         size += com.google.protobuf.CodedOutputStream
@@ -844,113 +409,105 @@ public final class SMSProtocol {
       memoizedSerializedSize = size;
       return size;
     }
-    
+
     private static final long serialVersionUID = 0L;
     @java.lang.Override
     protected java.lang.Object writeReplace()
         throws java.io.ObjectStreamException {
       return super.writeReplace();
     }
-    
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
         com.google.protobuf.ByteString data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
         com.google.protobuf.ByteString data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(byte[] data)
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(byte[] data)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data).buildParsed();
+      return PARSER.parseFrom(data);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
         byte[] data,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws com.google.protobuf.InvalidProtocolBufferException {
-      return newBuilder().mergeFrom(data, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(data, extensionRegistry);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(java.io.InputStream input)
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(java.io.InputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseDelimitedFrom(java.io.InputStream input)
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseDelimitedFrom(java.io.InputStream input)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseDelimitedFrom(
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseDelimitedFrom(
         java.io.InputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      Builder builder = newBuilder();
-      if (builder.mergeDelimitedFrom(input, extensionRegistry)) {
-        return builder.buildParsed();
-      } else {
-        return null;
-      }
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
         com.google.protobuf.CodedInputStream input)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input).buildParsed();
+      return PARSER.parseFrom(input);
     }
-    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parseFrom(
         com.google.protobuf.CodedInputStream input,
         com.google.protobuf.ExtensionRegistryLite extensionRegistry)
         throws java.io.IOException {
-      return newBuilder().mergeFrom(input, extensionRegistry)
-               .buildParsed();
+      return PARSER.parseFrom(input, extensionRegistry);
     }
-    
+
     public static Builder newBuilder() { return Builder.create(); }
     public Builder newBuilderForType() { return newBuilder(); }
-    public static Builder newBuilder(org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage prototype) {
+    public static Builder newBuilder(org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage prototype) {
       return newBuilder().mergeFrom(prototype);
     }
     public Builder toBuilder() { return newBuilder(this); }
-    
+
     @java.lang.Override
     protected Builder newBuilderForType(
         com.google.protobuf.GeneratedMessage.BuilderParent parent) {
       Builder builder = new Builder(parent);
       return builder;
     }
+    /**
+     * Protobuf type {@code sms.protocol.protobuf.ClientToBrokerMessage}
+     */
     public static final class Builder extends
         com.google.protobuf.GeneratedMessage.Builder<Builder>
-       implements org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessageOrBuilder {
+       implements org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessageOrBuilder {
       public static final com.google.protobuf.Descriptors.Descriptor
           getDescriptor() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor;
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor;
       }
-      
+
       protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
           internalGetFieldAccessorTable() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_fieldAccessorTable;
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.class, org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.Builder.class);
       }
-      
-      // Construct using org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.newBuilder()
+
+      // Construct using org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.newBuilder()
       private Builder() {
         maybeForceBuilderInitialization();
       }
-      
-      private Builder(BuilderParent parent) {
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
         super(parent);
         maybeForceBuilderInitialization();
       }
@@ -961,10 +518,10 @@ public final class SMSProtocol {
       private static Builder create() {
         return new Builder();
       }
-      
+
       public Builder clear() {
         super.clear();
-        messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType.BROKER_TOPIC_MESSAGE_PUBLISH;
+        messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
         bitField0_ = (bitField0_ & ~0x00000001);
         topicName_ = "";
         bitField0_ = (bitField0_ & ~0x00000002);
@@ -972,40 +529,30 @@ public final class SMSProtocol {
         bitField0_ = (bitField0_ & ~0x00000004);
         return this;
       }
-      
+
       public Builder clone() {
         return create().mergeFrom(buildPartial());
       }
-      
+
       public com.google.protobuf.Descriptors.Descriptor
           getDescriptorForType() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDescriptor();
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor;
       }
-      
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage getDefaultInstanceForType() {
-        return org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDefaultInstance();
+
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage getDefaultInstanceForType() {
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDefaultInstance();
       }
-      
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage build() {
-        org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage result = buildPartial();
+
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage build() {
+        org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage result = buildPartial();
         if (!result.isInitialized()) {
           throw newUninitializedMessageException(result);
         }
         return result;
       }
-      
-      private org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage buildParsed()
-          throws com.google.protobuf.InvalidProtocolBufferException {
-        org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage result = buildPartial();
-        if (!result.isInitialized()) {
-          throw newUninitializedMessageException(
-            result).asInvalidProtocolBufferException();
-        }
-        return result;
-      }
-      
-      public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage buildPartial() {
-        org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage result = new org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage(this);
+
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage buildPartial() {
+        org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage result = new org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage(this);
         int from_bitField0_ = bitField0_;
         int to_bitField0_ = 0;
         if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
@@ -1024,23 +571,25 @@ public final class SMSProtocol {
         onBuilt();
         return result;
       }
-      
+
       public Builder mergeFrom(com.google.protobuf.Message other) {
-        if (other instanceof org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage) {
-          return mergeFrom((org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage)other);
+        if (other instanceof org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage) {
+          return mergeFrom((org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage)other);
         } else {
           super.mergeFrom(other);
           return this;
         }
       }
-      
-      public Builder mergeFrom(org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage other) {
-        if (other == org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDefaultInstance()) return this;
+
+      public Builder mergeFrom(org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage other) {
+        if (other == org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.getDefaultInstance()) return this;
         if (other.hasMessageType()) {
           setMessageType(other.getMessageType());
         }
         if (other.hasTopicName()) {
-          setTopicName(other.getTopicName());
+          bitField0_ |= 0x00000002;
+          topicName_ = other.topicName_;
+          onChanged();
         }
         if (other.hasMessagePayload()) {
           setMessagePayload(other.getMessagePayload());
@@ -1048,7 +597,7 @@ public final class SMSProtocol {
         this.mergeUnknownFields(other.getUnknownFields());
         return this;
       }
-      
+
       public final boolean isInitialized() {
         if (!hasMessageType()) {
           
@@ -1060,27 +609,269 @@ public final class SMSProtocol {
         }
         return true;
       }
-      
+
       public Builder mergeFrom(
           com.google.protobuf.CodedInputStream input,
           com.google.protobuf.ExtensionRegistryLite extensionRegistry)
           throws java.io.IOException {
-        com.google.protobuf.UnknownFieldSet.Builder unknownFields =
-          com.google.protobuf.UnknownFieldSet.newBuilder(
-            this.getUnknownFields());
-        while (true) {
+        org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
+      private int bitField0_;
+
+      // required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;
+      private org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
+      /**
+       * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+       */
+      public boolean hasMessageType() {
+        return ((bitField0_ & 0x00000001) == 0x00000001);
+      }
+      /**
+       * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+       */
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType getMessageType() {
+        return messageType_;
+      }
+      /**
+       * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+       */
+      public Builder setMessageType(org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType value) {
+        if (value == null) {
+          throw new NullPointerException();
+        }
+        bitField0_ |= 0x00000001;
+        messageType_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required .sms.protocol.protobuf.ClientToBrokerMessage.ClientToBrokerMessageType messageType = 1;</code>
+       */
+      public Builder clearMessageType() {
+        bitField0_ = (bitField0_ & ~0x00000001);
+        messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC;
+        onChanged();
+        return this;
+      }
+
+      // required string topicName = 2;
+      private java.lang.Object topicName_ = "";
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public boolean hasTopicName() {
+        return ((bitField0_ & 0x00000002) == 0x00000002);
+      }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public java.lang.String getTopicName() {
+        java.lang.Object ref = topicName_;
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
+          topicName_ = s;
+          return s;
+        } else {
+          return (java.lang.String) ref;
+        }
+      }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTopicNameBytes() {
+        java.lang.Object ref = topicName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          topicName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public Builder setTopicName(
+          java.lang.String value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        topicName_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public Builder clearTopicName() {
+        bitField0_ = (bitField0_ & ~0x00000002);
+        topicName_ = getDefaultInstance().getTopicName();
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public Builder setTopicNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
+        topicName_ = value;
+        onChanged();
+        return this;
+      }
+
+      // optional bytes messagePayload = 3;
+      private com.google.protobuf.ByteString messagePayload_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
+      public boolean hasMessagePayload() {
+        return ((bitField0_ & 0x00000004) == 0x00000004);
+      }
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
+      public com.google.protobuf.ByteString getMessagePayload() {
+        return messagePayload_;
+      }
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
+      public Builder setMessagePayload(com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000004;
+        messagePayload_ = value;
+        onChanged();
+        return this;
+      }
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
+      public Builder clearMessagePayload() {
+        bitField0_ = (bitField0_ & ~0x00000004);
+        messagePayload_ = getDefaultInstance().getMessagePayload();
+        onChanged();
+        return this;
+      }
+
+      // @@protoc_insertion_point(builder_scope:sms.protocol.protobuf.ClientToBrokerMessage)
+    }
+
+    static {
+      defaultInstance = new ClientToBrokerMessage(true);
+      defaultInstance.initFields();
+    }
+
+    // @@protoc_insertion_point(class_scope:sms.protocol.protobuf.ClientToBrokerMessage)
+  }
+
+  public interface BrokerToClientMessageOrBuilder
+      extends com.google.protobuf.MessageOrBuilder {
+
+    // required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;
+    /**
+     * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+     */
+    boolean hasMessageType();
+    /**
+     * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+     */
+    org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType getMessageType();
+
+    // required string topicName = 2;
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    boolean hasTopicName();
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    java.lang.String getTopicName();
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    com.google.protobuf.ByteString
+        getTopicNameBytes();
+
+    // optional bytes messagePayload = 3;
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
+    boolean hasMessagePayload();
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
+    com.google.protobuf.ByteString getMessagePayload();
+  }
+  /**
+   * Protobuf type {@code sms.protocol.protobuf.BrokerToClientMessage}
+   */
+  public static final class BrokerToClientMessage extends
+      com.google.protobuf.GeneratedMessage
+      implements BrokerToClientMessageOrBuilder {
+    // Use BrokerToClientMessage.newBuilder() to construct.
+    private BrokerToClientMessage(com.google.protobuf.GeneratedMessage.Builder<?> builder) {
+      super(builder);
+      this.unknownFields = builder.getUnknownFields();
+    }
+    private BrokerToClientMessage(boolean noInit) { this.unknownFields = com.google.protobuf.UnknownFieldSet.getDefaultInstance(); }
+
+    private static final BrokerToClientMessage defaultInstance;
+    public static BrokerToClientMessage getDefaultInstance() {
+      return defaultInstance;
+    }
+
+    public BrokerToClientMessage getDefaultInstanceForType() {
+      return defaultInstance;
+    }
+
+    private final com.google.protobuf.UnknownFieldSet unknownFields;
+    @java.lang.Override
+    public final com.google.protobuf.UnknownFieldSet
+        getUnknownFields() {
+      return this.unknownFields;
+    }
+    private BrokerToClientMessage(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      initFields();
+      int mutable_bitField0_ = 0;
+      com.google.protobuf.UnknownFieldSet.Builder unknownFields =
+          com.google.protobuf.UnknownFieldSet.newBuilder();
+      try {
+        boolean done = false;
+        while (!done) {
           int tag = input.readTag();
           switch (tag) {
             case 0:
-              this.setUnknownFields(unknownFields.build());
-              onChanged();
-              return this;
+              done = true;
+              break;
             default: {
               if (!parseUnknownField(input, unknownFields,
                                      extensionRegistry, tag)) {
-                this.setUnknownFields(unknownFields.build());
-                onChanged();
-                return this;
+                done = true;
               }
               break;
             }
@@ -1107,18 +898,488 @@ public final class SMSProtocol {
             }
           }
         }
+      } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+        throw e.setUnfinishedMessage(this);
+      } catch (java.io.IOException e) {
+        throw new com.google.protobuf.InvalidProtocolBufferException(
+            e.getMessage()).setUnfinishedMessage(this);
+      } finally {
+        this.unknownFields = unknownFields.build();
+        makeExtensionsImmutable();
       }
-      
+    }
+    public static final com.google.protobuf.Descriptors.Descriptor
+        getDescriptor() {
+      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor;
+    }
+
+    protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+        internalGetFieldAccessorTable() {
+      return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_fieldAccessorTable
+          .ensureFieldAccessorsInitialized(
+              org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.class, org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.Builder.class);
+    }
+
+    public static com.google.protobuf.Parser<BrokerToClientMessage> PARSER =
+        new com.google.protobuf.AbstractParser<BrokerToClientMessage>() {
+      public BrokerToClientMessage parsePartialFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws com.google.protobuf.InvalidProtocolBufferException {
+        return new BrokerToClientMessage(input, extensionRegistry);
+      }
+    };
+
+    @java.lang.Override
+    public com.google.protobuf.Parser<BrokerToClientMessage> getParserForType() {
+      return PARSER;
+    }
+
+    /**
+     * Protobuf enum {@code sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType}
+     */
+    public enum BrokerToClientMessageType
+        implements com.google.protobuf.ProtocolMessageEnum {
+      /**
+       * <code>BROKER_TOPIC_MESSAGE_PUBLISH = 0;</code>
+       */
+      BROKER_TOPIC_MESSAGE_PUBLISH(0, 0),
+      ;
+
+      /**
+       * <code>BROKER_TOPIC_MESSAGE_PUBLISH = 0;</code>
+       */
+      public static final int BROKER_TOPIC_MESSAGE_PUBLISH_VALUE = 0;
+
+
+      public final int getNumber() { return value; }
+
+      public static BrokerToClientMessageType valueOf(int value) {
+        switch (value) {
+          case 0: return BROKER_TOPIC_MESSAGE_PUBLISH;
+          default: return null;
+        }
+      }
+
+      public static com.google.protobuf.Internal.EnumLiteMap<BrokerToClientMessageType>
+          internalGetValueMap() {
+        return internalValueMap;
+      }
+      private static com.google.protobuf.Internal.EnumLiteMap<BrokerToClientMessageType>
+          internalValueMap =
+            new com.google.protobuf.Internal.EnumLiteMap<BrokerToClientMessageType>() {
+              public BrokerToClientMessageType findValueByNumber(int number) {
+                return BrokerToClientMessageType.valueOf(number);
+              }
+            };
+
+      public final com.google.protobuf.Descriptors.EnumValueDescriptor
+          getValueDescriptor() {
+        return getDescriptor().getValues().get(index);
+      }
+      public final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptorForType() {
+        return getDescriptor();
+      }
+      public static final com.google.protobuf.Descriptors.EnumDescriptor
+          getDescriptor() {
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDescriptor().getEnumTypes().get(0);
+      }
+
+      private static final BrokerToClientMessageType[] VALUES = values();
+
+      public static BrokerToClientMessageType valueOf(
+          com.google.protobuf.Descriptors.EnumValueDescriptor desc) {
+        if (desc.getType() != getDescriptor()) {
+          throw new java.lang.IllegalArgumentException(
+            "EnumValueDescriptor is not for this type.");
+        }
+        return VALUES[desc.getIndex()];
+      }
+
+      private final int index;
+      private final int value;
+
+      private BrokerToClientMessageType(int index, int value) {
+        this.index = index;
+        this.value = value;
+      }
+
+      // @@protoc_insertion_point(enum_scope:sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType)
+    }
+
+    private int bitField0_;
+    // required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;
+    public static final int MESSAGETYPE_FIELD_NUMBER = 1;
+    private org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType messageType_;
+    /**
+     * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+     */
+    public boolean hasMessageType() {
+      return ((bitField0_ & 0x00000001) == 0x00000001);
+    }
+    /**
+     * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+     */
+    public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType getMessageType() {
+      return messageType_;
+    }
+
+    // required string topicName = 2;
+    public static final int TOPICNAME_FIELD_NUMBER = 2;
+    private java.lang.Object topicName_;
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    public boolean hasTopicName() {
+      return ((bitField0_ & 0x00000002) == 0x00000002);
+    }
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    public java.lang.String getTopicName() {
+      java.lang.Object ref = topicName_;
+      if (ref instanceof java.lang.String) {
+        return (java.lang.String) ref;
+      } else {
+        com.google.protobuf.ByteString bs = 
+            (com.google.protobuf.ByteString) ref;
+        java.lang.String s = bs.toStringUtf8();
+        if (bs.isValidUtf8()) {
+          topicName_ = s;
+        }
+        return s;
+      }
+    }
+    /**
+     * <code>required string topicName = 2;</code>
+     */
+    public com.google.protobuf.ByteString
+        getTopicNameBytes() {
+      java.lang.Object ref = topicName_;
+      if (ref instanceof java.lang.String) {
+        com.google.protobuf.ByteString b = 
+            com.google.protobuf.ByteString.copyFromUtf8(
+                (java.lang.String) ref);
+        topicName_ = b;
+        return b;
+      } else {
+        return (com.google.protobuf.ByteString) ref;
+      }
+    }
+
+    // optional bytes messagePayload = 3;
+    public static final int MESSAGEPAYLOAD_FIELD_NUMBER = 3;
+    private com.google.protobuf.ByteString messagePayload_;
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
+    public boolean hasMessagePayload() {
+      return ((bitField0_ & 0x00000004) == 0x00000004);
+    }
+    /**
+     * <code>optional bytes messagePayload = 3;</code>
+     */
+    public com.google.protobuf.ByteString getMessagePayload() {
+      return messagePayload_;
+    }
+
+    private void initFields() {
+      messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType.BROKER_TOPIC_MESSAGE_PUBLISH;
+      topicName_ = "";
+      messagePayload_ = com.google.protobuf.ByteString.EMPTY;
+    }
+    private byte memoizedIsInitialized = -1;
+    public final boolean isInitialized() {
+      byte isInitialized = memoizedIsInitialized;
+      if (isInitialized != -1) return isInitialized == 1;
+
+      if (!hasMessageType()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      if (!hasTopicName()) {
+        memoizedIsInitialized = 0;
+        return false;
+      }
+      memoizedIsInitialized = 1;
+      return true;
+    }
+
+    public void writeTo(com.google.protobuf.CodedOutputStream output)
+                        throws java.io.IOException {
+      getSerializedSize();
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        output.writeEnum(1, messageType_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        output.writeBytes(2, getTopicNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        output.writeBytes(3, messagePayload_);
+      }
+      getUnknownFields().writeTo(output);
+    }
+
+    private int memoizedSerializedSize = -1;
+    public int getSerializedSize() {
+      int size = memoizedSerializedSize;
+      if (size != -1) return size;
+
+      size = 0;
+      if (((bitField0_ & 0x00000001) == 0x00000001)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeEnumSize(1, messageType_.getNumber());
+      }
+      if (((bitField0_ & 0x00000002) == 0x00000002)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(2, getTopicNameBytes());
+      }
+      if (((bitField0_ & 0x00000004) == 0x00000004)) {
+        size += com.google.protobuf.CodedOutputStream
+          .computeBytesSize(3, messagePayload_);
+      }
+      size += getUnknownFields().getSerializedSize();
+      memoizedSerializedSize = size;
+      return size;
+    }
+
+    private static final long serialVersionUID = 0L;
+    @java.lang.Override
+    protected java.lang.Object writeReplace()
+        throws java.io.ObjectStreamException {
+      return super.writeReplace();
+    }
+
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+        com.google.protobuf.ByteString data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+        com.google.protobuf.ByteString data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(byte[] data)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+        byte[] data,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws com.google.protobuf.InvalidProtocolBufferException {
+      return PARSER.parseFrom(data, extensionRegistry);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseDelimitedFrom(java.io.InputStream input)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseDelimitedFrom(
+        java.io.InputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseDelimitedFrom(input, extensionRegistry);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+        com.google.protobuf.CodedInputStream input)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input);
+    }
+    public static org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parseFrom(
+        com.google.protobuf.CodedInputStream input,
+        com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+        throws java.io.IOException {
+      return PARSER.parseFrom(input, extensionRegistry);
+    }
+
+    public static Builder newBuilder() { return Builder.create(); }
+    public Builder newBuilderForType() { return newBuilder(); }
+    public static Builder newBuilder(org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage prototype) {
+      return newBuilder().mergeFrom(prototype);
+    }
+    public Builder toBuilder() { return newBuilder(this); }
+
+    @java.lang.Override
+    protected Builder newBuilderForType(
+        com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+      Builder builder = new Builder(parent);
+      return builder;
+    }
+    /**
+     * Protobuf type {@code sms.protocol.protobuf.BrokerToClientMessage}
+     */
+    public static final class Builder extends
+        com.google.protobuf.GeneratedMessage.Builder<Builder>
+       implements org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessageOrBuilder {
+      public static final com.google.protobuf.Descriptors.Descriptor
+          getDescriptor() {
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor;
+      }
+
+      protected com.google.protobuf.GeneratedMessage.FieldAccessorTable
+          internalGetFieldAccessorTable() {
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_fieldAccessorTable
+            .ensureFieldAccessorsInitialized(
+                org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.class, org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.Builder.class);
+      }
+
+      // Construct using org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.newBuilder()
+      private Builder() {
+        maybeForceBuilderInitialization();
+      }
+
+      private Builder(
+          com.google.protobuf.GeneratedMessage.BuilderParent parent) {
+        super(parent);
+        maybeForceBuilderInitialization();
+      }
+      private void maybeForceBuilderInitialization() {
+        if (com.google.protobuf.GeneratedMessage.alwaysUseFieldBuilders) {
+        }
+      }
+      private static Builder create() {
+        return new Builder();
+      }
+
+      public Builder clear() {
+        super.clear();
+        messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType.BROKER_TOPIC_MESSAGE_PUBLISH;
+        bitField0_ = (bitField0_ & ~0x00000001);
+        topicName_ = "";
+        bitField0_ = (bitField0_ & ~0x00000002);
+        messagePayload_ = com.google.protobuf.ByteString.EMPTY;
+        bitField0_ = (bitField0_ & ~0x00000004);
+        return this;
+      }
+
+      public Builder clone() {
+        return create().mergeFrom(buildPartial());
+      }
+
+      public com.google.protobuf.Descriptors.Descriptor
+          getDescriptorForType() {
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor;
+      }
+
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage getDefaultInstanceForType() {
+        return org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDefaultInstance();
+      }
+
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage build() {
+        org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage result = buildPartial();
+        if (!result.isInitialized()) {
+          throw newUninitializedMessageException(result);
+        }
+        return result;
+      }
+
+      public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage buildPartial() {
+        org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage result = new org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage(this);
+        int from_bitField0_ = bitField0_;
+        int to_bitField0_ = 0;
+        if (((from_bitField0_ & 0x00000001) == 0x00000001)) {
+          to_bitField0_ |= 0x00000001;
+        }
+        result.messageType_ = messageType_;
+        if (((from_bitField0_ & 0x00000002) == 0x00000002)) {
+          to_bitField0_ |= 0x00000002;
+        }
+        result.topicName_ = topicName_;
+        if (((from_bitField0_ & 0x00000004) == 0x00000004)) {
+          to_bitField0_ |= 0x00000004;
+        }
+        result.messagePayload_ = messagePayload_;
+        result.bitField0_ = to_bitField0_;
+        onBuilt();
+        return result;
+      }
+
+      public Builder mergeFrom(com.google.protobuf.Message other) {
+        if (other instanceof org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage) {
+          return mergeFrom((org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage)other);
+        } else {
+          super.mergeFrom(other);
+          return this;
+        }
+      }
+
+      public Builder mergeFrom(org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage other) {
+        if (other == org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.getDefaultInstance()) return this;
+        if (other.hasMessageType()) {
+          setMessageType(other.getMessageType());
+        }
+        if (other.hasTopicName()) {
+          bitField0_ |= 0x00000002;
+          topicName_ = other.topicName_;
+          onChanged();
+        }
+        if (other.hasMessagePayload()) {
+          setMessagePayload(other.getMessagePayload());
+        }
+        this.mergeUnknownFields(other.getUnknownFields());
+        return this;
+      }
+
+      public final boolean isInitialized() {
+        if (!hasMessageType()) {
+          
+          return false;
+        }
+        if (!hasTopicName()) {
+          
+          return false;
+        }
+        return true;
+      }
+
+      public Builder mergeFrom(
+          com.google.protobuf.CodedInputStream input,
+          com.google.protobuf.ExtensionRegistryLite extensionRegistry)
+          throws java.io.IOException {
+        org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage parsedMessage = null;
+        try {
+          parsedMessage = PARSER.parsePartialFrom(input, extensionRegistry);
+        } catch (com.google.protobuf.InvalidProtocolBufferException e) {
+          parsedMessage = (org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage) e.getUnfinishedMessage();
+          throw e;
+        } finally {
+          if (parsedMessage != null) {
+            mergeFrom(parsedMessage);
+          }
+        }
+        return this;
+      }
       private int bitField0_;
-      
+
       // required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;
       private org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType.BROKER_TOPIC_MESSAGE_PUBLISH;
+      /**
+       * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+       */
       public boolean hasMessageType() {
         return ((bitField0_ & 0x00000001) == 0x00000001);
       }
+      /**
+       * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+       */
       public org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType getMessageType() {
         return messageType_;
       }
+      /**
+       * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+       */
       public Builder setMessageType(org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType value) {
         if (value == null) {
           throw new NullPointerException();
@@ -1128,29 +1389,59 @@ public final class SMSProtocol {
         onChanged();
         return this;
       }
+      /**
+       * <code>required .sms.protocol.protobuf.BrokerToClientMessage.BrokerToClientMessageType messageType = 1;</code>
+       */
       public Builder clearMessageType() {
         bitField0_ = (bitField0_ & ~0x00000001);
         messageType_ = org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType.BROKER_TOPIC_MESSAGE_PUBLISH;
         onChanged();
         return this;
       }
-      
+
       // required string topicName = 2;
       private java.lang.Object topicName_ = "";
+      /**
+       * <code>required string topicName = 2;</code>
+       */
       public boolean hasTopicName() {
         return ((bitField0_ & 0x00000002) == 0x00000002);
       }
-      public String getTopicName() {
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public java.lang.String getTopicName() {
         java.lang.Object ref = topicName_;
-        if (!(ref instanceof String)) {
-          String s = ((com.google.protobuf.ByteString) ref).toStringUtf8();
+        if (!(ref instanceof java.lang.String)) {
+          java.lang.String s = ((com.google.protobuf.ByteString) ref)
+              .toStringUtf8();
           topicName_ = s;
           return s;
         } else {
-          return (String) ref;
+          return (java.lang.String) ref;
         }
       }
-      public Builder setTopicName(String value) {
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public com.google.protobuf.ByteString
+          getTopicNameBytes() {
+        java.lang.Object ref = topicName_;
+        if (ref instanceof String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          topicName_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
+      }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public Builder setTopicName(
+          java.lang.String value) {
         if (value == null) {
     throw new NullPointerException();
   }
@@ -1159,26 +1450,46 @@ public final class SMSProtocol {
         onChanged();
         return this;
       }
+      /**
+       * <code>required string topicName = 2;</code>
+       */
       public Builder clearTopicName() {
         bitField0_ = (bitField0_ & ~0x00000002);
         topicName_ = getDefaultInstance().getTopicName();
         onChanged();
         return this;
       }
-      void setTopicName(com.google.protobuf.ByteString value) {
-        bitField0_ |= 0x00000002;
+      /**
+       * <code>required string topicName = 2;</code>
+       */
+      public Builder setTopicNameBytes(
+          com.google.protobuf.ByteString value) {
+        if (value == null) {
+    throw new NullPointerException();
+  }
+  bitField0_ |= 0x00000002;
         topicName_ = value;
         onChanged();
+        return this;
       }
-      
+
       // optional bytes messagePayload = 3;
       private com.google.protobuf.ByteString messagePayload_ = com.google.protobuf.ByteString.EMPTY;
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
       public boolean hasMessagePayload() {
         return ((bitField0_ & 0x00000004) == 0x00000004);
       }
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
       public com.google.protobuf.ByteString getMessagePayload() {
         return messagePayload_;
       }
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
       public Builder setMessagePayload(com.google.protobuf.ByteString value) {
         if (value == null) {
     throw new NullPointerException();
@@ -1188,24 +1499,27 @@ public final class SMSProtocol {
         onChanged();
         return this;
       }
+      /**
+       * <code>optional bytes messagePayload = 3;</code>
+       */
       public Builder clearMessagePayload() {
         bitField0_ = (bitField0_ & ~0x00000004);
         messagePayload_ = getDefaultInstance().getMessagePayload();
         onChanged();
         return this;
       }
-      
+
       // @@protoc_insertion_point(builder_scope:sms.protocol.protobuf.BrokerToClientMessage)
     }
-    
+
     static {
       defaultInstance = new BrokerToClientMessage(true);
       defaultInstance.initFields();
     }
-    
+
     // @@protoc_insertion_point(class_scope:sms.protocol.protobuf.BrokerToClientMessage)
   }
-  
+
   private static com.google.protobuf.Descriptors.Descriptor
     internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor;
   private static
@@ -1216,7 +1530,7 @@ public final class SMSProtocol {
   private static
     com.google.protobuf.GeneratedMessage.FieldAccessorTable
       internal_static_sms_protocol_protobuf_BrokerToClientMessage_fieldAccessorTable;
-  
+
   public static com.google.protobuf.Descriptors.FileDescriptor
       getDescriptor() {
     return descriptor;
@@ -1252,17 +1566,13 @@ public final class SMSProtocol {
           internal_static_sms_protocol_protobuf_ClientToBrokerMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sms_protocol_protobuf_ClientToBrokerMessage_descriptor,
-              new java.lang.String[] { "MessageType", "TopicName", "MessagePayload", },
-              org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.class,
-              org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.Builder.class);
+              new java.lang.String[] { "MessageType", "TopicName", "MessagePayload", });
           internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor =
             getDescriptor().getMessageTypes().get(1);
           internal_static_sms_protocol_protobuf_BrokerToClientMessage_fieldAccessorTable = new
             com.google.protobuf.GeneratedMessage.FieldAccessorTable(
               internal_static_sms_protocol_protobuf_BrokerToClientMessage_descriptor,
-              new java.lang.String[] { "MessageType", "TopicName", "MessagePayload", },
-              org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.class,
-              org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.Builder.class);
+              new java.lang.String[] { "MessageType", "TopicName", "MessagePayload", });
           return null;
         }
       };
@@ -1271,6 +1581,6 @@ public final class SMSProtocol {
         new com.google.protobuf.Descriptors.FileDescriptor[] {
         }, assigner);
   }
-  
+
   // @@protoc_insertion_point(outer_class_scope)
 }

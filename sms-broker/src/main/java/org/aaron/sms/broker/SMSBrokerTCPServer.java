@@ -26,36 +26,34 @@ package org.aaron.sms.broker;
  * #L%
  */
 
-import java.net.InetSocketAddress;
+import io.netty.bootstrap.ServerBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.SimpleChannelInboundHandler;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.protobuf.ProtobufDecoder;
+import io.netty.handler.codec.protobuf.ProtobufEncoder;
+import io.netty.handler.logging.LogLevel;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.util.internal.logging.InternalLoggerFactory;
+import io.netty.util.internal.logging.Slf4JLoggerFactory;
+
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.aaron.sms.protocol.SMSProtocolConstants;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType;
-import org.jboss.netty.bootstrap.ServerBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.channel.socket.ServerSocketChannelFactory;
-import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
-import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
-import org.jboss.netty.handler.codec.frame.LengthFieldPrepender;
-import org.jboss.netty.handler.codec.protobuf.ProtobufDecoder;
-import org.jboss.netty.handler.logging.LoggingHandler;
-import org.jboss.netty.logging.InternalLogLevel;
-import org.jboss.netty.logging.InternalLoggerFactory;
-import org.jboss.netty.logging.Slf4JLoggerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,110 +62,100 @@ public class SMSBrokerTCPServer {
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSBrokerTCPServer.class);
 
-	private final ChannelGroup allChannels = new DefaultChannelGroup();
-
-	private final ExecutorService executor = Executors.newCachedThreadPool();
+	private final ChannelGroup allChannels = new DefaultChannelGroup(
+			GlobalEventExecutor.INSTANCE);
 
 	private final AtomicBoolean destroyed = new AtomicBoolean(false);
 
 	private final CountDownLatch destroyedLatch = new CountDownLatch(1);
 
-	private final ServerSocketChannelFactory serverSocketChannelFactory;
+	private final EventLoopGroup bossGroup = new NioEventLoopGroup();
+
+	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
 
 	private final SMSTopicContainer topicContainer;
 
-	private class ClientHandler extends SimpleChannelUpstreamHandler {
-
-		public ClientHandler() {
-
-		}
+	private class ServerHandler extends
+			SimpleChannelInboundHandler<SMSProtocol.ClientToBrokerMessage> {
 
 		@Override
-		public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e)
+		public void channelRegistered(ChannelHandlerContext ctx)
 				throws Exception {
-			allChannels.add(e.getChannel());
-			log.info("channelOpen {}", e.getChannel());
+			log.debug("channelRegistered {}", ctx.channel());
+			allChannels.add(ctx.channel());
 		}
 
 		@Override
-		public void channelConnected(ChannelHandlerContext ctx,
-				ChannelStateEvent e) throws Exception {
-			log.debug("channelConnected {}", e.getChannel());
+		public void channelActive(ChannelHandlerContext ctx) throws Exception {
+			log.info("channelActive {}", ctx.channel());
 		}
 
 		@Override
-		public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent e) {
-			log.debug("exceptionCaught {}", e.getChannel(), e.getCause());
-			e.getChannel().close();
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+			log.debug("exceptionCaught {}", ctx.channel(), cause);
+			ctx.channel().close();
 		}
 
 		@Override
-		public void channelClosed(ChannelHandlerContext ctopicContainertx,
-				ChannelStateEvent e) {
-			log.info("channelClosed {}", e.getChannel());
+		public void channelInactive(ChannelHandlerContext ctx) {
+			log.info("channelInactive {}", ctx.channel());
 		}
 
 		@Override
-		public void messageReceived(ChannelHandlerContext ctx,
-				MessageEvent event) {
+		public void channelRead0(ChannelHandlerContext ctx,
+				SMSProtocol.ClientToBrokerMessage message) {
 			try {
-				log.debug("messageReceived from {} message = '{}'",
-						event.getChannel(), event.getMessage());
-				processIncomingMessage(event.getChannel(),
-						(SMSProtocol.ClientToBrokerMessage) event.getMessage());
+				log.debug("channelRead0 from {} message = '{}'", ctx.channel(),
+						message);
+				processIncomingMessage(ctx.channel(), message);
 			} catch (Exception e) {
-				log.warn("messageReceived", e);
-				event.getChannel().close();
+				log.warn("channelRead0", e);
+				ctx.channel().close();
 			}
 		}
 	}
 
-	private class ServerPipelineFactory implements ChannelPipelineFactory {
-
-		public ServerPipelineFactory() {
-
-		}
+	private class ServerChannelInitializer extends ChannelInitializer<Channel> {
 
 		@Override
-		public ChannelPipeline getPipeline() throws Exception {
-			return Channels
-					.pipeline(
-							new LoggingHandler(InternalLogLevel.DEBUG),
+		protected void initChannel(Channel ch) throws Exception {
+			final ChannelPipeline p = ch.pipeline();
+			p.addLast("logger", new LoggingHandler(LogLevel.DEBUG));
 
-							new LengthFieldPrepender(
-									SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES),
+			p.addLast("frameEncoder", new LengthFieldPrepender(
+					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES));
 
-							new LengthFieldBasedFrameDecoder(
-									SMSProtocolConstants.MAX_MESSAGE_LENGTH_BYTES,
-									0,
-									SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES,
-									0,
-									SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES),
+			p.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(
+					SMSProtocolConstants.MAX_MESSAGE_LENGTH_BYTES, 0,
+					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES, 0,
+					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES));
 
-							new ProtobufDecoder(
-									SMSProtocol.ClientToBrokerMessage
-											.getDefaultInstance()),
+			p.addLast("protobufEncoder", new ProtobufEncoder());
 
-							new ClientHandler());
+			p.addLast("protobufDecoder", new ProtobufDecoder(
+					SMSProtocol.ClientToBrokerMessage.getDefaultInstance()));
+
+			p.addLast("serverHandler", new ServerHandler());
 		}
 	}
 
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
-			String listenAddress, int listenPort) {
+			String listenAddress, int listenPort) throws InterruptedException {
 		this.topicContainer = topicContainer;
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-		serverSocketChannelFactory = new NioServerSocketChannelFactory(
-				executor, executor);
-		final ServerBootstrap serverBootstrap = new ServerBootstrap(
-				serverSocketChannelFactory);
-		serverBootstrap.setPipelineFactory(new ServerPipelineFactory());
-		serverBootstrap.setOption("reuseAddress", Boolean.TRUE);
-		final Channel serverChannel = serverBootstrap
-				.bind(new InetSocketAddress(listenAddress, listenPort));
+		final ServerBootstrap b = new ServerBootstrap();
+		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+				.childHandler(new ServerChannelInitializer())
+				.option(ChannelOption.SO_REUSEADDR, true);
+
+		final Channel serverChannel = b.bind(listenAddress, listenPort).sync()
+				.channel();
 		allChannels.add(serverChannel);
-		log.info("listening on " + serverChannel.getLocalAddress());
+
+		log.info("listening on " + serverChannel.localAddress());
+
 	}
 
 	public void destroy() {
@@ -175,9 +163,9 @@ public class SMSBrokerTCPServer {
 
 		allChannels.close();
 
-		serverSocketChannelFactory.releaseExternalResources();
+		bossGroup.shutdownGracefully();
 
-		executor.shutdown();
+		workerGroup.shutdownGracefully();
 
 		destroyed.set(true);
 

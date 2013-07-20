@@ -84,7 +84,7 @@ public class SMSTestSender implements Runnable {
 
 	public static void main(String[] args) {
 		final ArrayList<Thread> threadList = new ArrayList<Thread>();
-		for (int i = 0; i < 50; ++i) {
+		for (int i = 0; i < 25; ++i) {
 			final Thread t = new Thread(new SMSTestSender("test.topic." + i));
 			t.start();
 			threadList.add(t);

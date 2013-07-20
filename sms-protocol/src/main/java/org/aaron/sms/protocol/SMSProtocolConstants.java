@@ -26,6 +26,7 @@ package org.aaron.sms.protocol;
  * #L%
  */
 
+
 public class SMSProtocolConstants {
 
 	private SMSProtocolConstants() {
