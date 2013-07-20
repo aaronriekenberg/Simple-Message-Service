@@ -90,13 +90,13 @@ public class SMSConnection {
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSConnection.class);
 
+	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+
 	private final ChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
 	private final ChannelGroup connectedChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
-
-	private final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
 	private final ScheduledExecutorService scheduledExecutorService = Executors
 			.newScheduledThreadPool(1);
@@ -362,11 +362,11 @@ public class SMSConnection {
 			return;
 		}
 
+		listener.set(null);
+
 		scheduledExecutorService.shutdown();
 
 		allChannels.close();
-
-		eventLoopGroup.shutdownGracefully();
 	}
 
 	private void fireConnectionOpen() {
