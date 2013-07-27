@@ -26,6 +26,8 @@ package org.aaron.sms.examples;
  * #L%
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 
 import org.aaron.sms.api.SMSConnection;
@@ -41,7 +43,7 @@ public class SMSTestSender implements Runnable {
 	private final String topicName;
 
 	public SMSTestSender(String topicName) {
-		this.topicName = topicName;
+		this.topicName = checkNotNull(topicName);
 	}
 
 	@Override

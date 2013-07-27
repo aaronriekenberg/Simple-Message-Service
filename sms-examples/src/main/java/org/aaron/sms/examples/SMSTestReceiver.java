@@ -26,6 +26,8 @@ package org.aaron.sms.examples;
  * #L%
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -48,7 +50,7 @@ public class SMSTestReceiver implements Runnable {
 	private final String topicName;
 
 	public SMSTestReceiver(String topicName) {
-		this.topicName = topicName;
+		this.topicName = checkNotNull(topicName);
 	}
 
 	@Override
@@ -72,6 +74,7 @@ public class SMSTestReceiver implements Runnable {
 						byte[] message) {
 					log.debug("handleIncomingMessage topic {} length {}",
 							topicName, message.length);
+					assert SMSTestReceiver.this.topicName.equals(topicName);
 					messagesReceived.getAndIncrement();
 				}
 
