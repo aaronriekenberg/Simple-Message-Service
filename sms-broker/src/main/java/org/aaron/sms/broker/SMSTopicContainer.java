@@ -52,8 +52,8 @@ public class SMSTopicContainer {
 
 	public SMSTopic getTopic(String topicName, EventLoopGroup eventLoopGroup) {
 		checkNotNull(topicName, "topicName is null");
-		checkNotNull(eventLoopGroup, "eventLoopGroup is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
+		checkNotNull(eventLoopGroup, "eventLoopGroup is null");
 
 		SMSTopic topic = topicNameToInfo.get(topicName);
 
