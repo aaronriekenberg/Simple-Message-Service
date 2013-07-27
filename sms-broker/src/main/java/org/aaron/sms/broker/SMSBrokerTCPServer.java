@@ -185,7 +185,8 @@ public class SMSBrokerTCPServer {
 		switch (message.getMessageType()) {
 		case CLIENT_SEND_MESSAGE_TO_TOPIC: {
 			final String topicName = message.getTopicName();
-			final SMSTopic topic = topicContainer.getTopic(topicName);
+			final SMSTopic topic = topicContainer.getTopic(topicName,
+					workerGroup);
 			topic.write(SMSProtocol.BrokerToClientMessage
 					.newBuilder()
 					.setMessageType(
@@ -197,14 +198,16 @@ public class SMSBrokerTCPServer {
 
 		case CLIENT_SUBSCRIBE_TO_TOPIC: {
 			final String topicName = message.getTopicName();
-			final SMSTopic topic = topicContainer.getTopic(topicName);
+			final SMSTopic topic = topicContainer.getTopic(topicName,
+					workerGroup);
 			topic.addSubscription(channel);
 			break;
 		}
 
 		case CLIENT_UNSUBSCRIBE_FROM_TOPIC: {
 			final String topicName = message.getTopicName();
-			final SMSTopic topic = topicContainer.getTopic(topicName);
+			final SMSTopic topic = topicContainer.getTopic(topicName,
+					workerGroup);
 			topic.removeSubscription(channel);
 			break;
 		}

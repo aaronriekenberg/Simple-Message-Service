@@ -30,17 +30,18 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.channel.Channel;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.util.concurrent.GlobalEventExecutor;
+import io.netty.util.concurrent.EventExecutor;
 
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
 class SMSTopic {
 
-	private final ChannelGroup channelGroup = new DefaultChannelGroup(
-			GlobalEventExecutor.INSTANCE);
+	private final ChannelGroup channelGroup;
 
-	public SMSTopic() {
+	public SMSTopic(EventExecutor eventExecutor) {
+		checkNotNull(eventExecutor, "eventExecutor is null");
 
+		channelGroup = new DefaultChannelGroup(eventExecutor);
 	}
 
 	public void addSubscription(Channel channel) {

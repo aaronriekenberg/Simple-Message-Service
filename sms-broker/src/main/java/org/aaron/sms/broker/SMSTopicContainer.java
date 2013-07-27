@@ -28,6 +28,7 @@ package org.aaron.sms.broker;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
+import io.netty.channel.EventLoopGroup;
 
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -49,14 +50,15 @@ public class SMSTopicContainer {
 		log.info("destroy");
 	}
 
-	public SMSTopic getTopic(String topicName) {
+	public SMSTopic getTopic(String topicName, EventLoopGroup eventLoopGroup) {
 		checkNotNull(topicName, "topicName is null");
+		checkNotNull(eventLoopGroup, "eventLoopGroup is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 
 		SMSTopic topic = topicNameToInfo.get(topicName);
 
 		if (topic == null) {
-			final SMSTopic newTopic = new SMSTopic();
+			final SMSTopic newTopic = new SMSTopic(eventLoopGroup.next());
 			topic = topicNameToInfo.putIfAbsent(topicName, newTopic);
 			if (topic == null) {
 				log.info("created topic '" + topicName + "'");
