@@ -28,7 +28,6 @@ package org.aaron.sms.examples;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -38,7 +37,7 @@ import org.aaron.sms.api.SMSConnectionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SMSTestReceiver implements Runnable {
+public class SMSTestReceiver {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSTestReceiver.class);
@@ -53,8 +52,7 @@ public class SMSTestReceiver implements Runnable {
 		this.topicName = checkNotNull(topicName);
 	}
 
-	@Override
-	public void run() {
+	public void start() {
 		try {
 			final SMSConnection smsConnection = new SMSConnection("127.0.0.1",
 					10001);
@@ -93,25 +91,19 @@ public class SMSTestReceiver implements Runnable {
 
 			smsConnection.subscribeToTopic(topicName);
 
-			while (true) {
-				Thread.sleep(1000);
-			}
 		} catch (Exception e) {
-			log.warn("main", e);
+			log.warn("start", e);
 		}
 	}
 
 	public static void main(String[] args) {
-		final ArrayList<Thread> threadList = new ArrayList<Thread>();
-		for (int i = 0; i < 50; ++i) {
-			final Thread t = new Thread(new SMSTestReceiver("test.topic." + i));
-			t.start();
-			threadList.add(t);
+		for (int i = 0; i < 30; ++i) {
+			new SMSTestReceiver("test.topic." + i).start();
 		}
-		for (Thread t : threadList) {
+		while (true) {
 			try {
-				t.join();
-			} catch (InterruptedException e) {
+				Thread.sleep(1000);
+			} catch (Exception e) {
 				log.warn("main", e);
 			}
 		}

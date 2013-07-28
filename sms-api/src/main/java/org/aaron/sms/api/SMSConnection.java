@@ -47,6 +47,9 @@ import io.netty.handler.codec.protobuf.ProtobufDecoder;
 import io.netty.handler.codec.protobuf.ProtobufEncoder;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timeout;
+import io.netty.util.TimerTask;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
@@ -54,8 +57,6 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
@@ -92,21 +93,31 @@ public class SMSConnection {
 
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
+	private static final HashedWheelTimer timer = new HashedWheelTimer();
+
 	private final ChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
 	private final ChannelGroup connectedChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
-	private final ScheduledExecutorService scheduledExecutorService = Executors
-			.newScheduledThreadPool(1);
-
 	private final Set<String> subscribedTopics = Collections
 			.synchronizedSet(new HashSet<String>());
 
-	private final AtomicBoolean started = new AtomicBoolean(false);
+	private enum ConnectionState {
+		NOT_STARTED,
+
+		RUNNING,
+
+		DESTROYED
+	}
+
+	private final AtomicReference<ConnectionState> connectionState = new AtomicReference<>(
+			ConnectionState.NOT_STARTED);
 
 	private final AtomicReference<SMSConnectionListener> listener = new AtomicReference<>();
+
+	private final Object destroyLock = new Object();
 
 	private final String brokerAddress;
 
@@ -125,7 +136,13 @@ public class SMSConnection {
 		public void channelRegistered(ChannelHandlerContext ctx)
 				throws Exception {
 			log.debug("channelRegistered {}", ctx.channel());
-			allChannels.add(ctx.channel());
+			synchronized (destroyLock) {
+				if (connectionState.get() == ConnectionState.DESTROYED) {
+					ctx.channel().close();
+				} else {
+					allChannels.add(ctx.channel());
+				}
+			}
 		}
 
 		@Override
@@ -209,6 +226,13 @@ public class SMSConnection {
 		this.brokerPort = brokerPort;
 	}
 
+	private void assertState(ConnectionState expectedState) {
+		final ConnectionState localState = connectionState.get();
+		checkState(localState == expectedState,
+				"Expected current state = %s, actual current state = %s",
+				expectedState, localState);
+	}
+
 	/**
 	 * Set an SMSConnectionListener for this connection. Only one
 	 * SMSConnectionListener may be registered at a time.
@@ -226,7 +250,8 @@ public class SMSConnection {
 	 * Broker.
 	 */
 	public void start() {
-		checkState(started.compareAndSet(false, true), "already started");
+		checkState(connectionState.compareAndSet(ConnectionState.NOT_STARTED,
+				ConnectionState.RUNNING), "Invalid state for start");
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
@@ -234,7 +259,7 @@ public class SMSConnection {
 	}
 
 	private void reconnect() {
-		if (!started.get()) {
+		if (connectionState.get() != ConnectionState.RUNNING) {
 			return;
 		}
 
@@ -246,13 +271,13 @@ public class SMSConnection {
 	}
 
 	private void reconnectAfterDelay() {
-		if (!started.get()) {
+		if (connectionState.get() != ConnectionState.RUNNING) {
 			return;
 		}
 
-		scheduledExecutorService.schedule(new Runnable() {
+		timer.newTimeout(new TimerTask() {
 			@Override
-			public void run() {
+			public void run(Timeout timeout) throws Exception {
 				try {
 					reconnect();
 				} catch (Exception e) {
@@ -263,7 +288,7 @@ public class SMSConnection {
 	}
 
 	private void resubscribeToTopics() {
-		if (!started.get()) {
+		if (connectionState.get() != ConnectionState.RUNNING) {
 			return;
 		}
 
@@ -290,7 +315,7 @@ public class SMSConnection {
 	public void subscribeToTopic(String topicName) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
-		checkState(started.get(), "not started");
+		assertState(ConnectionState.RUNNING);
 
 		subscribedTopics.add(topicName);
 		connectedChannels.flushAndWrite(SMSProtocol.ClientToBrokerMessage
@@ -309,7 +334,7 @@ public class SMSConnection {
 	public void unsubscribeFromTopic(String topicName) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
-		checkState(started.get(), "not started");
+		assertState(ConnectionState.RUNNING);
 
 		subscribedTopics.remove(topicName);
 		connectedChannels
@@ -338,7 +363,7 @@ public class SMSConnection {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		checkNotNull(message, "message is null");
-		checkState(started.get(), "not started");
+		assertState(ConnectionState.RUNNING);
 
 		connectedChannels.flushAndWrite(SMSProtocol.ClientToBrokerMessage
 				.newBuilder()
@@ -358,15 +383,16 @@ public class SMSConnection {
 	 * created.
 	 */
 	public void destroy() {
-		if (!started.compareAndSet(true, false)) {
-			return;
+		synchronized (destroyLock) {
+			if (!connectionState.compareAndSet(ConnectionState.RUNNING,
+					ConnectionState.DESTROYED)) {
+				return;
+			}
+
+			listener.set(null);
+
+			allChannels.close();
 		}
-
-		listener.set(null);
-
-		scheduledExecutorService.shutdown();
-
-		allChannels.close();
 	}
 
 	private void fireConnectionOpen() {
