@@ -178,8 +178,7 @@ public class SMSConnection {
 						message);
 				switch (message.getMessageType()) {
 				case BROKER_TOPIC_MESSAGE_PUBLISH:
-					fireMessageReceived(message.getTopicName(), message
-							.getMessagePayload().toByteArray());
+					handleBrokerTopicMessagePublish(message);
 					break;
 				}
 			} catch (Exception e) {
@@ -393,6 +392,18 @@ public class SMSConnection {
 
 			allChannels.close();
 		}
+	}
+
+	private void handleBrokerTopicMessagePublish(
+			SMSProtocol.BrokerToClientMessage message) {
+		checkNotNull(message, "message is null");
+		checkNotNull(message.getTopicName(), "topic name is null");
+		checkArgument(message.getTopicName().length() > 0,
+				"topic name is emtpy");
+		checkNotNull(message.getMessagePayload(), "message payload is null");
+
+		fireMessageReceived(message.getTopicName(), message.getMessagePayload()
+				.toByteArray());
 	}
 
 	private void fireConnectionOpen() {
