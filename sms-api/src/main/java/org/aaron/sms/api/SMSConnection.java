@@ -136,6 +136,12 @@ public class SMSConnection {
 		public void channelRegistered(ChannelHandlerContext ctx)
 				throws Exception {
 			log.debug("channelRegistered {}", ctx.channel());
+
+			/*
+			 * Need to synchronize on destroyLock to avoid another thread
+			 * calling destroy() between connectionState.get() and
+			 * allChannels.add() below.
+			 */
 			synchronized (destroyLock) {
 				if (connectionState.get() == ConnectionState.DESTROYED) {
 					ctx.channel().close();
