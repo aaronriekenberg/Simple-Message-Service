@@ -1,5 +1,5 @@
 BoostSystemUtil.o: BoostSystemUtil.cpp BoostSystemUtil.h
-BufferPool.o: BufferPool.cpp BufferPool.h
+BufferPool.o: BufferPool.cpp BufferPool.h Log.h
 Broker.o: Broker.cpp Broker.h BufferPool.h TopicContainer.h Topic.h \
  TopicListener.h ClientAcceptor.h ClientSession.h SMSProtocol.pb.h \
  TcpResolver.h
