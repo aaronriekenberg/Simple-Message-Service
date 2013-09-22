@@ -7,6 +7,7 @@
 #include <memory>
 #include <string>
 #include <vector>
+#include "Buffer.h"
 #include "SMSProtocol.pb.h"
 #include "TopicContainer.h"
 #include "TopicListener.h"
@@ -73,7 +74,7 @@ private:
 
 	bool m_clientSocketClosed = false;
 
-	std::vector<unsigned char> m_readBuffer;
+	Buffer m_readBuffer;
 
 	std::deque<std::tuple<BufferSharedPtr, size_t>> m_writeQueue;
 

@@ -211,9 +211,8 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 				const size_t brokerToClientMessageSize =
 						m_brokerToClientMessage.ByteSize();
 
-				BufferSharedPtr pBuffer(
-						new std::vector<unsigned char>(
-								brokerToClientMessageSize, 0));
+				BufferSharedPtr pBuffer = std::make_shared<Buffer>(
+						brokerToClientMessageSize, 0);
 
 				m_brokerToClientMessage.SerializeToArray(&((*pBuffer)[0]),
 						pBuffer->size());

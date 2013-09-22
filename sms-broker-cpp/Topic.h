@@ -5,6 +5,7 @@
 #include <string>
 #include <unordered_map>
 #include <vector>
+#include "Buffer.h"
 #include "TopicListener.h"
 
 namespace smsbroker {
@@ -22,8 +23,6 @@ public:
 	void subscribe(std::shared_ptr<TopicListener> pTopicListener);
 
 	void unsubscribe(std::shared_ptr<TopicListener> pTopicListener);
-
-	typedef std::shared_ptr<std::vector<unsigned char>> BufferSharedPtr;
 
 	void publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer,
 			size_t bufferSize);

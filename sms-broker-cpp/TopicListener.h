@@ -4,7 +4,7 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "Topic.h"
+#include "Buffer.h"
 
 namespace smsbroker {
 
@@ -14,8 +14,6 @@ public:
 	virtual ~TopicListener() = default;
 
 	virtual const std::string& getTopicListenerID() const = 0;
-
-	typedef std::shared_ptr<std::vector<unsigned char>> BufferSharedPtr;
 
 	virtual void writeSerializedBrokerToClientMessage(
 			BufferSharedPtr pSerializedBuffer, size_t bufferSize) = 0;
