@@ -13,7 +13,7 @@ public:
 	typedef std::shared_ptr<ClientAcceptor> SharedPtr;
 
 	static SharedPtr create(TopicContainer& topicContainer,
-			BufferPool& bufferPool, boost::asio::io_service& ioService,
+			boost::asio::io_service& ioService,
 			const boost::asio::ip::tcp::endpoint& localEndpoint);
 
 	~ClientAcceptor() = default;
@@ -25,7 +25,7 @@ private:
 
 	ClientAcceptor& operator=(const ClientAcceptor& rhs) = delete;
 
-	ClientAcceptor(TopicContainer& topicContainer, BufferPool& bufferPool,
+	ClientAcceptor(TopicContainer& topicContainer,
 			boost::asio::io_service& ioService,
 			const boost::asio::ip::tcp::endpoint& localEndpoint);
 
@@ -35,8 +35,6 @@ private:
 			const boost::system::error_code& error);
 
 	TopicContainer& m_topicContainer;
-
-	BufferPool& m_bufferPool;
 
 	boost::asio::ip::tcp::acceptor m_acceptor;
 

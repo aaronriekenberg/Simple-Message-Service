@@ -18,14 +18,14 @@ std::string getUUID() {
 namespace smsbroker {
 
 ClientSession::SharedPtr ClientSession::create(TopicContainer& topicContainer,
-		BufferPool& bufferPool, boost::asio::io_service& ioService) {
-	return SharedPtr(new ClientSession(topicContainer, bufferPool, ioService));
+		boost::asio::io_service& ioService) {
+	return SharedPtr(new ClientSession(topicContainer, ioService));
 }
 
 ClientSession::ClientSession(TopicContainer& topicContainer,
-		BufferPool& bufferPool, boost::asio::io_service& ioService) :
-		m_id(getUUID()), m_topicContainer(topicContainer), m_bufferPool(
-				bufferPool), m_clientSocket(ioService) {
+		boost::asio::io_service& ioService) :
+		m_id(getUUID()), m_topicContainer(topicContainer), m_clientSocket(
+				ioService), m_strand(ioService) {
 
 }
 
@@ -42,6 +42,33 @@ boost::asio::ip::tcp::socket& ClientSession::getClientSocket() {
 }
 
 void ClientSession::handleClientSocketAccepted() {
+	auto sharedThis = shared_from_this();
+	m_strand.dispatch([=] {
+		sharedThis->handleClientSocketAcceptedInStrand();
+	});
+}
+
+void ClientSession::writeSerializedBrokerToClientMessage(
+		BufferSharedPtr pSerializedBuffer, size_t bufferSize) {
+	auto sharedThis = shared_from_this();
+	m_strand.dispatch(
+			[=] {
+				sharedThis->writeSerializedBrokerToClientMessageInStrand(pSerializedBuffer,bufferSize);
+			});
+}
+
+void ClientSession::terminate() {
+	if (!m_clientSocketClosed) {
+		m_clientSocket.close();
+		m_clientSocketClosed = true;
+		if (!m_connectionString.empty()) {
+			Log::getInfoInstance() << "disconnect client to broker "
+					<< m_connectionString << " id " << m_id;
+		}
+	}
+}
+
+void ClientSession::handleClientSocketAcceptedInStrand() {
 	std::stringstream connectionStringSS;
 	connectionStringSS << m_clientSocket.remote_endpoint() << " -> "
 			<< m_clientSocket.local_endpoint();
@@ -53,7 +80,7 @@ void ClientSession::handleClientSocketAccepted() {
 	readHeader();
 }
 
-void ClientSession::writeSerializedBrokerToClientMessage(
+void ClientSession::writeSerializedBrokerToClientMessageInStrand(
 		BufferSharedPtr pSerializedBuffer, size_t bufferSize) {
 	if (m_clientSocketClosed) {
 		return;
@@ -63,17 +90,6 @@ void ClientSession::writeSerializedBrokerToClientMessage(
 	m_writeQueue.push_back(std::make_tuple(pSerializedBuffer, bufferSize));
 	if (!writeInProgress) {
 		writeNextBufferInQueueIfNecessary();
-	}
-}
-
-void ClientSession::terminate() {
-	if (!m_clientSocketClosed) {
-		m_clientSocket.close();
-		m_clientSocketClosed = true;
-		if (!m_connectionString.empty()) {
-			Log::getInfoInstance() << "disconnect client to broker "
-					<< m_connectionString << " id " << m_id;
-		}
 	}
 }
 
@@ -90,11 +106,11 @@ void ClientSession::writeNextBufferInQueueIfNecessary() {
 						*std::get<0>(bufferAndSize), bufferSize) } };
 		auto sharedThis = shared_from_this();
 		boost::asio::async_write(m_clientSocket, writeBufferArray,
-				[=] (const boost::system::error_code& error,
+				m_strand.wrap([=] (const boost::system::error_code& error,
 						size_t bytesWritten)
 				{
 					sharedThis->writeComplete(error);
-				});
+				}));
 	}
 }
 
@@ -116,11 +132,11 @@ void ClientSession::readHeader() {
 	auto sharedThis = shared_from_this();
 	boost::asio::async_read(m_clientSocket,
 			boost::asio::buffer(m_readBuffer, 4),
-			[=] (const boost::system::error_code& error,
+			m_strand.wrap([=] (const boost::system::error_code& error,
 					size_t bytesTransferred)
 			{
 				sharedThis->readHeaderComplete(error, bytesTransferred);
-			});
+			}));
 }
 
 void ClientSession::readHeaderComplete(const boost::system::error_code& error,
@@ -150,11 +166,11 @@ void ClientSession::readPayload(size_t payloadSize) {
 	auto sharedThis = shared_from_this();
 	boost::asio::async_read(m_clientSocket,
 			boost::asio::buffer(m_readBuffer, payloadSize),
-			[=] (const boost::system::error_code& error,
+			m_strand.wrap([=] (const boost::system::error_code& error,
 					size_t bytesTransferred)
 			{
 				sharedThis->readPayloadComplete(error, bytesTransferred);
-			});
+			}));
 }
 
 void ClientSession::readPayloadComplete(const boost::system::error_code& error,
@@ -195,10 +211,9 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 				const size_t brokerToClientMessageSize =
 						m_brokerToClientMessage.ByteSize();
 
-				auto pBuffer = m_bufferPool.get();
-				if (pBuffer->size() < brokerToClientMessageSize) {
-					pBuffer->resize(brokerToClientMessageSize, 0);
-				}
+				BufferSharedPtr pBuffer(
+						new std::vector<unsigned char>(
+								brokerToClientMessageSize, 0));
 
 				m_brokerToClientMessage.SerializeToArray(&((*pBuffer)[0]),
 						pBuffer->size());

@@ -2,7 +2,6 @@ CXX = g++
 CXXFLAGS = -O3 -std=gnu++11 -g -O3 -Wall -pthread
 LDFLAGS = -pthread -lprotobuf -lboost_system
 SRC = BoostSystemUtil.cpp \
-      BufferPool.cpp \
       Broker.cpp \
       ClientAcceptor.cpp \
       ClientSession.cpp \

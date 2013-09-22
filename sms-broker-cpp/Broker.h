@@ -4,7 +4,6 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include <string>
-#include "BufferPool.h"
 #include "TopicContainer.h"
 
 namespace smsbroker {
@@ -14,14 +13,16 @@ public:
 	typedef std::shared_ptr<Broker> SharedPtr;
 
 	static SharedPtr create(
-			const std::tuple<std::string, std::string>& listenAddressAndPort);
+			const std::tuple<std::string, std::string>& listenAddressAndPort,
+			int numThreads);
 
 	~Broker() = default;
 
 	void run();
 
 private:
-	Broker(const std::tuple<std::string, std::string>& listenAddressAndPort);
+	Broker(const std::tuple<std::string, std::string>& listenAddressAndPort,
+			int numThreads);
 
 	Broker(const Broker& rhs) = delete;
 
@@ -31,7 +32,7 @@ private:
 
 	const std::tuple<std::string, std::string> m_listenAddressAndPort;
 
-	BufferPool m_bufferPool;
+	const int m_numThreads;
 
 	TopicContainer m_topicContainer;
 

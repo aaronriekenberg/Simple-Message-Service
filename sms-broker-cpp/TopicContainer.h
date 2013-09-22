@@ -1,15 +1,14 @@
 #ifndef TOPIC_CONTAINER_H
 #define TOPIC_CONTAINER_H
 
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include "Topic.h"
 
-namespace smsbroker
-{
+namespace smsbroker {
 
-class TopicContainer
-{
+class TopicContainer {
 public:
 	TopicContainer() = default;
 
@@ -22,7 +21,9 @@ private:
 
 	TopicContainer& operator=(const TopicContainer& rhs) = delete;
 
-	std::unordered_map<std::string, Topic> m_topicNameToTopic;
+	std::unordered_map<std::string, Topic*> m_topicNameToTopic;
+
+	std::mutex m_mutex;
 
 };
 

@@ -5,11 +5,10 @@
 namespace smsbroker {
 
 ClientAcceptor::SharedPtr ClientAcceptor::create(TopicContainer& topicContainer,
-		BufferPool& bufferPool, boost::asio::io_service& ioService,
+		boost::asio::io_service& ioService,
 		const boost::asio::ip::tcp::endpoint& localEndpoint) {
 	return SharedPtr(
-			new ClientAcceptor(topicContainer, bufferPool, ioService,
-					localEndpoint));
+			new ClientAcceptor(topicContainer, ioService, localEndpoint));
 }
 
 void ClientAcceptor::start() {
@@ -18,15 +17,14 @@ void ClientAcceptor::start() {
 }
 
 ClientAcceptor::ClientAcceptor(TopicContainer& topicContainer,
-		BufferPool& bufferPool, boost::asio::io_service& ioService,
+		boost::asio::io_service& ioService,
 		const boost::asio::ip::tcp::endpoint& localEndpoint) :
-		m_topicContainer(topicContainer), m_bufferPool(bufferPool), m_acceptor(
-				ioService, localEndpoint) {
+		m_topicContainer(topicContainer), m_acceptor(ioService, localEndpoint) {
 
 }
 
 void ClientAcceptor::registerForAccept() {
-	auto pSession = ClientSession::create(m_topicContainer, m_bufferPool,
+	auto pSession = ClientSession::create(m_topicContainer,
 			m_acceptor.get_io_service());
 	auto sharedThis = shared_from_this();
 	m_acceptor.async_accept(pSession->getClientSocket(),

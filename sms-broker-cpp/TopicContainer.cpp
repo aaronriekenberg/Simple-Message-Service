@@ -4,14 +4,18 @@
 namespace smsbroker {
 
 Topic& TopicContainer::getTopic(const std::string& topicName) {
-	std::unordered_map<std::string, Topic>::iterator i =
+	std::lock_guard<std::mutex> lock(m_mutex);
+	Topic* pTopic = nullptr;
+	std::unordered_map<std::string, Topic*>::iterator i =
 			m_topicNameToTopic.find(topicName);
 	if (i != m_topicNameToTopic.end()) {
-		return i->second;
+		pTopic = i->second;
 	} else {
 		Log::getInfoInstance() << "creating topic " << topicName;
-		return m_topicNameToTopic[topicName];
+		pTopic = new Topic;
+		m_topicNameToTopic[topicName] = pTopic;
 	}
+	return (*pTopic);
 }
 
 }

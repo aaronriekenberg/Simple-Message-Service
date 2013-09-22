@@ -7,7 +7,6 @@
 #include <memory>
 #include <string>
 #include <vector>
-#include "BufferPool.h"
 #include "SMSProtocol.pb.h"
 #include "TopicContainer.h"
 #include "TopicListener.h"
@@ -20,7 +19,7 @@ public:
 	typedef std::shared_ptr<ClientSession> SharedPtr;
 
 	static SharedPtr create(TopicContainer& topicContainer,
-			BufferPool& bufferPool, boost::asio::io_service& ioService);
+			boost::asio::io_service& ioService);
 
 	virtual ~ClientSession() noexcept;
 
@@ -34,7 +33,7 @@ public:
 			BufferSharedPtr pSerializedBuffer, size_t bufferSize) override;
 
 private:
-	ClientSession(TopicContainer& topicContainer, BufferPool& bufferPool,
+	ClientSession(TopicContainer& topicContainer,
 			boost::asio::io_service& ioService);
 
 	ClientSession(const ClientSession& rhs) = delete;
@@ -42,6 +41,11 @@ private:
 	ClientSession& operator=(const ClientSession& rhs) = delete;
 
 	void terminate();
+
+	void handleClientSocketAcceptedInStrand();
+
+	void writeSerializedBrokerToClientMessageInStrand(
+			BufferSharedPtr pSerializedBuffer, size_t bufferSize);
 
 	void writeNextBufferInQueueIfNecessary();
 
@@ -61,9 +65,9 @@ private:
 
 	TopicContainer& m_topicContainer;
 
-	BufferPool& m_bufferPool;
-
 	boost::asio::ip::tcp::socket m_clientSocket;
+
+	boost::asio::io_service::strand m_strand;
 
 	std::string m_connectionString;
 

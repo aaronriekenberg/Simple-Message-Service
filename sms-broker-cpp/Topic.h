@@ -1,6 +1,7 @@
 #ifndef TOPIC_H
 #define TOPIC_H
 
+#include <mutex>
 #include <string>
 #include <unordered_map>
 #include <vector>
@@ -14,9 +15,9 @@ public:
 
 	~Topic() = default;
 
-	Topic(const Topic& rhs) = default;
+	Topic(const Topic& rhs) = delete;
 
-	Topic& operator=(const Topic& rhs) = default;
+	Topic& operator=(const Topic& rhs) = delete;
 
 	void subscribe(std::shared_ptr<TopicListener> pTopicListener);
 
@@ -31,6 +32,8 @@ private:
 	std::unordered_map<std::string, std::weak_ptr<TopicListener>> m_idToWeakListener;
 
 	std::vector<std::string> m_idsToRemove;
+
+	std::mutex m_mutex;
 
 };
 

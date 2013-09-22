@@ -3,29 +3,39 @@
 namespace smsbroker {
 
 void Topic::subscribe(std::shared_ptr<TopicListener> pTopicListener) {
+	std::lock_guard<std::mutex> lock(m_mutex);
 	m_idToWeakListener[pTopicListener->getTopicListenerID()] = pTopicListener;
 }
 
 void Topic::unsubscribe(std::shared_ptr<TopicListener> pTopicListener) {
+	std::lock_guard<std::mutex> lock(m_mutex);
 	m_idToWeakListener.erase(pTopicListener->getTopicListenerID());
 }
 
 void Topic::publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer,
 		size_t bufferSize) {
-	for (const auto& entry : m_idToWeakListener) {
-		if (auto pListener = entry.second.lock()) {
-			pListener->writeSerializedBrokerToClientMessage(pBuffer,
-					bufferSize);
-		} else {
-			m_idsToRemove.push_back(entry.first);
+	std::vector<std::shared_ptr<TopicListener>> listenersToNotify;
+
+	{
+		std::lock_guard<std::mutex> lock(m_mutex);
+		for (const auto& entry : m_idToWeakListener) {
+			if (auto pListener = entry.second.lock()) {
+				listenersToNotify.push_back(pListener);
+			} else {
+				m_idsToRemove.push_back(entry.first);
+			}
 		}
+
+		for (const auto& id : m_idsToRemove) {
+			m_idToWeakListener.erase(id);
+		}
+
+		m_idsToRemove.clear();
 	}
 
-	for (const auto& id : m_idsToRemove) {
-		m_idToWeakListener.erase(id);
+	for (auto pListener : listenersToNotify) {
+		pListener->writeSerializedBrokerToClientMessage(pBuffer, bufferSize);
 	}
-
-	m_idsToRemove.clear();
 }
 
 }

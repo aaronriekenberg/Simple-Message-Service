@@ -1,16 +1,15 @@
 BoostSystemUtil.o: BoostSystemUtil.cpp BoostSystemUtil.h
-BufferPool.o: BufferPool.cpp BufferPool.h Log.h
-Broker.o: Broker.cpp Broker.h BufferPool.h TopicContainer.h Topic.h \
- TopicListener.h ClientAcceptor.h ClientSession.h SMSProtocol.pb.h \
- TcpResolver.h
+Broker.o: Broker.cpp Broker.h TopicContainer.h Topic.h TopicListener.h \
+ ClientAcceptor.h ClientSession.h SMSProtocol.pb.h Log.h TcpResolver.h \
+ ThreadName.h
 ClientAcceptor.o: ClientAcceptor.cpp BoostSystemUtil.h ClientAcceptor.h \
- ClientSession.h BufferPool.h SMSProtocol.pb.h TopicContainer.h Topic.h \
+ ClientSession.h SMSProtocol.pb.h TopicContainer.h Topic.h \
  TopicListener.h Log.h
-ClientSession.o: ClientSession.cpp ClientSession.h BufferPool.h \
- SMSProtocol.pb.h TopicContainer.h Topic.h TopicListener.h Log.h
+ClientSession.o: ClientSession.cpp ClientSession.h SMSProtocol.pb.h \
+ TopicContainer.h Topic.h TopicListener.h Log.h
 Log.o: Log.cpp ThreadName.h Log.h
-Main.o: Main.cpp Broker.h BufferPool.h TopicContainer.h Topic.h \
- TopicListener.h Log.h ThreadName.h
+Main.o: Main.cpp Broker.h TopicContainer.h Topic.h TopicListener.h Log.h \
+ ThreadName.h
 SMSProtocol.pb.o: SMSProtocol.pb.cpp SMSProtocol.pb.h
 TcpResolver.o: TcpResolver.cpp BoostSystemUtil.h TcpResolver.h
 ThreadName.o: ThreadName.cpp ThreadName.h
