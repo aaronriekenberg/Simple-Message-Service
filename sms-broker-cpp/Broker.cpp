@@ -19,7 +19,7 @@ void Broker::run() {
 	std::vector<std::thread> threadVector;
 	for (int i = 0; i < m_numThreads; ++i) {
 		threadVector.emplace_back(
-				[i,this] () {
+				[=] () {
 					ThreadName::set(std::string("io-") + std::to_string(i));
 					Log::getInfoInstance() << "started io thread";
 
