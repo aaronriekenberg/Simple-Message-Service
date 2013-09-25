@@ -12,8 +12,7 @@ void Topic::unsubscribe(std::shared_ptr<TopicListener> pTopicListener) {
 	m_idToWeakListener.erase(pTopicListener->getTopicListenerID());
 }
 
-void Topic::publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer,
-		size_t bufferSize) {
+void Topic::publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer) {
 	std::vector<std::shared_ptr<TopicListener>> listenersToNotify;
 
 	{
@@ -34,7 +33,7 @@ void Topic::publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer,
 	}
 
 	for (auto pListener : listenersToNotify) {
-		pListener->writeSerializedBrokerToClientMessage(pBuffer, bufferSize);
+		pListener->writeSerializedBrokerToClientMessage(pBuffer);
 	}
 }
 

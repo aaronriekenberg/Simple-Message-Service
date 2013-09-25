@@ -49,11 +49,11 @@ void ClientSession::handleClientSocketAccepted() {
 }
 
 void ClientSession::writeSerializedBrokerToClientMessage(
-		BufferSharedPtr pSerializedBuffer, size_t bufferSize) {
+		BufferSharedPtr pSerializedBuffer) {
 	auto sharedThis = shared_from_this();
 	m_strand.dispatch(
 			[=] {
-				sharedThis->writeSerializedBrokerToClientMessageInStrand(pSerializedBuffer,bufferSize);
+				sharedThis->writeSerializedBrokerToClientMessageInStrand(pSerializedBuffer);
 			});
 }
 
@@ -81,13 +81,13 @@ void ClientSession::handleClientSocketAcceptedInStrand() {
 }
 
 void ClientSession::writeSerializedBrokerToClientMessageInStrand(
-		BufferSharedPtr pSerializedBuffer, size_t bufferSize) {
+		BufferSharedPtr pSerializedBuffer) {
 	if (m_clientSocketClosed) {
 		return;
 	}
 
 	const bool writeInProgress = (!m_writeQueue.empty());
-	m_writeQueue.push_back(std::make_tuple(pSerializedBuffer, bufferSize));
+	m_writeQueue.push_back(pSerializedBuffer);
 	if (!writeInProgress) {
 		writeNextBufferInQueueIfNecessary();
 	}
@@ -95,15 +95,15 @@ void ClientSession::writeSerializedBrokerToClientMessageInStrand(
 
 void ClientSession::writeNextBufferInQueueIfNecessary() {
 	if (!m_writeQueue.empty()) {
-		const auto& bufferAndSize = m_writeQueue.front();
-		const size_t bufferSize = std::get<1>(bufferAndSize);
+		auto buffer = m_writeQueue.front();
+		const size_t bufferSize = buffer->size();
 		m_writeHeader[0] = (bufferSize >> 24);
 		m_writeHeader[1] = (bufferSize >> 16);
 		m_writeHeader[2] = (bufferSize >> 8);
 		m_writeHeader[3] = (bufferSize);
-		std::array<boost::asio::const_buffer, 2> writeBufferArray = { {
-				boost::asio::buffer(m_writeHeader), boost::asio::buffer(
-						*std::get<0>(bufferAndSize), bufferSize) } };
+		std::array<boost::asio::const_buffer, 2> writeBufferArray = {
+				{ boost::asio::buffer(m_writeHeader), boost::asio::buffer(
+						*buffer) } };
 		auto sharedThis = shared_from_this();
 		boost::asio::async_write(m_clientSocket, writeBufferArray,
 				m_strand.wrap([=] (const boost::system::error_code& error,
@@ -181,7 +181,7 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 		terminate();
 	} else {
 		if (!m_clientToBrokerMessage.ParseFromArray(&(m_readBuffer[0]),
-				m_readBuffer.size())) {
+				bytesTransferred)) {
 			terminate();
 		} else {
 			switch (m_clientToBrokerMessage.messagetype()) {
@@ -217,8 +217,7 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 				m_brokerToClientMessage.SerializeToArray(&((*pBuffer)[0]),
 						pBuffer->size());
 
-				topic.publishSerializedBrokerToClientMessage(pBuffer,
-						brokerToClientMessageSize);
+				topic.publishSerializedBrokerToClientMessage(pBuffer);
 				break;
 			}
 			}

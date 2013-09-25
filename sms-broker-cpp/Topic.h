@@ -24,8 +24,7 @@ public:
 
 	void unsubscribe(std::shared_ptr<TopicListener> pTopicListener);
 
-	void publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer,
-			size_t bufferSize);
+	void publishSerializedBrokerToClientMessage(BufferSharedPtr pBuffer);
 
 private:
 	std::unordered_map<std::string, std::weak_ptr<TopicListener>> m_idToWeakListener;

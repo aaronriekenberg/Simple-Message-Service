@@ -31,7 +31,7 @@ public:
 	void handleClientSocketAccepted();
 
 	virtual void writeSerializedBrokerToClientMessage(
-			BufferSharedPtr pSerializedBuffer, size_t bufferSize) override;
+			BufferSharedPtr pSerializedBuffer) override;
 
 private:
 	ClientSession(TopicContainer& topicContainer,
@@ -46,7 +46,7 @@ private:
 	void handleClientSocketAcceptedInStrand();
 
 	void writeSerializedBrokerToClientMessageInStrand(
-			BufferSharedPtr pSerializedBuffer, size_t bufferSize);
+			BufferSharedPtr pSerializedBuffer);
 
 	void writeNextBufferInQueueIfNecessary();
 
@@ -76,7 +76,7 @@ private:
 
 	Buffer m_readBuffer;
 
-	std::deque<std::tuple<BufferSharedPtr, size_t>> m_writeQueue;
+	std::deque<BufferSharedPtr> m_writeQueue;
 
 	std::array<unsigned char, 4> m_writeHeader;
 
