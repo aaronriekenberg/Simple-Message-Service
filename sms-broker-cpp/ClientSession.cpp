@@ -119,10 +119,12 @@ void ClientSession::writeComplete(const boost::system::error_code& error) {
 		terminate();
 	} else if (error) {
 		terminate();
+	} else {
+		if (!m_writeQueue.empty()) {
+			m_writeQueue.pop_front();
+		}
+		writeNextBufferInQueueIfNecessary();
 	}
-
-	m_writeQueue.pop_front();
-	writeNextBufferInQueueIfNecessary();
 }
 
 void ClientSession::readHeader() {
