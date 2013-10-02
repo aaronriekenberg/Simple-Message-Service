@@ -21,7 +21,7 @@ void Broker::run() {
 		threadVector.emplace_back(
 				[=] () {
 					ThreadName::set(std::string("io-") + std::to_string(i));
-					Log::getInfoInstance() << "started io thread";
+					Log::getInfoInstance() << "started io thread " << std::to_string(i);
 
 					try {
 						m_ioService.run();

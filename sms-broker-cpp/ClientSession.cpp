@@ -1,19 +1,8 @@
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
-#include <boost/uuid/random_generator.hpp>
 #include <sstream>
 #include "ClientSession.h"
 #include "Log.h"
 #include "SMSProtocol.pb.h"
-
-namespace {
-
-std::string getUUID() {
-	boost::uuids::random_generator generator;
-	return boost::uuids::to_string(generator());
-}
-
-}
+#include "UUIDGenerator.h"
 
 namespace smsbroker {
 
@@ -24,7 +13,7 @@ ClientSession::SharedPtr ClientSession::create(TopicContainer& topicContainer,
 
 ClientSession::ClientSession(TopicContainer& topicContainer,
 		boost::asio::io_service& ioService) :
-		m_id(getUUID()), m_topicContainer(topicContainer), m_clientSocket(
+		m_id(UUIDGenerator::getUUID()), m_topicContainer(topicContainer), m_clientSocket(
 				ioService), m_strand(ioService) {
 
 }

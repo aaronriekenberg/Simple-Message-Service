@@ -11,7 +11,8 @@ SRC = BoostSystemUtil.cpp \
       TcpResolver.cpp \
       ThreadName.cpp \
       Topic.cpp \
-      TopicContainer.cpp
+      TopicContainer.cpp \
+      UUIDGenerator.cpp
 OBJS = ${SRC:.cpp=.o}
 
 all: cppsmsbroker
