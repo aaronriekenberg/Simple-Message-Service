@@ -1,8 +1,6 @@
 #ifndef UUID_GENERATOR_H
 #define UUID_GENERATOR_H
 
-#include <boost/uuid/uuid.hpp>
-#include <boost/uuid/uuid_io.hpp>
 #include <boost/uuid/random_generator.hpp>
 #include <mutex>
 #include <string>
