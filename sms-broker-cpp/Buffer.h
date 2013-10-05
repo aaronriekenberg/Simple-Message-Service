@@ -10,6 +10,8 @@ typedef std::vector<unsigned char> Buffer;
 
 typedef std::shared_ptr<Buffer> BufferSharedPtr;
 
+typedef std::shared_ptr<const Buffer> ConstBufferSharedPtr;
+
 }
 
 #endif

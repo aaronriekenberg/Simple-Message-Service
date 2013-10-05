@@ -16,7 +16,7 @@ public:
 	virtual const std::string& getTopicListenerID() const = 0;
 
 	virtual void writeSerializedBrokerToClientMessage(
-			BufferSharedPtr pSerializedBuffer) = 0;
+			ConstBufferSharedPtr pSerializedBuffer) = 0;
 
 };
 

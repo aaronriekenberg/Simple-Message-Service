@@ -38,7 +38,7 @@ void ClientSession::handleClientSocketAccepted() {
 }
 
 void ClientSession::writeSerializedBrokerToClientMessage(
-		BufferSharedPtr pSerializedBuffer) {
+		ConstBufferSharedPtr pSerializedBuffer) {
 	auto sharedThis = shared_from_this();
 	m_strand.dispatch(
 			[=] {
@@ -70,7 +70,7 @@ void ClientSession::handleClientSocketAcceptedInStrand() {
 }
 
 void ClientSession::writeSerializedBrokerToClientMessageInStrand(
-		BufferSharedPtr pSerializedBuffer) {
+		ConstBufferSharedPtr pSerializedBuffer) {
 	if (m_clientSocketClosed) {
 		return;
 	}
