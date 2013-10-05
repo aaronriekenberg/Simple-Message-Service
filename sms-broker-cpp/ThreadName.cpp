@@ -8,7 +8,7 @@ const std::string UNKNOWN_THREAD_NAME = "unknown";
 
 namespace smsbroker {
 
-__thread std::string* ThreadName::m_pThreadName = 0;
+__thread std::string* ThreadName::m_pThreadName = nullptr;
 
 void ThreadName::set(const std::string& name) {
 	delete m_pThreadName;

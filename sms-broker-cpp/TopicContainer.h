@@ -10,20 +10,20 @@ namespace smsbroker {
 
 class TopicContainer {
 public:
-	TopicContainer() = default;
+	TopicContainer() = delete;
 
-	~TopicContainer() = default;
+	~TopicContainer() = delete;
 
-	Topic& getTopic(const std::string& topicName);
+	static Topic& getTopic(const std::string& topicName);
 
 private:
-	TopicContainer(const TopicContainer& rhs) = delete;
+	static Topic& getTopicFromSharedStorage(const std::string& topicName);
 
-	TopicContainer& operator=(const TopicContainer& rhs) = delete;
+	static std::unordered_map<std::string, Topic*> m_sharedTopicNameToTopic;
 
-	std::unordered_map<std::string, Topic*> m_topicNameToTopic;
+	static std::mutex m_mutex;
 
-	std::mutex m_mutex;
+	static __thread std::unordered_map<std::string, Topic*>* m_pThreadLocalTopicNameToTopic;
 
 };
 

@@ -34,8 +34,6 @@ private:
 
 	const int m_numThreads;
 
-	TopicContainer m_topicContainer;
-
 	boost::asio::io_service m_ioService;
 
 };

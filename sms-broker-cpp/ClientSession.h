@@ -9,7 +9,6 @@
 #include <vector>
 #include "Buffer.h"
 #include "SMSProtocol.pb.h"
-#include "TopicContainer.h"
 #include "TopicListener.h"
 
 namespace smsbroker {
@@ -19,8 +18,7 @@ class ClientSession: public std::enable_shared_from_this<ClientSession>,
 public:
 	typedef std::shared_ptr<ClientSession> SharedPtr;
 
-	static SharedPtr create(TopicContainer& topicContainer,
-			boost::asio::io_service& ioService);
+	static SharedPtr create(boost::asio::io_service& ioService);
 
 	virtual ~ClientSession() noexcept;
 
@@ -34,8 +32,7 @@ public:
 			ConstBufferSharedPtr pSerializedBuffer) override;
 
 private:
-	ClientSession(TopicContainer& topicContainer,
-			boost::asio::io_service& ioService);
+	ClientSession(boost::asio::io_service& ioService);
 
 	ClientSession(const ClientSession& rhs) = delete;
 
@@ -63,8 +60,6 @@ private:
 			size_t bytesTransferred);
 
 	const std::string m_id;
-
-	TopicContainer& m_topicContainer;
 
 	boost::asio::ip::tcp::socket m_clientSocket;
 

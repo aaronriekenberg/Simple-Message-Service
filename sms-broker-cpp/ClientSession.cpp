@@ -2,19 +2,19 @@
 #include "ClientSession.h"
 #include "Log.h"
 #include "SMSProtocol.pb.h"
+#include "TopicContainer.h"
 #include "UUIDGenerator.h"
 
 namespace smsbroker {
 
-ClientSession::SharedPtr ClientSession::create(TopicContainer& topicContainer,
+ClientSession::SharedPtr ClientSession::create(
 		boost::asio::io_service& ioService) {
-	return SharedPtr(new ClientSession(topicContainer, ioService));
+	return SharedPtr(new ClientSession(ioService));
 }
 
-ClientSession::ClientSession(TopicContainer& topicContainer,
-		boost::asio::io_service& ioService) :
-		m_id(UUIDGenerator::getUUID()), m_topicContainer(topicContainer), m_clientSocket(
-				ioService), m_strand(ioService) {
+ClientSession::ClientSession(boost::asio::io_service& ioService) :
+		m_id(UUIDGenerator::getUUID()), m_clientSocket(ioService), m_strand(
+				ioService) {
 
 }
 
@@ -177,19 +177,19 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 		} else {
 			switch (m_clientToBrokerMessage.messagetype()) {
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SUBSCRIBE_TO_TOPIC: {
-				Topic& topic = m_topicContainer.getTopic(
+				Topic& topic = TopicContainer::getTopic(
 						m_clientToBrokerMessage.topicname());
 				topic.subscribe(shared_from_this());
 				break;
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_UNSUBSCRIBE_FROM_TOPIC: {
-				Topic& topic = m_topicContainer.getTopic(
+				Topic& topic = TopicContainer::getTopic(
 						m_clientToBrokerMessage.topicname());
 				topic.unsubscribe(shared_from_this());
 				break;
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SEND_MESSAGE_TO_TOPIC: {
-				Topic& topic = m_topicContainer.getTopic(
+				Topic& topic = TopicContainer::getTopic(
 						m_clientToBrokerMessage.topicname());
 
 				m_brokerToClientMessage.set_messagetype(

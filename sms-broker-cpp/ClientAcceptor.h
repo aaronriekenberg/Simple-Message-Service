@@ -4,7 +4,6 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include "ClientSession.h"
-#include "TopicContainer.h"
 
 namespace smsbroker {
 
@@ -12,8 +11,7 @@ class ClientAcceptor: public std::enable_shared_from_this<ClientAcceptor> {
 public:
 	typedef std::shared_ptr<ClientAcceptor> SharedPtr;
 
-	static SharedPtr create(TopicContainer& topicContainer,
-			boost::asio::io_service& ioService,
+	static SharedPtr create(boost::asio::io_service& ioService,
 			const boost::asio::ip::tcp::endpoint& localEndpoint);
 
 	~ClientAcceptor() = default;
@@ -25,16 +23,13 @@ private:
 
 	ClientAcceptor& operator=(const ClientAcceptor& rhs) = delete;
 
-	ClientAcceptor(TopicContainer& topicContainer,
-			boost::asio::io_service& ioService,
+	ClientAcceptor(boost::asio::io_service& ioService,
 			const boost::asio::ip::tcp::endpoint& localEndpoint);
 
 	void registerForAccept();
 
 	void handleAccept(ClientSession::SharedPtr pSession,
 			const boost::system::error_code& error);
-
-	TopicContainer& m_topicContainer;
 
 	boost::asio::ip::tcp::acceptor m_acceptor;
 

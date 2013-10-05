@@ -3,10 +3,9 @@ Broker.o: Broker.cpp Broker.h TopicContainer.h Topic.h Buffer.h \
  TopicListener.h ClientAcceptor.h ClientSession.h SMSProtocol.pb.h Log.h \
  TcpResolver.h ThreadName.h
 ClientAcceptor.o: ClientAcceptor.cpp BoostSystemUtil.h ClientAcceptor.h \
- ClientSession.h Buffer.h SMSProtocol.pb.h TopicContainer.h Topic.h \
- TopicListener.h Log.h
+ ClientSession.h Buffer.h SMSProtocol.pb.h TopicListener.h Log.h
 ClientSession.o: ClientSession.cpp ClientSession.h Buffer.h \
- SMSProtocol.pb.h TopicContainer.h Topic.h TopicListener.h Log.h \
+ SMSProtocol.pb.h TopicListener.h Log.h TopicContainer.h Topic.h \
  UUIDGenerator.h
 Log.o: Log.cpp ThreadName.h Log.h
 Main.o: Main.cpp Broker.h TopicContainer.h Topic.h Buffer.h \
