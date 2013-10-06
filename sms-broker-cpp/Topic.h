@@ -34,9 +34,9 @@ private:
 
 	std::unordered_map<std::string, std::shared_ptr<TopicListener>> m_idToListener;
 
-	typedef std::vector<TopicListener*> ListenersVector;
+	typedef std::vector<std::shared_ptr<TopicListener>> ListenersVector;
 
-	typedef const std::vector<TopicListener*> ConstListenersVector;
+	typedef const ListenersVector ConstListenersVector;
 
 	std::shared_ptr<ConstListenersVector> m_pListenersVector;
 

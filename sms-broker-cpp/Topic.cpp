@@ -30,7 +30,7 @@ void Topic::rebuidListenersVector() {
 				new ListenersVector);
 		pNewListenersVector->reserve(m_idToListener.size());
 		for (const auto& entry : m_idToListener) {
-			pNewListenersVector->push_back(entry.second.get());
+			pNewListenersVector->push_back(entry.second);
 		}
 		m_pListenersVector = pNewListenersVector;
 	}
