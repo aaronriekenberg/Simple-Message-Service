@@ -6,6 +6,7 @@
 #include <deque>
 #include <memory>
 #include <string>
+#include <unordered_set>
 #include <vector>
 #include "Buffer.h"
 #include "SMSProtocol.pb.h"
@@ -67,7 +68,7 @@ private:
 
 	std::string m_connectionString;
 
-	bool m_clientSocketClosed = false;
+	bool m_terminated = false;
 
 	Buffer m_readBuffer;
 
@@ -78,6 +79,8 @@ private:
 	sms::protocol::protobuf::ClientToBrokerMessage m_clientToBrokerMessage;
 
 	sms::protocol::protobuf::BrokerToClientMessage m_brokerToClientMessage;
+
+	std::unordered_set<std::string> m_subscribedTopics;
 
 };
 

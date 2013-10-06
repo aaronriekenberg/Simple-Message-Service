@@ -4,37 +4,51 @@ namespace smsbroker {
 
 void Topic::subscribe(std::shared_ptr<TopicListener> pTopicListener) {
 	std::lock_guard<std::mutex> lock(m_mutex);
-	m_idToWeakListener[pTopicListener->getTopicListenerID()] = pTopicListener;
+	m_idToListener[pTopicListener->getTopicListenerID()] = pTopicListener;
+	rebuidListenersVector();
 }
 
-void Topic::unsubscribe(std::shared_ptr<TopicListener> pTopicListener) {
+void Topic::unsubscribe(const TopicListener& topicListener) {
 	std::lock_guard<std::mutex> lock(m_mutex);
-	m_idToWeakListener.erase(pTopicListener->getTopicListenerID());
+	m_idToListener.erase(topicListener.getTopicListenerID());
+	rebuidListenersVector();
+}
+
+bool Topic::hasSubscribers() const {
+	std::lock_guard<std::mutex> lock(m_mutex);
+	if (m_pListenersVector) {
+		return true;
+	}
+	return false;
+}
+
+void Topic::rebuidListenersVector() {
+	if (m_idToListener.empty()) {
+		m_pListenersVector.reset();
+	} else {
+		std::shared_ptr<ListenersVector> pNewListenersVector(
+				new ListenersVector);
+		pNewListenersVector->reserve(m_idToListener.size());
+		for (const auto& entry : m_idToListener) {
+			pNewListenersVector->push_back(entry.second.get());
+		}
+		m_pListenersVector = pNewListenersVector;
+	}
 }
 
 void Topic::publishSerializedBrokerToClientMessage(
-		ConstBufferSharedPtr pBuffer) {
-	std::vector<std::shared_ptr<TopicListener>> listenersToNotify;
+		ConstBufferSharedPtr pBuffer) const {
+	std::shared_ptr<ConstListenersVector> pListenersVector;
 
 	{
 		std::lock_guard<std::mutex> lock(m_mutex);
-		for (const auto& entry : m_idToWeakListener) {
-			if (auto pListener = entry.second.lock()) {
-				listenersToNotify.push_back(pListener);
-			} else {
-				m_idsToRemove.push_back(entry.first);
-			}
-		}
-
-		for (const auto& id : m_idsToRemove) {
-			m_idToWeakListener.erase(id);
-		}
-
-		m_idsToRemove.clear();
+		pListenersVector = m_pListenersVector;
 	}
 
-	for (auto pListener : listenersToNotify) {
-		pListener->writeSerializedBrokerToClientMessage(pBuffer);
+	if (pListenersVector) {
+		for (auto pListener : (*pListenersVector)) {
+			pListener->writeSerializedBrokerToClientMessage(pBuffer);
+		}
 	}
 }
 

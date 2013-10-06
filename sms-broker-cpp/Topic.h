@@ -16,22 +16,31 @@ public:
 
 	~Topic() = default;
 
+	void subscribe(std::shared_ptr<TopicListener> pTopicListener);
+
+	void unsubscribe(const TopicListener& topicListener);
+
+	bool hasSubscribers() const;
+
+	void publishSerializedBrokerToClientMessage(
+			ConstBufferSharedPtr pBuffer) const;
+
+private:
 	Topic(const Topic& rhs) = delete;
 
 	Topic& operator=(const Topic& rhs) = delete;
 
-	void subscribe(std::shared_ptr<TopicListener> pTopicListener);
+	void rebuidListenersVector();
 
-	void unsubscribe(std::shared_ptr<TopicListener> pTopicListener);
+	std::unordered_map<std::string, std::shared_ptr<TopicListener>> m_idToListener;
 
-	void publishSerializedBrokerToClientMessage(ConstBufferSharedPtr pBuffer);
+	typedef std::vector<TopicListener*> ListenersVector;
 
-private:
-	std::unordered_map<std::string, std::weak_ptr<TopicListener>> m_idToWeakListener;
+	typedef const std::vector<TopicListener*> ConstListenersVector;
 
-	std::vector<std::string> m_idsToRemove;
+	std::shared_ptr<ConstListenersVector> m_pListenersVector;
 
-	std::mutex m_mutex;
+	mutable std::mutex m_mutex;
 
 };
 

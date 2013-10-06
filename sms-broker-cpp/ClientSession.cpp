@@ -47,13 +47,19 @@ void ClientSession::writeSerializedBrokerToClientMessage(
 }
 
 void ClientSession::terminate() {
-	if (!m_clientSocketClosed) {
+	if (!m_terminated) {
 		m_clientSocket.close();
-		m_clientSocketClosed = true;
 		if (!m_connectionString.empty()) {
 			Log::getInfoInstance() << "disconnect client to broker "
 					<< m_connectionString << " id " << m_id;
 		}
+
+		for (const auto& subscribedTopic : m_subscribedTopics) {
+			TopicContainer::getTopic(subscribedTopic).unsubscribe(*this);
+		}
+		m_subscribedTopics.clear();
+
+		m_terminated = true;
 	}
 }
 
@@ -71,7 +77,7 @@ void ClientSession::handleClientSocketAcceptedInStrand() {
 
 void ClientSession::writeSerializedBrokerToClientMessageInStrand(
 		ConstBufferSharedPtr pSerializedBuffer) {
-	if (m_clientSocketClosed) {
+	if (m_terminated) {
 		return;
 	}
 
@@ -104,8 +110,8 @@ void ClientSession::writeNextBufferInQueueIfNecessary() {
 }
 
 void ClientSession::writeComplete(const boost::system::error_code& error) {
-	if (m_clientSocketClosed) {
-		terminate();
+	if (m_terminated) {
+		return;
 	} else if (error) {
 		terminate();
 	} else {
@@ -132,8 +138,8 @@ void ClientSession::readHeader() {
 
 void ClientSession::readHeaderComplete(const boost::system::error_code& error,
 		size_t bytesTransferred) {
-	if (m_clientSocketClosed) {
-		terminate();
+	if (m_terminated) {
+		return;
 	} else if (error) {
 		terminate();
 	} else {
@@ -166,8 +172,8 @@ void ClientSession::readPayload(size_t payloadSize) {
 
 void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 		size_t bytesTransferred) {
-	if (m_clientSocketClosed) {
-		terminate();
+	if (m_terminated) {
+		return;
 	} else if (error) {
 		terminate();
 	} else {
@@ -180,35 +186,38 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 				Topic& topic = TopicContainer::getTopic(
 						m_clientToBrokerMessage.topicname());
 				topic.subscribe(shared_from_this());
+				m_subscribedTopics.insert(m_clientToBrokerMessage.topicname());
 				break;
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_UNSUBSCRIBE_FROM_TOPIC: {
 				Topic& topic = TopicContainer::getTopic(
 						m_clientToBrokerMessage.topicname());
-				topic.unsubscribe(shared_from_this());
+				topic.unsubscribe(*this);
+				m_subscribedTopics.erase(m_clientToBrokerMessage.topicname());
 				break;
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SEND_MESSAGE_TO_TOPIC: {
 				Topic& topic = TopicContainer::getTopic(
 						m_clientToBrokerMessage.topicname());
+				if (topic.hasSubscribers()) {
+					m_brokerToClientMessage.set_messagetype(
+							sms::protocol::protobuf::BrokerToClientMessage_BrokerToClientMessageType_BROKER_TOPIC_MESSAGE_PUBLISH);
+					m_brokerToClientMessage.set_messagepayload(
+							m_clientToBrokerMessage.messagepayload());
+					m_brokerToClientMessage.set_topicname(
+							m_clientToBrokerMessage.topicname());
 
-				m_brokerToClientMessage.set_messagetype(
-						sms::protocol::protobuf::BrokerToClientMessage_BrokerToClientMessageType_BROKER_TOPIC_MESSAGE_PUBLISH);
-				m_brokerToClientMessage.set_messagepayload(
-						m_clientToBrokerMessage.messagepayload());
-				m_brokerToClientMessage.set_topicname(
-						m_clientToBrokerMessage.topicname());
+					const size_t brokerToClientMessageSize =
+							m_brokerToClientMessage.ByteSize();
 
-				const size_t brokerToClientMessageSize =
-						m_brokerToClientMessage.ByteSize();
+					BufferSharedPtr pBuffer = std::make_shared<Buffer>(
+							brokerToClientMessageSize, 0);
 
-				BufferSharedPtr pBuffer = std::make_shared<Buffer>(
-						brokerToClientMessageSize, 0);
+					m_brokerToClientMessage.SerializeToArray(&((*pBuffer)[0]),
+							pBuffer->size());
 
-				m_brokerToClientMessage.SerializeToArray(&((*pBuffer)[0]),
-						pBuffer->size());
-
-				topic.publishSerializedBrokerToClientMessage(pBuffer);
+					topic.publishSerializedBrokerToClientMessage(pBuffer);
+				}
 				break;
 			}
 			}
