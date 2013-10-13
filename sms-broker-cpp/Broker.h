@@ -10,31 +10,18 @@ namespace smsbroker {
 
 class Broker {
 public:
-	typedef std::shared_ptr<Broker> SharedPtr;
+	Broker() = delete;
 
-	static SharedPtr create(
+	~Broker() = delete;
+
+	static void run(
 			const std::tuple<std::string, std::string>& listenAddressAndPort,
 			int numThreads);
 
-	~Broker() = default;
-
-	void run();
-
 private:
-	Broker(const std::tuple<std::string, std::string>& listenAddressAndPort,
-			int numThreads);
-
-	Broker(const Broker& rhs) = delete;
-
-	Broker& operator=(const Broker& rhs) = delete;
-
-	void createAcceptors();
-
-	const std::tuple<std::string, std::string> m_listenAddressAndPort;
-
-	const int m_numThreads;
-
-	boost::asio::io_service m_ioService;
+	static void createAcceptor(
+			const std::tuple<std::string, std::string>& listenAddressAndPort,
+			boost::asio::io_service& ioService);
 
 };
 

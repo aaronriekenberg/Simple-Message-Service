@@ -23,8 +23,6 @@ private:
 
 	TcpResolver& operator=(const TcpResolver& rhs) = delete;
 
-	boost::asio::io_service& m_ioService;
-
 	boost::asio::ip::tcp::resolver m_resolver;
 
 };

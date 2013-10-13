@@ -7,10 +7,8 @@ int main(int argc, char** argv) {
 	try {
 		smsbroker::ThreadName::set("main");
 
-		smsbroker::Broker::SharedPtr pBroker = smsbroker::Broker::create(
-				std::make_tuple("0.0.0.0", "10001"),
+		smsbroker::Broker::run(std::make_tuple("0.0.0.0", "10001"),
 				std::thread::hardware_concurrency() * 2);
-		pBroker->run();
 	} catch (const std::exception& e) {
 		smsbroker::Log::getInfoInstance() << "main caught exception: "
 				<< e.what();

@@ -7,24 +7,23 @@
 
 namespace smsbroker {
 
-Broker::SharedPtr Broker::create(
+void Broker::run(
 		const std::tuple<std::string, std::string>& listenAddressAndPort,
 		int numThreads) {
-	return SharedPtr(new Broker(listenAddressAndPort, numThreads));
-}
+	auto pIOService = std::make_shared<boost::asio::io_service>(numThreads);
 
-void Broker::run() {
-	createAcceptors();
+	createAcceptor(listenAddressAndPort, *pIOService);
 
 	std::vector<std::thread> threadVector;
-	for (int i = 0; i < m_numThreads; ++i) {
+	threadVector.reserve(numThreads);
+	for (int i = 0; i < numThreads; ++i) {
 		threadVector.emplace_back(
 				[=] () {
 					ThreadName::set(std::string("io-") + std::to_string(i));
-					Log::getInfoInstance() << "started io thread " << std::to_string(i);
+					Log::getInfoInstance() << "started io thread " << i;
 
 					try {
-						m_ioService.run();
+						pIOService->run();
 					} catch (const std::exception& e) {
 						Log::getInfoInstance() << "io thread caught exception: " << e.what();
 					} catch (...) {
@@ -38,18 +37,13 @@ void Broker::run() {
 	}
 }
 
-Broker::Broker(const std::tuple<std::string, std::string>& listenAddressAndPort,
-		int numThreads) :
-		m_listenAddressAndPort(listenAddressAndPort), m_numThreads(numThreads), m_ioService(
-				numThreads) {
-
-}
-
-void Broker::createAcceptors() {
-	TcpResolver resolver(m_ioService);
+void Broker::createAcceptor(
+		const std::tuple<std::string, std::string>& listenAddressAndPort,
+		boost::asio::io_service& ioService) {
+	TcpResolver resolver(ioService);
 	boost::asio::ip::tcp::endpoint listenEndpoint = resolver.resolve(
-			m_listenAddressAndPort);
-	ClientAcceptor::create(m_ioService, listenEndpoint)->start();
+			listenAddressAndPort);
+	ClientAcceptor::create(ioService, listenEndpoint)->start();
 }
 
 }

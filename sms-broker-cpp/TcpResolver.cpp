@@ -4,7 +4,7 @@
 namespace smsbroker {
 
 TcpResolver::TcpResolver(boost::asio::io_service& ioService) :
-		m_ioService(ioService), m_resolver(m_ioService) {
+		m_resolver(ioService) {
 
 }
 
