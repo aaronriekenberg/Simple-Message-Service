@@ -19,11 +19,13 @@ public:
 private:
 	static Topic& getTopicFromSharedStorage(const std::string& topicName);
 
-	static std::unordered_map<std::string, Topic*> m_sharedTopicNameToTopic;
+	typedef std::unordered_map<std::string, Topic*> TopicNameToPointerMap;
+
+	static TopicNameToPointerMap m_sharedTopicNameToTopic;
 
 	static std::mutex m_mutex;
 
-	static __thread std::unordered_map<std::string, Topic*>* m_pThreadLocalTopicNameToTopic;
+	static __thread TopicNameToPointerMap* m_pThreadLocalTopicNameToTopic;
 
 };
 

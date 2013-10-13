@@ -3,17 +3,16 @@
 
 namespace smsbroker {
 
-std::unordered_map<std::string, Topic*> TopicContainer::m_sharedTopicNameToTopic;
+TopicContainer::TopicNameToPointerMap TopicContainer::m_sharedTopicNameToTopic;
 
 std::mutex TopicContainer::m_mutex;
 
-__thread std::unordered_map<std::string, Topic*>* TopicContainer::m_pThreadLocalTopicNameToTopic =
+__thread TopicContainer::TopicNameToPointerMap* TopicContainer::m_pThreadLocalTopicNameToTopic =
 		nullptr;
 
 Topic& TopicContainer::getTopic(const std::string& topicName) {
 	if (!m_pThreadLocalTopicNameToTopic) {
-		m_pThreadLocalTopicNameToTopic = new std::unordered_map<std::string,
-				Topic*>;
+		m_pThreadLocalTopicNameToTopic = new TopicNameToPointerMap;
 	}
 	auto& m_threadLocalMap = *m_pThreadLocalTopicNameToTopic;
 
