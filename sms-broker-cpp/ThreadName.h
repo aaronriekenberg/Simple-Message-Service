@@ -14,7 +14,7 @@ public:
 
 private:
 
-	static __thread std::string* m_pThreadName;
+	static thread_local std::string m_threadName;
 
 	ThreadName() = delete;
 
