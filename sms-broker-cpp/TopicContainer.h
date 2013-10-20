@@ -25,7 +25,7 @@ private:
 
 	static std::mutex m_mutex;
 
-	static __thread TopicNameToPointerMap* m_pThreadLocalTopicNameToTopic;
+	static thread_local TopicNameToPointerMap m_threadLocalTopicNameToTopic;
 
 };
 

@@ -7,22 +7,16 @@ TopicContainer::TopicNameToPointerMap TopicContainer::m_sharedTopicNameToTopic;
 
 std::mutex TopicContainer::m_mutex;
 
-__thread TopicContainer::TopicNameToPointerMap* TopicContainer::m_pThreadLocalTopicNameToTopic =
-		nullptr;
+thread_local TopicContainer::TopicNameToPointerMap TopicContainer::m_threadLocalTopicNameToTopic;
 
 Topic& TopicContainer::getTopic(const std::string& topicName) {
-	if (!m_pThreadLocalTopicNameToTopic) {
-		m_pThreadLocalTopicNameToTopic = new TopicNameToPointerMap;
-	}
-	auto& m_threadLocalMap = *m_pThreadLocalTopicNameToTopic;
-
 	Topic* pTopic = nullptr;
-	auto i = m_threadLocalMap.find(topicName);
-	if (i != m_threadLocalMap.end()) {
+	auto i = m_threadLocalTopicNameToTopic.find(topicName);
+	if (i != m_threadLocalTopicNameToTopic.end()) {
 		pTopic = i->second;
 	} else {
 		pTopic = &getTopicFromSharedStorage(topicName);
-		m_threadLocalMap[topicName] = pTopic;
+		m_threadLocalTopicNameToTopic[topicName] = pTopic;
 	}
 	return (*pTopic);
 }
