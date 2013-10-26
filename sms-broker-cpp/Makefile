@@ -7,11 +7,12 @@ SRC = BoostSystemUtil.cpp \
       ClientSession.cpp \
       Log.cpp \
       Main.cpp \
+      SharedTopicContainer.cpp \
       SMSProtocol.pb.cpp \
       TcpResolver.cpp \
+      ThreadLocalTopicContainer.cpp \
       ThreadName.cpp \
       Topic.cpp \
-      TopicContainer.cpp \
       UUIDGenerator.cpp
 OBJS = ${SRC:.cpp=.o}
 

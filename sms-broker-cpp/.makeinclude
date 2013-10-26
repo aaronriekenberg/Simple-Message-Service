@@ -1,19 +1,22 @@
 BoostSystemUtil.o: BoostSystemUtil.cpp BoostSystemUtil.h
-Broker.o: Broker.cpp Broker.h TopicContainer.h Topic.h Buffer.h \
+Broker.o: Broker.cpp Broker.h SharedTopicContainer.h Topic.h Buffer.h \
  TopicListener.h ClientAcceptor.h ClientSession.h SMSProtocol.pb.h Log.h \
- TcpResolver.h ThreadName.h
+ TcpResolver.h ThreadLocalTopicContainer.h ThreadName.h
 ClientAcceptor.o: ClientAcceptor.cpp BoostSystemUtil.h ClientAcceptor.h \
  ClientSession.h Buffer.h SMSProtocol.pb.h TopicListener.h Log.h
 ClientSession.o: ClientSession.cpp ClientSession.h Buffer.h \
- SMSProtocol.pb.h TopicListener.h Log.h TopicContainer.h Topic.h \
- UUIDGenerator.h
+ SMSProtocol.pb.h TopicListener.h Log.h ThreadLocalTopicContainer.h \
+ Topic.h UUIDGenerator.h
 Log.o: Log.cpp ThreadName.h Log.h
-Main.o: Main.cpp Broker.h TopicContainer.h Topic.h Buffer.h \
+Main.o: Main.cpp Broker.h SharedTopicContainer.h Topic.h Buffer.h \
  TopicListener.h Log.h ThreadName.h
+SharedTopicContainer.o: SharedTopicContainer.cpp Log.h \
+ SharedTopicContainer.h Topic.h Buffer.h TopicListener.h
 SMSProtocol.pb.o: SMSProtocol.pb.cpp SMSProtocol.pb.h
 TcpResolver.o: TcpResolver.cpp BoostSystemUtil.h TcpResolver.h
+ThreadLocalTopicContainer.o: ThreadLocalTopicContainer.cpp \
+ ThreadLocalTopicContainer.h Topic.h Buffer.h TopicListener.h \
+ SharedTopicContainer.h
 ThreadName.o: ThreadName.cpp ThreadName.h
 Topic.o: Topic.cpp Topic.h Buffer.h TopicListener.h
-TopicContainer.o: TopicContainer.cpp Log.h TopicContainer.h Topic.h \
- Buffer.h TopicListener.h
 UUIDGenerator.o: UUIDGenerator.cpp UUIDGenerator.h

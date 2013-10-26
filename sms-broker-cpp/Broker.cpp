@@ -2,28 +2,39 @@
 #include "ClientAcceptor.h"
 #include "Log.h"
 #include "TcpResolver.h"
+#include "ThreadLocalTopicContainer.h"
 #include "ThreadName.h"
 #include <thread>
 
 namespace smsbroker {
 
-void Broker::run(
+Broker::SharedPtr Broker::create(
 		const std::tuple<std::string, std::string>& listenAddressAndPort,
 		int numThreads) {
-	auto pIOService = std::make_shared<boost::asio::io_service>(numThreads);
+	return SharedPtr(new Broker(listenAddressAndPort, numThreads));
+}
 
-	createAcceptor(listenAddressAndPort, *pIOService);
+Broker::Broker(const std::tuple<std::string, std::string>& listenAddressAndPort,
+		int numThreads) :
+		m_ioService(numThreads), m_listenAddressAndPort(listenAddressAndPort), m_numThreads(
+				numThreads) {
+
+}
+
+void Broker::run() {
+	createAcceptor();
 
 	std::vector<std::thread> threadVector;
-	threadVector.reserve(numThreads);
-	for (int i = 0; i < numThreads; ++i) {
+	threadVector.reserve(m_numThreads);
+	for (int i = 0; i < m_numThreads; ++i) {
 		threadVector.emplace_back(
 				[=] () {
-					ThreadName::set(std::string("io-") + std::to_string(i));
-					Log::getInfoInstance() << "started io thread " << i;
-
 					try {
-						pIOService->run();
+						ThreadName::set(std::string("io-") + std::to_string(i));
+						Log::getInfoInstance() << "started io thread " << i;
+
+						ThreadLocalTopicContainer::createThreadLocalInstance(m_sharedTopicContainer);
+						m_ioService.run();
 					} catch (const std::exception& e) {
 						Log::getInfoInstance() << "io thread caught exception: " << e.what();
 					} catch (...) {
@@ -37,13 +48,11 @@ void Broker::run(
 	}
 }
 
-void Broker::createAcceptor(
-		const std::tuple<std::string, std::string>& listenAddressAndPort,
-		boost::asio::io_service& ioService) {
-	TcpResolver resolver(ioService);
+void Broker::createAcceptor() {
+	TcpResolver resolver(m_ioService);
 	boost::asio::ip::tcp::endpoint listenEndpoint = resolver.resolve(
-			listenAddressAndPort);
-	ClientAcceptor::create(ioService, listenEndpoint)->start();
+			m_listenAddressAndPort);
+	ClientAcceptor::create(m_ioService, listenEndpoint)->start();
 }
 
 }

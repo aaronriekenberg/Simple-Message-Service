@@ -4,24 +4,39 @@
 #include <boost/asio.hpp>
 #include <memory>
 #include <string>
-#include "TopicContainer.h"
+#include "SharedTopicContainer.h"
 
 namespace smsbroker {
 
 class Broker {
 public:
-	Broker() = delete;
+	typedef std::shared_ptr<Broker> SharedPtr;
 
-	~Broker() = delete;
-
-	static void run(
+	static SharedPtr create(
 			const std::tuple<std::string, std::string>& listenAddressAndPort,
 			int numThreads);
 
+	~Broker() = default;
+
+	void run();
+
 private:
-	static void createAcceptor(
-			const std::tuple<std::string, std::string>& listenAddressAndPort,
-			boost::asio::io_service& ioService);
+	Broker(const std::tuple<std::string, std::string>& listenAddressAndPort,
+			int numThreads);
+
+	Broker(const Broker& rhs) = delete;
+
+	const Broker& operator=(const Broker& rhs) = delete;
+
+	void createAcceptor();
+
+	boost::asio::io_service m_ioService;
+
+	const std::tuple<std::string, std::string> m_listenAddressAndPort;
+
+	const int m_numThreads;
+
+	SharedTopicContainer m_sharedTopicContainer;
 
 };
 

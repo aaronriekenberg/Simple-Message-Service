@@ -2,7 +2,7 @@
 #include "ClientSession.h"
 #include "Log.h"
 #include "SMSProtocol.pb.h"
-#include "TopicContainer.h"
+#include "ThreadLocalTopicContainer.h"
 #include "UUIDGenerator.h"
 
 namespace smsbroker {
@@ -55,7 +55,8 @@ void ClientSession::terminate() {
 		}
 
 		for (const auto& subscribedTopic : m_subscribedTopics) {
-			TopicContainer::getTopic(subscribedTopic).unsubscribe(*this);
+			ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+					subscribedTopic).unsubscribe(*this);
 		}
 		m_subscribedTopics.clear();
 
@@ -183,22 +184,25 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 		} else {
 			switch (m_clientToBrokerMessage.messagetype()) {
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SUBSCRIBE_TO_TOPIC: {
-				Topic& topic = TopicContainer::getTopic(
-						m_clientToBrokerMessage.topicname());
+				Topic& topic =
+						ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+								m_clientToBrokerMessage.topicname());
 				topic.subscribe(shared_from_this());
 				m_subscribedTopics.insert(m_clientToBrokerMessage.topicname());
 				break;
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_UNSUBSCRIBE_FROM_TOPIC: {
-				Topic& topic = TopicContainer::getTopic(
-						m_clientToBrokerMessage.topicname());
+				Topic& topic =
+						ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+								m_clientToBrokerMessage.topicname());
 				topic.unsubscribe(*this);
 				m_subscribedTopics.erase(m_clientToBrokerMessage.topicname());
 				break;
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SEND_MESSAGE_TO_TOPIC: {
-				Topic& topic = TopicContainer::getTopic(
-						m_clientToBrokerMessage.topicname());
+				Topic& topic =
+						ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+								m_clientToBrokerMessage.topicname());
 				if (topic.hasSubscribers()) {
 					m_brokerToClientMessage.set_messagetype(
 							sms::protocol::protobuf::BrokerToClientMessage_BrokerToClientMessageType_BROKER_TOPIC_MESSAGE_PUBLISH);
