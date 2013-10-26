@@ -97,7 +97,7 @@ void ClientSession::writeNextBufferInQueueIfNecessary() {
 		m_writeHeader[1] = (bufferSize >> 16);
 		m_writeHeader[2] = (bufferSize >> 8);
 		m_writeHeader[3] = (bufferSize);
-		std::array<boost::asio::const_buffer, 2> writeBufferArray =
+		const std::array<boost::asio::const_buffer, 2> writeBufferArray =
 				{ boost::asio::buffer(m_writeHeader), boost::asio::buffer(
 						*buffer) };
 		auto sharedThis = shared_from_this();
