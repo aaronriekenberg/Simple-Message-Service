@@ -50,8 +50,7 @@ void Broker::run() {
 
 void Broker::createAcceptor() {
 	TcpResolver resolver(m_ioService);
-	boost::asio::ip::tcp::endpoint listenEndpoint = resolver.resolve(
-			m_listenAddressAndPort);
+	auto listenEndpoint = resolver.resolve(m_listenAddressAndPort);
 	ClientAcceptor::create(m_ioService, listenEndpoint)->start();
 }
 
