@@ -21,7 +21,8 @@ public:
 	Topic& getTopic(const std::string& topicName);
 
 private:
-	ThreadLocalTopicContainer(SharedTopicContainer& sharedTopicContainer);
+	explicit ThreadLocalTopicContainer(
+			SharedTopicContainer& sharedTopicContainer);
 
 	ThreadLocalTopicContainer(const ThreadLocalTopicContainer& rhs) = delete;
 
