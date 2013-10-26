@@ -33,7 +33,7 @@ void Broker::run() {
 						ThreadName::set(std::string("io-") + std::to_string(i));
 						Log::getInfoInstance() << "started io thread " << i;
 
-						ThreadLocalTopicContainer::createThreadLocalInstance(m_sharedTopicContainer);
+						ThreadLocalTopicContainer::createInstance(m_sharedTopicContainer);
 						m_ioService.run();
 					} catch (const std::exception& e) {
 						Log::getInfoInstance() << "io thread caught exception: " << e.what();

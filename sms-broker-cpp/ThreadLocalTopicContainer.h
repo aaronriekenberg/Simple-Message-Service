@@ -12,10 +12,9 @@ class SharedTopicContainer;
 
 class ThreadLocalTopicContainer {
 public:
-	static void createThreadLocalInstance(
-			SharedTopicContainer& sharedTopicContainer);
+	static void createInstance(SharedTopicContainer& sharedTopicContainer);
 
-	static ThreadLocalTopicContainer& getThreadLocalInstance();
+	static ThreadLocalTopicContainer& getInstance();
 
 	~ThreadLocalTopicContainer() = default;
 

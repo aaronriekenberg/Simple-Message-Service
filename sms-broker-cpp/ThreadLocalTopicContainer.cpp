@@ -6,13 +6,13 @@ namespace smsbroker {
 thread_local std::unique_ptr<ThreadLocalTopicContainer> ThreadLocalTopicContainer::m_pThreadLocalInstance =
 		nullptr;
 
-void ThreadLocalTopicContainer::createThreadLocalInstance(
+void ThreadLocalTopicContainer::createInstance(
 		SharedTopicContainer& sharedTopicContainer) {
 	m_pThreadLocalInstance.reset(
 			new ThreadLocalTopicContainer(sharedTopicContainer));
 }
 
-ThreadLocalTopicContainer& ThreadLocalTopicContainer::getThreadLocalInstance() {
+ThreadLocalTopicContainer& ThreadLocalTopicContainer::getInstance() {
 	return *m_pThreadLocalInstance;
 }
 

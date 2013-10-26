@@ -55,8 +55,8 @@ void ClientSession::terminate() {
 		}
 
 		for (const auto& subscribedTopic : m_subscribedTopics) {
-			ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
-					subscribedTopic).unsubscribe(*this);
+			ThreadLocalTopicContainer::getInstance().getTopic(subscribedTopic).unsubscribe(
+					*this);
 		}
 		m_subscribedTopics.clear();
 
@@ -185,7 +185,7 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 			switch (m_clientToBrokerMessage.messagetype()) {
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SUBSCRIBE_TO_TOPIC: {
 				Topic& topic =
-						ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+						ThreadLocalTopicContainer::getInstance().getTopic(
 								m_clientToBrokerMessage.topicname());
 				topic.subscribe(shared_from_this());
 				m_subscribedTopics.insert(m_clientToBrokerMessage.topicname());
@@ -193,7 +193,7 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_UNSUBSCRIBE_FROM_TOPIC: {
 				Topic& topic =
-						ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+						ThreadLocalTopicContainer::getInstance().getTopic(
 								m_clientToBrokerMessage.topicname());
 				topic.unsubscribe(*this);
 				m_subscribedTopics.erase(m_clientToBrokerMessage.topicname());
@@ -201,7 +201,7 @@ void ClientSession::readPayloadComplete(const boost::system::error_code& error,
 			}
 			case sms::protocol::protobuf::ClientToBrokerMessage_ClientToBrokerMessageType_CLIENT_SEND_MESSAGE_TO_TOPIC: {
 				Topic& topic =
-						ThreadLocalTopicContainer::getThreadLocalInstance().getTopic(
+						ThreadLocalTopicContainer::getInstance().getTopic(
 								m_clientToBrokerMessage.topicname());
 				if (topic.hasSubscribers()) {
 					m_brokerToClientMessage.set_messagetype(
