@@ -22,7 +22,7 @@
 		<netty.version>4.0.13.Final</netty.version>
 		<protobuf.version>2.5.0</protobuf.version>
 		<slf4j.version>1.7.5</slf4j.version>
-		<spring.version>3.2.4.RELEASE</spring.version>
+		<spring.version>4.0.0.RELEASE</spring.version>
 	</properties>
 
 	<repositories>
