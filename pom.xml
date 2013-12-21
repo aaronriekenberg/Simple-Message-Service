@@ -23,6 +23,9 @@
 		<protobuf.version>2.5.0</protobuf.version>
 		<slf4j.version>1.7.5</slf4j.version>
 		<spring.version>4.0.0.RELEASE</spring.version>
+		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
+		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
+		<license-maven-plugin.version>1.5</license-maven-plugin.version>
 	</properties>
 
 	<repositories>
@@ -110,7 +113,7 @@
 									<pluginExecutionFilter>
 										<groupId>org.codehaus.mojo</groupId>
 										<artifactId>license-maven-plugin</artifactId>
-										<versionRange>[1.4,)</versionRange>
+										<versionRange>[1.5,)</versionRange>
 										<goals>
 											<goal>update-file-header</goal>
 										</goals>
@@ -130,7 +133,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.0</version>
+				<version>${maven-compiler-plugin.version}</version>
 				<configuration>
 					<source>1.7</source>
 					<target>1.7</target>
@@ -139,7 +142,7 @@
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-source-plugin</artifactId>
-				<version>2.2.1</version>
+				<version>${maven-source-plugin.version}</version>
 				<executions>
 					<execution>
 						<id>attach-sources</id>
@@ -153,7 +156,7 @@
 			<plugin>
 				<groupId>org.codehaus.mojo</groupId>
 				<artifactId>license-maven-plugin</artifactId>
-				<version>1.4</version>
+				<version>${license-maven-plugin.version}</version>
 				<configuration>
 					<licenseName>mit</licenseName>
 				</configuration>
