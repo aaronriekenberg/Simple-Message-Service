@@ -323,7 +323,7 @@ public class SMSConnection {
 		assertState(ConnectionState.RUNNING);
 
 		subscribedTopics.add(topicName);
-		connectedChannels.flushAndWrite(SMSProtocol.ClientToBrokerMessage
+		connectedChannels.writeAndFlush(SMSProtocol.ClientToBrokerMessage
 				.newBuilder()
 				.setMessageType(
 						ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
@@ -343,7 +343,7 @@ public class SMSConnection {
 
 		subscribedTopics.remove(topicName);
 		connectedChannels
-				.flushAndWrite(SMSProtocol.ClientToBrokerMessage
+				.writeAndFlush(SMSProtocol.ClientToBrokerMessage
 						.newBuilder()
 						.setMessageType(
 								ClientToBrokerMessageType.CLIENT_UNSUBSCRIBE_FROM_TOPIC)
@@ -370,7 +370,7 @@ public class SMSConnection {
 		checkNotNull(message, "message is null");
 		assertState(ConnectionState.RUNNING);
 
-		connectedChannels.flushAndWrite(SMSProtocol.ClientToBrokerMessage
+		connectedChannels.writeAndFlush(SMSProtocol.ClientToBrokerMessage
 				.newBuilder()
 				.setMessageType(
 						ClientToBrokerMessageType.CLIENT_SEND_MESSAGE_TO_TOPIC)

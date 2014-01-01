@@ -28,6 +28,7 @@ package org.aaron.sms.broker;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.channel.Channel;
+import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
@@ -35,7 +36,7 @@ import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
 class SMSTopic {
 
-	private final DefaultChannelGroup channelGroup = new DefaultChannelGroup(
+	private final ChannelGroup channelGroup = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
 	public SMSTopic() {
@@ -57,6 +58,6 @@ class SMSTopic {
 	public void write(SMSProtocol.BrokerToClientMessage message) {
 		checkNotNull(message, "message is null");
 
-		channelGroup.flushAndWrite(message);
+		channelGroup.writeAndFlush(message);
 	}
 }
