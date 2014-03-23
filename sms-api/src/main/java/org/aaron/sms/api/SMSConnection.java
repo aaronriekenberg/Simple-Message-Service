@@ -30,26 +30,15 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timeout;
-import io.netty.util.TimerTask;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
@@ -61,7 +50,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.aaron.sms.protocol.SMSProtocolConstants;
+import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType;
 import org.slf4j.Logger;
@@ -194,30 +183,6 @@ public class SMSConnection {
 		}
 	}
 
-	private class ClientChannelInitializer extends ChannelInitializer<Channel> {
-
-		@Override
-		protected void initChannel(Channel ch) throws Exception {
-			final ChannelPipeline p = ch.pipeline();
-			p.addLast("logger", new LoggingHandler(LogLevel.DEBUG));
-
-			p.addLast("frameEncoder", new LengthFieldPrepender(
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES));
-
-			p.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(
-					SMSProtocolConstants.MAX_MESSAGE_LENGTH_BYTES, 0,
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES, 0,
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES));
-
-			p.addLast("protobufEncoder", new ProtobufEncoder());
-
-			p.addLast("protobufDecoder", new ProtobufDecoder(
-					SMSProtocol.BrokerToClientMessage.getDefaultInstance()));
-
-			p.addLast("clientHandler", new ClientHandler());
-		}
-	}
-
 	/**
 	 * Constructor method
 	 * 
@@ -269,8 +234,12 @@ public class SMSConnection {
 		}
 
 		final Bootstrap b = new Bootstrap();
-		b.group(eventLoopGroup).channel(NioSocketChannel.class)
-				.handler(new ClientChannelInitializer())
+		b.group(eventLoopGroup)
+				.channel(NioSocketChannel.class)
+				.handler(
+						new SMSProtocolChannelInitializer(ClientHandler::new,
+								SMSProtocol.BrokerToClientMessage
+										.getDefaultInstance()))
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
 		b.connect(brokerAddress, brokerPort);
 	}
@@ -280,16 +249,7 @@ public class SMSConnection {
 			return;
 		}
 
-		timer.newTimeout(new TimerTask() {
-			@Override
-			public void run(Timeout timeout) throws Exception {
-				try {
-					reconnect();
-				} catch (Exception e) {
-					log.warn("run", e);
-				}
-			}
-		}, 1, TimeUnit.SECONDS);
+		timer.newTimeout(t -> reconnect(), 1, TimeUnit.SECONDS);
 	}
 
 	private void resubscribeToTopics() {
@@ -299,14 +259,13 @@ public class SMSConnection {
 
 		synchronized (subscribedTopics) {
 			log.debug("resubscribeToTopics {}", subscribedTopics);
-			for (String topicName : subscribedTopics) {
-				connectedChannels
-						.write(SMSProtocol.ClientToBrokerMessage
-								.newBuilder()
-								.setMessageType(
-										ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-								.setTopicName(topicName));
-			}
+			subscribedTopics
+					.forEach(topicName -> connectedChannels
+							.write(SMSProtocol.ClientToBrokerMessage
+									.newBuilder()
+									.setMessageType(
+											ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+									.setTopicName(topicName)));
 			connectedChannels.flush();
 		}
 	}

@@ -29,21 +29,13 @@ package org.aaron.sms.broker;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.ChannelPipeline;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
-import io.netty.handler.codec.LengthFieldPrepender;
-import io.netty.handler.codec.protobuf.ProtobufDecoder;
-import io.netty.handler.codec.protobuf.ProtobufEncoder;
-import io.netty.handler.logging.LogLevel;
-import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
@@ -51,7 +43,7 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.aaron.sms.protocol.SMSProtocolConstants;
+import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType;
 import org.slf4j.Logger;
@@ -115,30 +107,6 @@ public class SMSBrokerTCPServer {
 		}
 	}
 
-	private class ServerChannelInitializer extends ChannelInitializer<Channel> {
-
-		@Override
-		protected void initChannel(Channel ch) throws Exception {
-			final ChannelPipeline p = ch.pipeline();
-			p.addLast("logger", new LoggingHandler(LogLevel.DEBUG));
-
-			p.addLast("frameEncoder", new LengthFieldPrepender(
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES));
-
-			p.addLast("frameDecoder", new LengthFieldBasedFrameDecoder(
-					SMSProtocolConstants.MAX_MESSAGE_LENGTH_BYTES, 0,
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES, 0,
-					SMSProtocolConstants.MESSAGE_HEADER_LENGTH_BYTES));
-
-			p.addLast("protobufEncoder", new ProtobufEncoder());
-
-			p.addLast("protobufDecoder", new ProtobufDecoder(
-					SMSProtocol.ClientToBrokerMessage.getDefaultInstance()));
-
-			p.addLast("serverHandler", new ServerHandler());
-		}
-	}
-
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
 			String listenAddress, int listenPort) throws InterruptedException {
 		this.topicContainer = topicContainer;
@@ -146,8 +114,12 @@ public class SMSBrokerTCPServer {
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
-				.childHandler(new ServerChannelInitializer())
+		b.group(bossGroup, workerGroup)
+				.channel(NioServerSocketChannel.class)
+				.childHandler(
+						new SMSProtocolChannelInitializer(ServerHandler::new,
+								SMSProtocol.ClientToBrokerMessage
+										.getDefaultInstance()))
 				.option(ChannelOption.SO_REUSEADDR, true);
 
 		final Channel serverChannel = b.bind(listenAddress, listenPort).sync()

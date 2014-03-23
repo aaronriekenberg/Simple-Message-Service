@@ -53,17 +53,6 @@ public class SMSTopicContainer {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 
-		SMSTopic topic = topicNameToInfo.get(topicName);
-
-		if (topic == null) {
-			final SMSTopic newTopic = new SMSTopic();
-			topic = topicNameToInfo.putIfAbsent(topicName, newTopic);
-			if (topic == null) {
-				log.info("created topic '" + topicName + "'");
-				topic = newTopic;
-			}
-		}
-
-		return topic;
+		return topicNameToInfo.computeIfAbsent(topicName, t -> new SMSTopic());
 	}
 }

@@ -28,8 +28,9 @@ package org.aaron.sms.examples;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.aaron.sms.api.SMSConnection;
@@ -42,7 +43,8 @@ public class SMSTestReceiver {
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSTestReceiver.class);
 
-	private static final Timer timer = new Timer(true);
+	private static final ScheduledExecutorService executor = Executors
+			.newScheduledThreadPool(1);
 
 	private final AtomicInteger messagesReceived = new AtomicInteger(0);
 
@@ -57,13 +59,11 @@ public class SMSTestReceiver {
 			final SMSConnection smsConnection = new SMSConnection("127.0.0.1",
 					10001);
 
-			timer.scheduleAtFixedRate(new TimerTask() {
-				@Override
-				public void run() {
-					log.info(topicName + " messages received last second = "
-							+ messagesReceived.getAndSet(0));
-				}
-			}, 1000, 1000);
+			executor.scheduleAtFixedRate(
+					() -> log.info(topicName
+							+ " messages received last second = "
+							+ messagesReceived.getAndSet(0)), 1, 1,
+					TimeUnit.SECONDS);
 
 			smsConnection.setListener(new SMSConnectionListener() {
 
