@@ -32,15 +32,22 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.Objects;
+
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 class SMSTopic {
+
+	private static final Logger log = LoggerFactory.getLogger(SMSTopic.class);
 
 	private final ChannelGroup channelGroup = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
-	public SMSTopic() {
-
+	public SMSTopic(String topicName) {
+		Objects.requireNonNull(topicName, "topicName is null");
+		log.info("create SMSTopic '{}'", topicName);
 	}
 
 	public void addSubscription(Channel channel) {
