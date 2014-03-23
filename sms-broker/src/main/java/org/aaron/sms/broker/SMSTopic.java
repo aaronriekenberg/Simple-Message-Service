@@ -32,8 +32,6 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
-import java.util.Objects;
-
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,7 +44,7 @@ class SMSTopic {
 			GlobalEventExecutor.INSTANCE);
 
 	public SMSTopic(String topicName) {
-		Objects.requireNonNull(topicName, "topicName is null");
+		checkNotNull(topicName, "topicName is null");
 		log.info("create SMSTopic '{}'", topicName);
 	}
 
