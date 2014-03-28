@@ -45,6 +45,7 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -373,10 +374,8 @@ public class SMSConnection {
 
 	private void fireConnectionOpen() {
 		try {
-			final SMSConnectionListener localListener = listener.get();
-			if (localListener != null) {
-				localListener.handleConnectionOpen();
-			}
+			Optional.ofNullable(listener.get()).ifPresent(
+					SMSConnectionListener::handleConnectionOpen);
 		} catch (Exception e) {
 			log.warn("fireConnectionOpen", e);
 		}
@@ -384,10 +383,8 @@ public class SMSConnection {
 
 	private void fireConnectionClosed() {
 		try {
-			final SMSConnectionListener localListener = listener.get();
-			if (localListener != null) {
-				localListener.handleConnectionClosed();
-			}
+			Optional.ofNullable(listener.get()).ifPresent(
+					SMSConnectionListener::handleConnectionClosed);
 		} catch (Exception e) {
 			log.warn("fireConnectionClosed", e);
 		}
@@ -395,10 +392,8 @@ public class SMSConnection {
 
 	private void fireMessageReceived(String topicName, byte[] message) {
 		try {
-			final SMSConnectionListener localListener = listener.get();
-			if (localListener != null) {
-				localListener.handleIncomingMessage(topicName, message);
-			}
+			Optional.ofNullable(listener.get()).ifPresent(
+					l -> l.handleIncomingMessage(topicName, message));
 		} catch (Exception e) {
 			log.warn("fireMessageReceived", e);
 		}
