@@ -53,6 +53,6 @@ public class SMSTopicContainer {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 
-		return topicNameToInfo.computeIfAbsent(topicName, t -> new SMSTopic(t));
+		return topicNameToInfo.computeIfAbsent(topicName, SMSTopic::new);
 	}
 }
