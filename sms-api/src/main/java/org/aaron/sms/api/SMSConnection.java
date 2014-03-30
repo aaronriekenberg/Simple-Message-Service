@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
@@ -147,7 +148,7 @@ public class SMSConnection {
 			connectedChannels.add(ctx.channel());
 			haveBeenConnected.set(true);
 			resubscribeToTopics();
-			fireConnectionOpen();
+			fireListenerCallback(SMSConnectionListener::handleConnectionOpen);
 		}
 
 		@Override
@@ -161,7 +162,7 @@ public class SMSConnection {
 				throws Exception {
 			log.debug("channelUnregistered {}", ctx.channel());
 			if (haveBeenConnected.get()) {
-				fireConnectionClosed();
+				fireListenerCallback(SMSConnectionListener::handleConnectionClosed);
 			}
 			reconnectAfterDelay();
 		}
@@ -368,34 +369,16 @@ public class SMSConnection {
 				"topic name is emtpy");
 		checkNotNull(message.getMessagePayload(), "message payload is null");
 
-		fireMessageReceived(message.getTopicName(), message.getMessagePayload()
-				.toByteArray());
+		fireListenerCallback(listener -> listener.handleIncomingMessage(message
+				.getTopicName(), message.getMessagePayload().toByteArray()));
 	}
 
-	private void fireConnectionOpen() {
+	private void fireListenerCallback(Consumer<SMSConnectionListener> callback) {
 		try {
-			Optional.ofNullable(listener.get()).ifPresent(
-					SMSConnectionListener::handleConnectionOpen);
+			Optional.ofNullable(listener.get()).ifPresent(callback);
 		} catch (Exception e) {
-			log.warn("fireConnectionOpen", e);
+			log.warn("fireListenerCallback", e);
 		}
 	}
 
-	private void fireConnectionClosed() {
-		try {
-			Optional.ofNullable(listener.get()).ifPresent(
-					SMSConnectionListener::handleConnectionClosed);
-		} catch (Exception e) {
-			log.warn("fireConnectionClosed", e);
-		}
-	}
-
-	private void fireMessageReceived(String topicName, byte[] message) {
-		try {
-			Optional.ofNullable(listener.get()).ifPresent(
-					l -> l.handleIncomingMessage(topicName, message));
-		} catch (Exception e) {
-			log.warn("fireMessageReceived", e);
-		}
-	}
 }
