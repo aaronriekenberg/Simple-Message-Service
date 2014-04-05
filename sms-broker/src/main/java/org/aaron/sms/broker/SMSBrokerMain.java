@@ -35,12 +35,7 @@ public class SMSBrokerMain {
 				"META-INF/spring/sms-broker-spring.xml")) {
 			final SMSBrokerTCPServer brokerTCPServer = context
 					.getBean(SMSBrokerTCPServer.class);
-			while (!brokerTCPServer.isDestroyed()) {
-				try {
-					brokerTCPServer.awaitDestroyed();
-				} catch (InterruptedException e) {
-				}
-			}
+			brokerTCPServer.awaitDestroyedUninterruptible();
 		}
 	}
 

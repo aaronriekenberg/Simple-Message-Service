@@ -144,12 +144,21 @@ public class SMSBrokerTCPServer {
 		destroyedLatch.countDown();
 	}
 
+	public boolean isDestroyed() {
+		return destroyed.get();
+	}
+
 	public void awaitDestroyed() throws InterruptedException {
 		destroyedLatch.await();
 	}
 
-	public boolean isDestroyed() {
-		return destroyed.get();
+	public void awaitDestroyedUninterruptible() {
+		while (!isDestroyed()) {
+			try {
+				awaitDestroyed();
+			} catch (InterruptedException e) {
+			}
+		}
 	}
 
 	private void processIncomingMessage(Channel channel,
