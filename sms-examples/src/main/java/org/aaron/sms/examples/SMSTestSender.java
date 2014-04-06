@@ -28,7 +28,9 @@ package org.aaron.sms.examples;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSConnectionListener;
@@ -85,18 +87,19 @@ public class SMSTestSender implements Runnable {
 	}
 
 	public static void main(String[] args) {
-		final ArrayList<Thread> threadList = new ArrayList<Thread>();
-		for (int i = 0; i < 50; ++i) {
+		final List<Thread> threadList = IntStream.range(0, 50).mapToObj(i -> {
 			final Thread t = new Thread(new SMSTestSender("test.topic." + i));
 			t.start();
-			threadList.add(t);
-		}
-		for (Thread t : threadList) {
+			return t;
+		}).collect(Collectors.toList());
+
+		threadList.forEach(t -> {
 			try {
 				t.join();
-			} catch (InterruptedException e) {
-				log.warn("main", e);
+			} catch (Exception e) {
+				log.warn("join", e);
 			}
-		}
+		});
+
 	}
 }

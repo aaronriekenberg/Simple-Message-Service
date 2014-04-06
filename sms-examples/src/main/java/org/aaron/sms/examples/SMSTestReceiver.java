@@ -32,6 +32,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.IntStream;
 
 import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSConnectionListener;
@@ -97,9 +98,8 @@ public class SMSTestReceiver {
 	}
 
 	public static void main(String[] args) {
-		for (int i = 0; i < 50; ++i) {
-			new SMSTestReceiver("test.topic." + i).start();
-		}
+		IntStream.range(0, 50).forEach(
+				i -> new SMSTestReceiver("test.topic." + i).start());
 		while (true) {
 			try {
 				Thread.sleep(1000);
