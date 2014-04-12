@@ -73,7 +73,11 @@ public class SMSTestReceiver {
 						byte[] message) {
 					log.debug("handleIncomingMessage topic {} length {}",
 							topicName, message.length);
-					assert SMSTestReceiver.this.topicName.equals(topicName);
+					if (!SMSTestReceiver.this.topicName.equals(topicName)) {
+						throw new IllegalStateException("received topic name '"
+								+ topicName + "' expected '"
+								+ SMSTestReceiver.this.topicName + "'");
+					}
 					messagesReceived.getAndIncrement();
 				}
 
