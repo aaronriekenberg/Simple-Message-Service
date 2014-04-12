@@ -57,13 +57,6 @@ public class SMSTestSender implements Runnable {
 			smsConnection.setListener(new SMSConnectionListener() {
 
 				@Override
-				public void handleIncomingMessage(String topicName,
-						byte[] message) {
-					log.debug("handleIncomingMessage topic {} length {}",
-							topicName, message.length);
-				}
-
-				@Override
 				public void handleConnectionOpen() {
 					log.info("handleConnectionOpen");
 				}

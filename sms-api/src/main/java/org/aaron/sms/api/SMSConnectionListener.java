@@ -34,13 +34,17 @@ public interface SMSConnectionListener {
 	/**
 	 * Notification that the SMSConnection is now connected to the SMS Broker.
 	 */
-	public void handleConnectionOpen();
+	public default void handleConnectionOpen() {
+
+	}
 
 	/**
 	 * Notification that the SMSConnection is now disconnected from the SMS
 	 * Broker.
 	 */
-	public void handleConnectionClosed();
+	public default void handleConnectionClosed() {
+
+	}
 
 	/**
 	 * Handle an incoming message for a topic subscription.
@@ -50,6 +54,8 @@ public interface SMSConnectionListener {
 	 * @param message
 	 *            message payload
 	 */
-	public void handleIncomingMessage(String topicName, byte[] message);
+	public default void handleIncomingMessage(String topicName, byte[] message) {
+
+	}
 
 }
