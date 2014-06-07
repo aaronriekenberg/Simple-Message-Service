@@ -93,7 +93,7 @@ public class SMSConnection {
 			GlobalEventExecutor.INSTANCE);
 
 	private final Set<String> subscribedTopics = Collections
-			.synchronizedSet(new HashSet<String>());
+			.synchronizedSet(new HashSet<>());
 
 	private enum ConnectionState {
 		NOT_STARTED,
