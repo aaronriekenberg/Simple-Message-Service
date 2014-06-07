@@ -101,7 +101,7 @@ public class SMSTestReceiver {
 		}
 	}
 
-	private static final int NUM_RECEIVERS = 10;
+	private static final int NUM_RECEIVERS = 50;
 
 	public static void main(String[] args) {
 		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);

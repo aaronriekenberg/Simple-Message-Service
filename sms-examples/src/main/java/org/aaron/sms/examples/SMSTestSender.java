@@ -79,9 +79,9 @@ public class SMSTestSender implements Runnable {
 		}
 	}
 
-	private static final int NUM_SENDERS = 10;
+	private static final int NUM_SENDERS = 50;
 
-	private static final int MESSAGE_SIZE_BYTES = 5000;
+	private static final int MESSAGE_SIZE_BYTES = 50;
 
 	private static final long SLEEP_BETWEEN_SENDS_MS = 10;
 
