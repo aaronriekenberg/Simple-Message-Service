@@ -69,22 +69,35 @@ public class SMSTestSender implements Runnable {
 
 			smsConnection.start();
 
-			final byte[] buffer = new byte[5000];
+			final byte[] buffer = new byte[MESSAGE_SIZE_BYTES];
 			while (true) {
 				smsConnection.writeToTopic(topicName, buffer);
-				Thread.sleep(1);
+				Thread.sleep(SLEEP_BETWEEN_SENDS_MS);
 			}
 		} catch (Exception e) {
 			log.warn("main", e);
 		}
 	}
 
+	private static final int NUM_SENDERS = 10;
+
+	private static final int MESSAGE_SIZE_BYTES = 5000;
+
+	private static final long SLEEP_BETWEEN_SENDS_MS = 10;
+
 	public static void main(String[] args) {
-		final List<Thread> threadList = IntStream.range(0, 50).mapToObj(i -> {
-			final Thread t = new Thread(new SMSTestSender("test.topic." + i));
-			t.start();
-			return t;
-		}).collect(Collectors.toList());
+		log.info("NUM_SENDERS = {}", NUM_SENDERS);
+		log.info("MESSAGE_SIZE_BYTES = {}", MESSAGE_SIZE_BYTES);
+		log.info("SLEEP_BETWEEN_SENDS_MS = {}", SLEEP_BETWEEN_SENDS_MS);
+		final List<Thread> threadList = IntStream
+				.range(0, NUM_SENDERS)
+				.mapToObj(
+						i -> {
+							final Thread t = new Thread(new SMSTestSender(
+									"test.topic." + i));
+							t.start();
+							return t;
+						}).collect(Collectors.toList());
 
 		threadList.forEach(t -> {
 			try {

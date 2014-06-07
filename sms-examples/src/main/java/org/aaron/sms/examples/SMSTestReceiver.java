@@ -101,8 +101,11 @@ public class SMSTestReceiver {
 		}
 	}
 
+	private static final int NUM_RECEIVERS = 10;
+
 	public static void main(String[] args) {
-		IntStream.range(0, 50).forEach(
+		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);
+		IntStream.range(0, NUM_RECEIVERS).forEach(
 				i -> new SMSTestReceiver("test.topic." + i).start());
 		while (true) {
 			try {
@@ -112,5 +115,4 @@ public class SMSTestReceiver {
 			}
 		}
 	}
-
 }
