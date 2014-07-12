@@ -38,7 +38,6 @@ import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.util.HashedWheelTimer;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
@@ -83,8 +82,6 @@ public class SMSConnection {
 			.getLogger(SMSConnection.class);
 
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
-
-	private static final HashedWheelTimer timer = new HashedWheelTimer();
 
 	private final ChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
@@ -251,7 +248,7 @@ public class SMSConnection {
 			return;
 		}
 
-		timer.newTimeout(t -> reconnect(), 1, TimeUnit.SECONDS);
+		eventLoopGroup.schedule(() -> reconnect(), 1, TimeUnit.SECONDS);
 	}
 
 	private void resubscribeToTopics() {
