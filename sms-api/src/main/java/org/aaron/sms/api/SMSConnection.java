@@ -83,6 +83,8 @@ public class SMSConnection {
 
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
+	private static final int RECONNECT_DELAY_SECONDS = 1;
+
 	private final ChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
@@ -161,7 +163,7 @@ public class SMSConnection {
 			if (haveBeenConnected.get()) {
 				fireListenerCallback(SMSConnectionListener::handleConnectionClosed);
 			}
-			reconnectAfterDelay();
+			reconnectAsync(RECONNECT_DELAY_SECONDS);
 		}
 
 		@Override
@@ -224,48 +226,53 @@ public class SMSConnection {
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-		reconnect();
+		reconnectAsync(0);
 	}
 
-	private void reconnect() {
-		if (connectionState.get() != ConnectionState.RUNNING) {
-			return;
-		}
-
-		final Bootstrap b = new Bootstrap();
-		b.group(eventLoopGroup)
-				.channel(NioSocketChannel.class)
-				.handler(
-						new SMSProtocolChannelInitializer(ClientHandler::new,
-								SMSProtocol.BrokerToClientMessage
-										.getDefaultInstance()))
-				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, 1000);
-		b.connect(brokerAddress, brokerPort);
+	/**
+	 * Is the SMSConnection started?
+	 * 
+	 * @return true if started, false otherwise
+	 */
+	public boolean isStarted() {
+		return (connectionState.get() == ConnectionState.RUNNING);
 	}
 
-	private void reconnectAfterDelay() {
-		if (connectionState.get() != ConnectionState.RUNNING) {
-			return;
+	private void reconnectAsync(int delaySeconds) {
+		if (isStarted()) {
+			eventLoopGroup
+					.schedule(
+							() -> {
+								if (isStarted()) {
+									new Bootstrap()
+											.group(eventLoopGroup)
+											.channel(NioSocketChannel.class)
+											.handler(
+													new SMSProtocolChannelInitializer(
+															ClientHandler::new,
+															SMSProtocol.BrokerToClientMessage
+																	.getDefaultInstance()))
+											.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+													1000)
+											.connect(brokerAddress, brokerPort);
+								}
+							}, delaySeconds, TimeUnit.SECONDS);
 		}
-
-		eventLoopGroup.schedule(() -> reconnect(), 1, TimeUnit.SECONDS);
 	}
 
 	private void resubscribeToTopics() {
-		if (connectionState.get() != ConnectionState.RUNNING) {
-			return;
-		}
-
-		synchronized (subscribedTopics) {
-			log.debug("resubscribeToTopics {}", subscribedTopics);
-			subscribedTopics
-					.forEach(topicName -> connectedChannels
-							.write(SMSProtocol.ClientToBrokerMessage
-									.newBuilder()
-									.setMessageType(
-											ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-									.setTopicName(topicName)));
-			connectedChannels.flush();
+		if (isStarted()) {
+			synchronized (subscribedTopics) {
+				log.debug("resubscribeToTopics {}", subscribedTopics);
+				subscribedTopics
+						.forEach(topicName -> connectedChannels
+								.write(SMSProtocol.ClientToBrokerMessage
+										.newBuilder()
+										.setMessageType(
+												ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+										.setTopicName(topicName)));
+				connectedChannels.flush();
+			}
 		}
 	}
 
