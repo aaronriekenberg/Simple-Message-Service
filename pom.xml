@@ -22,7 +22,7 @@
 		<slf4j.version>1.7.6</slf4j.version>
 		<netty.version>4.0.21.Final</netty.version>
 		<protobuf.version>2.5.0</protobuf.version>
-		<spring.version>4.0.5.RELEASE</spring.version>
+		<spring.version>4.0.6.RELEASE</spring.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
 		<license-maven-plugin.version>1.5</license-maven-plugin.version>
