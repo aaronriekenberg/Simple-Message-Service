@@ -239,41 +239,46 @@ public class SMSConnection {
 	}
 
 	private void reconnectAsync(int delaySeconds) {
-		if (isStarted()) {
-			eventLoopGroup
-					.schedule(
-							() -> {
-								if (isStarted()) {
-									new Bootstrap()
-											.group(eventLoopGroup)
-											.channel(NioSocketChannel.class)
-											.handler(
-													new SMSProtocolChannelInitializer(
-															ClientHandler::new,
-															SMSProtocol.BrokerToClientMessage
-																	.getDefaultInstance()))
-											.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-													1000)
-											.connect(brokerAddress, brokerPort);
-								}
-							}, delaySeconds, TimeUnit.SECONDS);
+		if (!isStarted()) {
+			return;
 		}
+
+		eventLoopGroup
+				.schedule(
+						() -> {
+							if (isStarted()) {
+								new Bootstrap()
+										.group(eventLoopGroup)
+										.channel(NioSocketChannel.class)
+										.handler(
+												new SMSProtocolChannelInitializer(
+														ClientHandler::new,
+														SMSProtocol.BrokerToClientMessage
+																.getDefaultInstance()))
+										.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+												1000)
+										.connect(brokerAddress, brokerPort);
+							}
+						}, delaySeconds, TimeUnit.SECONDS);
 	}
 
 	private void resubscribeToTopics() {
-		if (isStarted()) {
-			synchronized (subscribedTopics) {
-				log.debug("resubscribeToTopics {}", subscribedTopics);
-				subscribedTopics
-						.forEach(topicName -> connectedChannels
-								.write(SMSProtocol.ClientToBrokerMessage
-										.newBuilder()
-										.setMessageType(
-												ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-										.setTopicName(topicName)));
-				connectedChannels.flush();
-			}
+		if (!isStarted()) {
+			return;
 		}
+
+		synchronized (subscribedTopics) {
+			log.debug("resubscribeToTopics {}", subscribedTopics);
+			subscribedTopics
+					.forEach(topicName -> connectedChannels
+							.write(SMSProtocol.ClientToBrokerMessage
+									.newBuilder()
+									.setMessageType(
+											ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+									.setTopicName(topicName)));
+			connectedChannels.flush();
+		}
+
 	}
 
 	/**
