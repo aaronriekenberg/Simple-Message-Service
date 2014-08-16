@@ -20,7 +20,7 @@
 		<guava.version>17.0</guava.version>
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.6</slf4j.version>
-		<netty.version>4.0.22.Final</netty.version>
+		<netty.version>4.0.23.Final</netty.version>
 		<protobuf.version>2.5.0</protobuf.version>
 		<spring.version>4.0.6.RELEASE</spring.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
