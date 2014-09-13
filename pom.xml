@@ -27,6 +27,7 @@
 		<maven-source-plugin.version>2.2.1</maven-source-plugin.version>
 		<license-maven-plugin.version>1.5</license-maven-plugin.version>
 		<appassembler-maven-plugin.version>1.8.1</appassembler-maven-plugin.version>
+		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 	</properties>
 
 	<dependencyManagement>
