@@ -83,8 +83,6 @@ public class SMSConnection {
 
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
-	private static final int RECONNECT_DELAY_SECONDS = 1;
-
 	private final ChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
@@ -112,6 +110,10 @@ public class SMSConnection {
 	private final String brokerAddress;
 
 	private final int brokerPort;
+
+	private final long reconnectDelay;
+
+	private final TimeUnit reconnectDelayUnit;
 
 	private class ClientHandler extends
 			SimpleChannelInboundHandler<SMSProtocol.BrokerToClientMessage> {
@@ -163,7 +165,7 @@ public class SMSConnection {
 			if (haveBeenConnected.get()) {
 				fireListenerCallback(SMSConnectionListener::handleConnectionClosed);
 			}
-			reconnectAsync(RECONNECT_DELAY_SECONDS);
+			reconnectAsync(reconnectDelay, reconnectDelayUnit);
 		}
 
 		@Override
@@ -192,9 +194,33 @@ public class SMSConnection {
 	 * @param serverPort
 	 */
 	public SMSConnection(String brokerAddress, int brokerPort) {
+		this(brokerAddress, brokerPort, 1, TimeUnit.SECONDS);
+	}
+
+	/**
+	 * Constructor method
+	 * 
+	 * @param serverAddress
+	 *            Broker address
+	 * @param serverPort
+	 * @param reconnect
+	 *            delay reconnect delay time
+	 * @param reconnect
+	 *            delay unit reconnect delay time unit
+	 */
+	public SMSConnection(String brokerAddress, int brokerPort,
+			long reconnectDelay, TimeUnit reconnectDelayUnit) {
 		this.brokerAddress = checkNotNull(brokerAddress,
 				"brokerAddress is null");
+
+		checkArgument(brokerPort > 0, "brokerPort must be positive");
 		this.brokerPort = brokerPort;
+
+		checkArgument(reconnectDelay > 0, "reconnectDelay must be positive");
+		this.reconnectDelay = reconnectDelay;
+
+		this.reconnectDelayUnit = checkNotNull(reconnectDelayUnit,
+				"reconnectDelayUnit is null");
 	}
 
 	private void assertState(ConnectionState expectedState) {
@@ -226,7 +252,7 @@ public class SMSConnection {
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-		reconnectAsync(0);
+		reconnectAsync(0, TimeUnit.SECONDS);
 	}
 
 	/**
@@ -238,7 +264,7 @@ public class SMSConnection {
 		return (connectionState.get() == ConnectionState.RUNNING);
 	}
 
-	private void reconnectAsync(int delaySeconds) {
+	private void reconnectAsync(long delay, TimeUnit delayUnit) {
 		if (!isStarted()) {
 			return;
 		}
@@ -259,7 +285,7 @@ public class SMSConnection {
 												1000)
 										.connect(brokerAddress, brokerPort);
 							}
-						}, delaySeconds, TimeUnit.SECONDS);
+						}, delay, delayUnit);
 	}
 
 	private void resubscribeToTopics() {
