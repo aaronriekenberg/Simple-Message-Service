@@ -25,7 +25,7 @@
 		<spring.version>4.1.1.RELEASE</spring.version>
 		<maven-compiler-plugin.version>3.1</maven-compiler-plugin.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<license-maven-plugin.version>1.5</license-maven-plugin.version>
+		<license-maven-plugin.version>1.7</license-maven-plugin.version>
 		<appassembler-maven-plugin.version>1.8.1</appassembler-maven-plugin.version>
 		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
 	</properties>
