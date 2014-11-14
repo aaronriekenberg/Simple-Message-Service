@@ -32,7 +32,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -54,7 +53,7 @@ public class SMSBrokerTCPServer {
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSBrokerTCPServer.class);
 
-	private final ChannelGroup allChannels = new DefaultChannelGroup(
+	private final DefaultChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
 	private final AtomicBoolean destroyed = new AtomicBoolean(false);

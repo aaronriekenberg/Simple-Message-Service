@@ -28,7 +28,6 @@ package org.aaron.sms.broker;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.channel.Channel;
-import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
@@ -40,7 +39,7 @@ class SMSTopic {
 
 	private static final Logger log = LoggerFactory.getLogger(SMSTopic.class);
 
-	private final ChannelGroup channelGroup = new DefaultChannelGroup(
+	private final DefaultChannelGroup channelGroup = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
 	public SMSTopic(String topicName) {

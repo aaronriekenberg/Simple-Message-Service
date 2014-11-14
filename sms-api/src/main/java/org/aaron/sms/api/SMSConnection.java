@@ -34,7 +34,6 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
-import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
@@ -83,10 +82,10 @@ public class SMSConnection {
 
 	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
 
-	private final ChannelGroup allChannels = new DefaultChannelGroup(
+	private final DefaultChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
-	private final ChannelGroup connectedChannels = new DefaultChannelGroup(
+	private final DefaultChannelGroup connectedChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
 	private final Set<String> subscribedTopics = Collections
