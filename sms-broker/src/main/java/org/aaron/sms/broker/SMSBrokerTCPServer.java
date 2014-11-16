@@ -156,6 +156,7 @@ public class SMSBrokerTCPServer {
 			try {
 				awaitDestroyed();
 			} catch (InterruptedException e) {
+				log.warn("awaitDestroyedUninterruptible interrupted", e);
 			}
 		}
 	}
