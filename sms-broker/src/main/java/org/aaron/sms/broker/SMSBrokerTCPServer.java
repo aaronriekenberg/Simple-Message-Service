@@ -107,7 +107,7 @@ public class SMSBrokerTCPServer {
 	}
 
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
-			String listenAddress, int listenPort) throws InterruptedException {
+			String listenAddress, int listenPort) {
 		this.topicContainer = topicContainer;
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
@@ -121,8 +121,8 @@ public class SMSBrokerTCPServer {
 										.getDefaultInstance()))
 				.option(ChannelOption.SO_REUSEADDR, true);
 
-		final Channel serverChannel = b.bind(listenAddress, listenPort).sync()
-				.channel();
+		final Channel serverChannel = b.bind(listenAddress, listenPort)
+				.syncUninterruptibly().channel();
 		allChannels.add(serverChannel);
 
 		log.info("listening on " + serverChannel.localAddress());
