@@ -46,7 +46,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
@@ -117,8 +116,6 @@ public class SMSConnection {
 	private class ClientHandler extends
 			SimpleChannelInboundHandler<SMSProtocol.BrokerToClientMessage> {
 
-		private final AtomicBoolean haveBeenConnected = new AtomicBoolean(false);
-
 		public ClientHandler() {
 
 		}
@@ -146,25 +143,27 @@ public class SMSConnection {
 		public void channelActive(ChannelHandlerContext ctx) throws Exception {
 			log.debug("channelActive {}", ctx.channel());
 			connectedChannels.add(ctx.channel());
-			haveBeenConnected.set(true);
 			resubscribeToTopics();
 			fireListenerCallback(SMSConnectionListener::handleConnectionOpen);
 		}
 
 		@Override
-		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-			log.debug("exceptionCaught {}", ctx.channel(), cause);
-			ctx.channel().close();
+		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
+			log.debug("channelInactive {}", ctx.channel());
+			fireListenerCallback(SMSConnectionListener::handleConnectionClosed);
 		}
 
 		@Override
 		public void channelUnregistered(ChannelHandlerContext ctx)
 				throws Exception {
 			log.debug("channelUnregistered {}", ctx.channel());
-			if (haveBeenConnected.get()) {
-				fireListenerCallback(SMSConnectionListener::handleConnectionClosed);
-			}
 			reconnectAsync(reconnectDelay, reconnectDelayUnit);
+		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+			log.debug("exceptionCaught {}", ctx.channel(), cause);
+			ctx.channel().close();
 		}
 
 		@Override
