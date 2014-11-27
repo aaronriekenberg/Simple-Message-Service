@@ -1,5 +1,7 @@
 package org.aaron.sms.api;
 
+import com.google.protobuf.ByteString;
+
 /*
  * #%L
  * Simple Message Service API
@@ -54,7 +56,8 @@ public interface SMSConnectionListener {
 	 * @param message
 	 *            message payload
 	 */
-	public default void handleIncomingMessage(String topicName, byte[] message) {
+	public default void handleIncomingMessage(String topicName,
+			ByteString message) {
 
 	}
 

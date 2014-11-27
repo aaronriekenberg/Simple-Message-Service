@@ -39,6 +39,8 @@ import org.aaron.sms.api.SMSConnectionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.ByteString;
+
 public class SMSTestReceiver {
 
 	private static final Logger log = LoggerFactory
@@ -70,9 +72,9 @@ public class SMSTestReceiver {
 
 				@Override
 				public void handleIncomingMessage(String topicName,
-						byte[] message) {
+						ByteString message) {
 					log.debug("handleIncomingMessage topic {} length {}",
-							topicName, message.length);
+							topicName, message.size());
 					if (!SMSTestReceiver.this.topicName.equals(topicName)) {
 						throw new IllegalStateException("received topic name '"
 								+ topicName + "' expected '"

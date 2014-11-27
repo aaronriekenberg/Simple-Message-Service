@@ -358,7 +358,7 @@ public class SMSConnection {
 	 * @param message
 	 *            message payload
 	 */
-	public void writeToTopic(String topicName, byte[] message) {
+	public void writeToTopic(String topicName, ByteString message) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		checkNotNull(message, "message is null");
@@ -368,8 +368,7 @@ public class SMSConnection {
 				.newBuilder()
 				.setMessageType(
 						ClientToBrokerMessageType.CLIENT_SEND_MESSAGE_TO_TOPIC)
-				.setTopicName(topicName)
-				.setMessagePayload(ByteString.copyFrom(message)));
+				.setTopicName(topicName).setMessagePayload(message));
 	}
 
 	/**
@@ -402,8 +401,8 @@ public class SMSConnection {
 				"topic name is emtpy");
 		checkNotNull(message.getMessagePayload(), "message payload is null");
 
-		fireListenerCallback(listener -> listener.handleIncomingMessage(message
-				.getTopicName(), message.getMessagePayload().toByteArray()));
+		fireListenerCallback(listener -> listener.handleIncomingMessage(
+				message.getTopicName(), message.getMessagePayload()));
 	}
 
 	private void fireListenerCallback(Consumer<SMSConnectionListener> callback) {

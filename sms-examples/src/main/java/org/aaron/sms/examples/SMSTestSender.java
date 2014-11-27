@@ -37,6 +37,8 @@ import org.aaron.sms.api.SMSConnectionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.protobuf.ByteString;
+
 public class SMSTestSender implements Runnable {
 
 	private static final Logger log = LoggerFactory
@@ -69,7 +71,8 @@ public class SMSTestSender implements Runnable {
 
 			smsConnection.start();
 
-			final byte[] buffer = new byte[MESSAGE_SIZE_BYTES];
+			final ByteString buffer = ByteString
+					.copyFrom(new byte[MESSAGE_SIZE_BYTES]);
 			while (true) {
 				smsConnection.writeToTopic(topicName, buffer);
 				Thread.sleep(SLEEP_BETWEEN_SENDS_MS);
