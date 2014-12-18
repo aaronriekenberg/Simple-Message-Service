@@ -84,9 +84,9 @@ public class SMSTestSender implements Runnable {
 
 	private static final int NUM_SENDERS = 50;
 
-	private static final int MESSAGE_SIZE_BYTES = 50;
+	private static final int MESSAGE_SIZE_BYTES = 5_000;
 
-	private static final long SLEEP_BETWEEN_SENDS_MS = 10;
+	private static final long SLEEP_BETWEEN_SENDS_MS = 1;
 
 	public static void main(String[] args) {
 		log.info("NUM_SENDERS = {}", NUM_SENDERS);

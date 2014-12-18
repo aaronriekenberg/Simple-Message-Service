@@ -316,12 +316,14 @@ public class SMSConnection {
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		assertState(ConnectionState.RUNNING);
 
-		subscribedTopics.add(topicName);
-		connectedChannels.writeAndFlush(SMSProtocol.ClientToBrokerMessage
-				.newBuilder()
-				.setMessageType(
-						ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-				.setTopicName(topicName));
+		if (subscribedTopics.add(topicName)) {
+			connectedChannels
+					.writeAndFlush(SMSProtocol.ClientToBrokerMessage
+							.newBuilder()
+							.setMessageType(
+									ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+							.setTopicName(topicName));
+		}
 	}
 
 	/**
@@ -335,13 +337,14 @@ public class SMSConnection {
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		assertState(ConnectionState.RUNNING);
 
-		subscribedTopics.remove(topicName);
-		connectedChannels
-				.writeAndFlush(SMSProtocol.ClientToBrokerMessage
-						.newBuilder()
-						.setMessageType(
-								ClientToBrokerMessageType.CLIENT_UNSUBSCRIBE_FROM_TOPIC)
-						.setTopicName(topicName));
+		if (subscribedTopics.remove(topicName)) {
+			connectedChannels
+					.writeAndFlush(SMSProtocol.ClientToBrokerMessage
+							.newBuilder()
+							.setMessageType(
+									ClientToBrokerMessageType.CLIENT_UNSUBSCRIBE_FROM_TOPIC)
+							.setTopicName(topicName));
+		}
 	}
 
 	/**
