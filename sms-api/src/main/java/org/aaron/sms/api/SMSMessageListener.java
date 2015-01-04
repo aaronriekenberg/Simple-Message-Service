@@ -31,34 +31,14 @@ import com.google.protobuf.ByteString;
 /**
  * A listener for events from an SMSConnection.
  */
-public interface SMSConnectionListener {
-
-	/**
-	 * Notification that the SMSConnection is now connected to the SMS Broker.
-	 */
-	public default void handleConnectionOpen() {
-
-	}
-
-	/**
-	 * Notification that the SMSConnection is now disconnected from the SMS
-	 * Broker.
-	 */
-	public default void handleConnectionClosed() {
-
-	}
+public interface SMSMessageListener {
 
 	/**
 	 * Handle an incoming message for a topic subscription.
 	 * 
-	 * @param topicName
-	 *            topic name
 	 * @param message
 	 *            message payload
 	 */
-	public default void handleIncomingMessage(String topicName,
-			ByteString message) {
-
-	}
+	public void handleIncomingMessage(ByteString message);
 
 }

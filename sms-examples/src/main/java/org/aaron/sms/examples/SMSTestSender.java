@@ -33,7 +33,7 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
 import org.aaron.sms.api.SMSConnection;
-import org.aaron.sms.api.SMSConnectionListener;
+import org.aaron.sms.api.SMSConnectionStateListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,18 +56,18 @@ public class SMSTestSender implements Runnable {
 			final SMSConnection smsConnection = new SMSConnection("127.0.0.1",
 					10001);
 
-			smsConnection.setListener(new SMSConnectionListener() {
+			smsConnection
+					.registerConnectionStateListener(new SMSConnectionStateListener() {
+						@Override
+						public void handleConnectionOpen() {
+							log.info("handleConnectionOpen");
+						}
 
-				@Override
-				public void handleConnectionOpen() {
-					log.info("handleConnectionOpen");
-				}
-
-				@Override
-				public void handleConnectionClosed() {
-					log.info("handleConnectionClosed");
-				}
-			});
+						@Override
+						public void handleConnectionClosed() {
+							log.info("handleConnectionClosed");
+						}
+					});
 
 			smsConnection.start();
 

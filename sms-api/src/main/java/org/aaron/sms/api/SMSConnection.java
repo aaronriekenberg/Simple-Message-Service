@@ -42,9 +42,8 @@ import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.util.Collections;
-import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -87,8 +86,7 @@ public class SMSConnection {
 	private final DefaultChannelGroup connectedChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
 
-	private final Set<String> subscribedTopics = Collections
-			.synchronizedSet(new HashSet<>());
+	private final ConcurrentHashMap<String, SMSMessageListener> subscribedTopicToListener = new ConcurrentHashMap<>();
 
 	private enum ConnectionState {
 		NOT_STARTED,
@@ -101,7 +99,8 @@ public class SMSConnection {
 	private final AtomicReference<ConnectionState> connectionState = new AtomicReference<>(
 			ConnectionState.NOT_STARTED);
 
-	private final AtomicReference<SMSConnectionListener> listener = new AtomicReference<>();
+	private final Set<SMSConnectionStateListener> connectionStateListeners = Collections
+			.newSetFromMap(new ConcurrentHashMap<>());
 
 	private final Object destroyLock = new Object();
 
@@ -144,13 +143,13 @@ public class SMSConnection {
 			log.debug("channelActive {}", ctx.channel());
 			connectedChannels.add(ctx.channel());
 			resubscribeToTopics();
-			fireListenerCallback(SMSConnectionListener::handleConnectionOpen);
+			fireConnectionStateListenerCallback(SMSConnectionStateListener::handleConnectionOpen);
 		}
 
 		@Override
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 			log.debug("channelInactive {}", ctx.channel());
-			fireListenerCallback(SMSConnectionListener::handleConnectionClosed);
+			fireConnectionStateListenerCallback(SMSConnectionStateListener::handleConnectionClosed);
 		}
 
 		@Override
@@ -229,15 +228,27 @@ public class SMSConnection {
 	}
 
 	/**
-	 * Set an SMSConnectionListener for this connection. Only one
-	 * SMSConnectionListener may be registered at a time.
+	 * Register an SMSConnectionStateListener for this connection.
 	 * 
 	 * @param listener
 	 */
-	public void setListener(SMSConnectionListener listener) {
+	public void registerConnectionStateListener(
+			SMSConnectionStateListener listener) {
 		checkNotNull(listener, "listener is null");
 
-		this.listener.set(listener);
+		connectionStateListeners.add(listener);
+	}
+
+	/**
+	 * Unregister an SMSConnectionStateListener for this connection.
+	 * 
+	 * @param listener
+	 */
+	public void unregisterConnectionStateListener(
+			SMSConnectionStateListener listener) {
+		checkNotNull(listener, "listener is null");
+
+		connectionStateListeners.remove(listener);
 	}
 
 	/**
@@ -291,18 +302,17 @@ public class SMSConnection {
 			return;
 		}
 
-		synchronized (subscribedTopics) {
-			log.debug("resubscribeToTopics {}", subscribedTopics);
-			subscribedTopics
-					.forEach(topicName -> connectedChannels
-							.write(SMSProtocol.ClientToBrokerMessage
-									.newBuilder()
-									.setMessageType(
-											ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-									.setTopicName(topicName)));
-			connectedChannels.flush();
-		}
-
+		log.debug("resubscribeToTopics {}", subscribedTopicToListener);
+		subscribedTopicToListener
+				.keySet()
+				.forEach(
+						topicName -> connectedChannels
+								.write(SMSProtocol.ClientToBrokerMessage
+										.newBuilder()
+										.setMessageType(
+												ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+										.setTopicName(topicName)));
+		connectedChannels.flush();
 	}
 
 	/**
@@ -310,13 +320,17 @@ public class SMSConnection {
 	 * 
 	 * @param topicName
 	 *            topic name
+	 * @param messageListener
+	 *            message listener
 	 */
-	public void subscribeToTopic(String topicName) {
+	public void subscribeToTopic(String topicName,
+			SMSMessageListener messageListener) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
+		checkNotNull(messageListener, "messageListener is null");
 		assertState(ConnectionState.RUNNING);
 
-		if (subscribedTopics.add(topicName)) {
+		if (subscribedTopicToListener.put(topicName, messageListener) == null) {
 			connectedChannels
 					.writeAndFlush(SMSProtocol.ClientToBrokerMessage
 							.newBuilder()
@@ -337,7 +351,7 @@ public class SMSConnection {
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		assertState(ConnectionState.RUNNING);
 
-		if (subscribedTopics.remove(topicName)) {
+		if (subscribedTopicToListener.remove(topicName) != null) {
 			connectedChannels
 					.writeAndFlush(SMSProtocol.ClientToBrokerMessage
 							.newBuilder()
@@ -390,7 +404,9 @@ public class SMSConnection {
 				return;
 			}
 
-			listener.set(null);
+			connectionStateListeners.clear();
+
+			subscribedTopicToListener.clear();
 
 			allChannels.close();
 		}
@@ -404,16 +420,31 @@ public class SMSConnection {
 				"topic name is emtpy");
 		checkNotNull(message.getMessagePayload(), "message payload is null");
 
-		fireListenerCallback(listener -> listener.handleIncomingMessage(
-				message.getTopicName(), message.getMessagePayload()));
-	}
-
-	private void fireListenerCallback(Consumer<SMSConnectionListener> callback) {
-		try {
-			Optional.ofNullable(listener.get()).ifPresent(callback);
-		} catch (Exception e) {
-			log.warn("fireListenerCallback", e);
+		final SMSMessageListener listener = subscribedTopicToListener
+				.get(message.getTopicName());
+		if (listener != null) {
+			fireMessageListenerCallback(listener,
+					l -> l.handleIncomingMessage(message.getMessagePayload()));
 		}
 	}
 
+	private void fireConnectionStateListenerCallback(
+			Consumer<SMSConnectionStateListener> callback) {
+		connectionStateListeners.forEach(listener -> {
+			try {
+				callback.accept(listener);
+			} catch (Exception e) {
+				log.warn("fireConnectionStateListenerCallback", e);
+			}
+		});
+	}
+
+	private void fireMessageListenerCallback(SMSMessageListener listener,
+			Consumer<SMSMessageListener> callback) {
+		try {
+			callback.accept(listener);
+		} catch (Exception e) {
+			log.warn("fireMessageListenerCallback", e);
+		}
+	}
 }

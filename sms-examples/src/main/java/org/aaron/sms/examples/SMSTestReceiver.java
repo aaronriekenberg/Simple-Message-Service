@@ -35,7 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import org.aaron.sms.api.SMSConnection;
-import org.aaron.sms.api.SMSConnectionListener;
+import org.aaron.sms.api.SMSConnectionStateListener;
+import org.aaron.sms.api.SMSMessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -68,35 +69,31 @@ public class SMSTestReceiver {
 							+ messagesReceived.getAndSet(0)), 1, 1,
 					TimeUnit.SECONDS);
 
-			smsConnection.setListener(new SMSConnectionListener() {
+			smsConnection
+					.registerConnectionStateListener(new SMSConnectionStateListener() {
+						@Override
+						public void handleConnectionOpen() {
+							log.info("handleConnectionOpen");
+						}
 
-				@Override
-				public void handleIncomingMessage(String topicName,
-						ByteString message) {
-					log.debug("handleIncomingMessage topic {} length {}",
-							topicName, message.size());
-					if (!SMSTestReceiver.this.topicName.equals(topicName)) {
-						throw new IllegalStateException("received topic name '"
-								+ topicName + "' expected '"
-								+ SMSTestReceiver.this.topicName + "'");
-					}
-					messagesReceived.getAndIncrement();
-				}
-
-				@Override
-				public void handleConnectionOpen() {
-					log.info("handleConnectionOpen");
-				}
-
-				@Override
-				public void handleConnectionClosed() {
-					log.info("handleConnectionClosed");
-				}
-			});
+						@Override
+						public void handleConnectionClosed() {
+							log.info("handleConnectionClosed");
+						}
+					});
 
 			smsConnection.start();
 
-			smsConnection.subscribeToTopic(topicName);
+			smsConnection.subscribeToTopic(topicName, new SMSMessageListener() {
+
+				@Override
+				public void handleIncomingMessage(ByteString message) {
+					log.debug("handleIncomingMessage topic {} length {}",
+							topicName, message.size());
+					messagesReceived.getAndIncrement();
+				}
+
+			});
 
 		} catch (Exception e) {
 			log.warn("start", e);
