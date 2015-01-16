@@ -82,8 +82,6 @@ public class SMSTestReceiver {
 						}
 					});
 
-			smsConnection.start();
-
 			smsConnection.subscribeToTopic(topicName, new SMSMessageListener() {
 
 				@Override
@@ -92,8 +90,9 @@ public class SMSTestReceiver {
 							topicName, message.size());
 					messagesReceived.getAndIncrement();
 				}
-
 			});
+
+			smsConnection.start();
 
 		} catch (Exception e) {
 			log.warn("start", e);

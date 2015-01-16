@@ -328,7 +328,6 @@ public class SMSConnection {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		checkNotNull(messageListener, "messageListener is null");
-		assertState(ConnectionState.RUNNING);
 
 		if (subscribedTopicToListener.put(topicName, messageListener) == null) {
 			connectedChannels
@@ -349,7 +348,6 @@ public class SMSConnection {
 	public void unsubscribeFromTopic(String topicName) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
-		assertState(ConnectionState.RUNNING);
 
 		if (subscribedTopicToListener.remove(topicName) != null) {
 			connectedChannels
