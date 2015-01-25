@@ -39,6 +39,7 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
+import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -108,7 +109,9 @@ public class SMSBrokerTCPServer {
 
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
 			String listenAddress, int listenPort) {
-		this.topicContainer = topicContainer;
+		this.topicContainer = Objects.requireNonNull(topicContainer,
+				"topicContainer is null");
+		Objects.requireNonNull(listenAddress, "listenAddress is null");
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
