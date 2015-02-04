@@ -33,7 +33,8 @@ package org.aaron.sms.api;
 public interface SMSConnectionStateListener {
 
 	/**
-	 * Notification that the SMSConnection is now connected to the SMS Broker.
+	 * Notification that the state of the network connection between
+	 * SMSConnection and the broker has changed.
 	 * 
 	 * @param newState
 	 *            new connection state
