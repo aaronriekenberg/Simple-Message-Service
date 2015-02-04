@@ -143,13 +143,13 @@ public class SMSConnection {
 			log.debug("channelActive {}", ctx.channel());
 			connectedChannels.add(ctx.channel());
 			resubscribeToTopics();
-			fireConnectionStateListenerCallback(SMSConnectionStateListener::handleConnectionOpen);
+			fireConnectionStateListenerCallback(SMSConnectionState.CONNECTED_TO_BROKER);
 		}
 
 		@Override
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 			log.debug("channelInactive {}", ctx.channel());
-			fireConnectionStateListenerCallback(SMSConnectionStateListener::handleConnectionClosed);
+			fireConnectionStateListenerCallback(SMSConnectionState.NOT_CONNECTED_TO_BROKER);
 		}
 
 		@Override
@@ -423,11 +423,10 @@ public class SMSConnection {
 		}
 	}
 
-	private void fireConnectionStateListenerCallback(
-			Consumer<SMSConnectionStateListener> callback) {
+	private void fireConnectionStateListenerCallback(SMSConnectionState newState) {
 		connectionStateListeners.forEach(listener -> {
 			try {
-				callback.accept(listener);
+				listener.connectionStateChanged(newState);
 			} catch (Exception e) {
 				log.warn("fireConnectionStateListenerCallback", e);
 			}

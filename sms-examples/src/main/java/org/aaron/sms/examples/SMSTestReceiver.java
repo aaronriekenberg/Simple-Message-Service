@@ -35,12 +35,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
 import org.aaron.sms.api.SMSConnection;
-import org.aaron.sms.api.SMSConnectionStateListener;
-import org.aaron.sms.api.SMSMessageListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.google.protobuf.ByteString;
 
 public class SMSTestReceiver {
 
@@ -69,27 +65,13 @@ public class SMSTestReceiver {
 							+ messagesReceived.getAndSet(0)), 1, 1,
 					TimeUnit.SECONDS);
 
-			smsConnection
-					.registerConnectionStateListener(new SMSConnectionStateListener() {
-						@Override
-						public void handleConnectionOpen() {
-							log.info("handleConnectionOpen");
-						}
+			smsConnection.registerConnectionStateListener(newState -> log.info(
+					"connection state changed {}", newState));
 
-						@Override
-						public void handleConnectionClosed() {
-							log.info("handleConnectionClosed");
-						}
-					});
-
-			smsConnection.subscribeToTopic(topicName, new SMSMessageListener() {
-
-				@Override
-				public void handleIncomingMessage(ByteString message) {
-					log.debug("handleIncomingMessage topic {} length {}",
-							topicName, message.size());
-					messagesReceived.getAndIncrement();
-				}
+			smsConnection.subscribeToTopic(topicName, message -> {
+				log.debug("handleIncomingMessage topic {} length {}",
+						topicName, message.size());
+				messagesReceived.getAndIncrement();
 			});
 
 			smsConnection.start();

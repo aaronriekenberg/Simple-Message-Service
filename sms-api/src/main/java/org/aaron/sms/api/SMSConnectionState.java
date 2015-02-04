@@ -4,7 +4,7 @@ package org.aaron.sms.api;
  * #%L
  * Simple Message Service API
  * %%
- * Copyright (C) 2013 Aaron Riekenberg
+ * Copyright (C) 2013 - 2015 Aaron Riekenberg
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -27,17 +27,12 @@ package org.aaron.sms.api;
  */
 
 /**
- * A listener for connection state events from an SMSConnection.
+ * State of connection between SMSConnection and broker.
  */
-@FunctionalInterface
-public interface SMSConnectionStateListener {
+public enum SMSConnectionState {
 
-	/**
-	 * Notification that the SMSConnection is now connected to the SMS Broker.
-	 * 
-	 * @param newState
-	 *            new connection state
-	 */
-	public void connectionStateChanged(SMSConnectionState newState);
+	CONNECTED_TO_BROKER,
+
+	NOT_CONNECTED_TO_BROKER
 
 }

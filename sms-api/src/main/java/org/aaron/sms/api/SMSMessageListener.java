@@ -31,6 +31,7 @@ import com.google.protobuf.ByteString;
 /**
  * A listener for events from an SMSConnection.
  */
+@FunctionalInterface
 public interface SMSMessageListener {
 
 	/**
