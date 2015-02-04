@@ -46,7 +46,6 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.function.Consumer;
 
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
@@ -418,8 +417,7 @@ public class SMSConnection {
 		final SMSMessageListener listener = subscribedTopicToListener
 				.get(message.getTopicName());
 		if (listener != null) {
-			fireMessageListenerCallback(listener,
-					l -> l.handleIncomingMessage(message.getMessagePayload()));
+			fireMessageListenerCallback(listener, message.getMessagePayload());
 		}
 	}
 
@@ -434,9 +432,9 @@ public class SMSConnection {
 	}
 
 	private void fireMessageListenerCallback(SMSMessageListener listener,
-			Consumer<SMSMessageListener> callback) {
+			ByteString message) {
 		try {
-			callback.accept(listener);
+			listener.handleIncomingMessage(message);
 		} catch (Exception e) {
 			log.warn("fireMessageListenerCallback", e);
 		}
