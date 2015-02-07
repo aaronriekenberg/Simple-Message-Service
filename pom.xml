@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+<project
+	xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<modelVersion>4.0.0</modelVersion>
@@ -21,13 +23,13 @@
 		<slf4j.version>1.7.10</slf4j.version>
 		<netty.version>4.0.25.Final</netty.version>
 		<protobuf.version>2.6.1</protobuf.version>
-		<spring.version>4.1.2.RELEASE</spring.version>
-		<javassist.version>3.18.2-GA</javassist.version>
+		<spring.version>4.1.4.RELEASE</spring.version>
+		<javassist.version>3.19.0-GA</javassist.version>
 		<maven-compiler-plugin.version>3.2</maven-compiler-plugin.version>
 		<maven-source-plugin.version>2.4</maven-source-plugin.version>
-		<license-maven-plugin.version>1.7</license-maven-plugin.version>
-		<appassembler-maven-plugin.version>1.8.1</appassembler-maven-plugin.version>
-		<maven-antrun-plugin.version>1.7</maven-antrun-plugin.version>
+		<license-maven-plugin.version>1.8</license-maven-plugin.version>
+		<appassembler-maven-plugin.version>1.9</appassembler-maven-plugin.version>
+		<maven-antrun-plugin.version>1.8</maven-antrun-plugin.version>
 	</properties>
 
 	<dependencyManagement>
