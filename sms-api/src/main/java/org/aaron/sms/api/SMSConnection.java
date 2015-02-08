@@ -77,7 +77,9 @@ public class SMSConnection {
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSConnection.class);
 
-	private static final EventLoopGroup eventLoopGroup = new NioEventLoopGroup();
+	private static final Integer CONNECT_TIMEOUT_MS = 1_000;
+
+	private static final EventLoopGroup EVENT_LOOP_GROUP = new NioEventLoopGroup();
 
 	private final DefaultChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
@@ -272,28 +274,29 @@ public class SMSConnection {
 		return (connectionState.get() == ConnectionState.RUNNING);
 	}
 
+	private void bootstrapConnection() {
+		if (!isStarted()) {
+			return;
+		}
+
+		new Bootstrap()
+				.group(EVENT_LOOP_GROUP)
+				.channel(NioSocketChannel.class)
+				.handler(
+						new SMSProtocolChannelInitializer(ClientHandler::new,
+								SMSProtocol.BrokerToClientMessage
+										.getDefaultInstance()))
+				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
+						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort);
+	}
+
 	private void reconnectAsync(long delay, TimeUnit delayUnit) {
 		if (!isStarted()) {
 			return;
 		}
 
-		eventLoopGroup
-				.schedule(
-						() -> {
-							if (isStarted()) {
-								new Bootstrap()
-										.group(eventLoopGroup)
-										.channel(NioSocketChannel.class)
-										.handler(
-												new SMSProtocolChannelInitializer(
-														ClientHandler::new,
-														SMSProtocol.BrokerToClientMessage
-																.getDefaultInstance()))
-										.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-												1000)
-										.connect(brokerAddress, brokerPort);
-							}
-						}, delay, delayUnit);
+		EVENT_LOOP_GROUP
+				.schedule(() -> bootstrapConnection(), delay, delayUnit);
 	}
 
 	private void resubscribeToTopics() {
