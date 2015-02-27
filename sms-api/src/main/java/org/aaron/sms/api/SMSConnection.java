@@ -306,14 +306,12 @@ public class SMSConnection {
 
 		log.debug("resubscribeToTopics {}", subscribedTopicToListener);
 		subscribedTopicToListener
-				.keySet()
-				.forEach(
-						topicName -> connectedChannels
-								.write(SMSProtocol.ClientToBrokerMessage
-										.newBuilder()
-										.setMessageType(
-												ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-										.setTopicName(topicName)));
+				.forEach((topicName, listener) -> connectedChannels
+						.write(SMSProtocol.ClientToBrokerMessage
+								.newBuilder()
+								.setMessageType(
+										ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+								.setTopicName(topicName)));
 		connectedChannels.flush();
 	}
 
