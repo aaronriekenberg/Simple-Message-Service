@@ -26,6 +26,7 @@ package org.aaron.sms.broker;
  * #L%
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandlerContext;
@@ -39,7 +40,6 @@ import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
-import java.util.Objects;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -109,9 +109,9 @@ public class SMSBrokerTCPServer {
 
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
 			String listenAddress, int listenPort) {
-		this.topicContainer = Objects.requireNonNull(topicContainer,
+		this.topicContainer = checkNotNull(topicContainer,
 				"topicContainer is null");
-		Objects.requireNonNull(listenAddress, "listenAddress is null");
+		checkNotNull(listenAddress, "listenAddress is null");
 
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
