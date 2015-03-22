@@ -81,15 +81,12 @@ public class SMSTestSender implements Runnable {
 		log.info("NUM_SENDERS = {}", NUM_SENDERS);
 		log.info("MESSAGE_SIZE_BYTES = {}", MESSAGE_SIZE_BYTES);
 		log.info("SLEEP_BETWEEN_SENDS_MS = {}", SLEEP_BETWEEN_SENDS_MS);
-		final List<Thread> threadList = IntStream
-				.range(0, NUM_SENDERS)
-				.mapToObj(
-						i -> {
-							final Thread t = new Thread(new SMSTestSender(
-									"test.topic." + i));
-							t.start();
-							return t;
-						}).collect(Collectors.toList());
+
+		final List<Thread> threadList = IntStream.range(0, NUM_SENDERS)
+				.mapToObj(i -> "test.topic." + i).map(SMSTestSender::new)
+				.map(Thread::new).collect(Collectors.toList());
+
+		threadList.forEach(Thread::start);
 
 		threadList.forEach(t -> {
 			try {

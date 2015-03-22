@@ -85,8 +85,10 @@ public class SMSTestReceiver {
 
 	public static void main(String[] args) {
 		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);
-		IntStream.range(0, NUM_RECEIVERS).forEach(
-				i -> new SMSTestReceiver("test.topic." + i).start());
+
+		IntStream.range(0, NUM_RECEIVERS).mapToObj(i -> "test.topic." + i)
+				.map(SMSTestReceiver::new).forEach(SMSTestReceiver::start);
+
 		while (true) {
 			try {
 				Thread.sleep(1000);
