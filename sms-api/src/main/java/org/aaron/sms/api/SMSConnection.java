@@ -46,6 +46,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
@@ -103,7 +104,7 @@ public class SMSConnection {
 	private final Set<SMSConnectionStateListener> connectionStateListeners = Collections
 			.newSetFromMap(new ConcurrentHashMap<>());
 
-	private final Object destroyLock = new Object();
+	private final ReentrantReadWriteLock destroyLock = new ReentrantReadWriteLock();
 
 	private final String brokerAddress;
 
@@ -130,12 +131,15 @@ public class SMSConnection {
 			 * calling destroy() between connectionState.get() and
 			 * allChannels.add() below.
 			 */
-			synchronized (destroyLock) {
+			destroyLock.readLock().lock();
+			try {
 				if (connectionState.get() == ConnectionState.DESTROYED) {
 					ctx.channel().close();
 				} else {
 					allChannels.add(ctx.channel());
 				}
+			} finally {
+				destroyLock.readLock().unlock();
 			}
 		}
 
@@ -393,7 +397,8 @@ public class SMSConnection {
 	 * created.
 	 */
 	public void destroy() {
-		synchronized (destroyLock) {
+		destroyLock.writeLock().lock();
+		try {
 			if (!connectionState.compareAndSet(ConnectionState.RUNNING,
 					ConnectionState.DESTROYED)) {
 				return;
@@ -404,6 +409,8 @@ public class SMSConnection {
 			subscribedTopicToListener.clear();
 
 			allChannels.close();
+		} finally {
+			destroyLock.writeLock().unlock();
 		}
 	}
 
