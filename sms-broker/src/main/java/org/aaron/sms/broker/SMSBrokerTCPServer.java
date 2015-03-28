@@ -101,14 +101,20 @@ public class SMSBrokerTCPServer {
 		}
 
 		@Override
-		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
-			log.debug("exceptionCaught {}", ctx.channel(), cause);
-			ctx.channel().close();
+		public void channelInactive(ChannelHandlerContext ctx) {
+			log.info("channelInactive {}", ctx.channel());
 		}
 
 		@Override
-		public void channelInactive(ChannelHandlerContext ctx) {
-			log.info("channelInactive {}", ctx.channel());
+		public void channelUnregistered(ChannelHandlerContext ctx)
+				throws Exception {
+			log.debug("channelUnregistered {}", ctx.channel());
+		}
+
+		@Override
+		public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) {
+			log.debug("exceptionCaught {}", ctx.channel(), cause);
+			ctx.channel().close();
 		}
 
 		@Override
