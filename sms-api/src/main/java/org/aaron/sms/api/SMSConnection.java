@@ -399,16 +399,16 @@ public class SMSConnection {
 	public void destroy() {
 		destroyLock.writeLock().lock();
 		try {
-			if (!connectionState.compareAndSet(ConnectionState.RUNNING,
+			if (connectionState.compareAndSet(ConnectionState.RUNNING,
 					ConnectionState.DESTROYED)) {
-				return;
+
+				connectionStateListeners.clear();
+
+				subscribedTopicToListener.clear();
+
+				allChannels.close();
+
 			}
-
-			connectionStateListeners.clear();
-
-			subscribedTopicToListener.clear();
-
-			allChannels.close();
 		} finally {
 			destroyLock.writeLock().unlock();
 		}
