@@ -42,6 +42,7 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
@@ -61,6 +62,8 @@ public class SMSBrokerTCPServer {
 
 	private final CountDownLatch destroyedLatch = new CountDownLatch(1);
 
+	private final ReentrantReadWriteLock destroyLock = new ReentrantReadWriteLock();
+
 	private final EventLoopGroup bossGroup = new NioEventLoopGroup();
 
 	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
@@ -74,7 +77,22 @@ public class SMSBrokerTCPServer {
 		public void channelRegistered(ChannelHandlerContext ctx)
 				throws Exception {
 			log.debug("channelRegistered {}", ctx.channel());
-			allChannels.add(ctx.channel());
+
+			/*
+			 * Need to synchronize on destroyLock to avoid another thread
+			 * calling destroy() between destroyed.get() and allChannels.add()
+			 * below.
+			 */
+			destroyLock.readLock().lock();
+			try {
+				if (destroyed.get()) {
+					ctx.channel().close();
+				} else {
+					allChannels.add(ctx.channel());
+				}
+			} finally {
+				destroyLock.readLock().unlock();
+			}
 		}
 
 		@Override
@@ -135,15 +153,22 @@ public class SMSBrokerTCPServer {
 	public void destroy() {
 		log.info("destroy");
 
-		allChannels.close();
+		destroyLock.writeLock().lock();
+		try {
+			if (destroyed.compareAndSet(false, true)) {
 
-		bossGroup.shutdownGracefully();
+				allChannels.close();
 
-		workerGroup.shutdownGracefully();
+				bossGroup.shutdownGracefully();
 
-		destroyed.set(true);
+				workerGroup.shutdownGracefully();
 
-		destroyedLatch.countDown();
+				destroyedLatch.countDown();
+
+			}
+		} finally {
+			destroyLock.writeLock().unlock();
+		}
 	}
 
 	public boolean isDestroyed() {
