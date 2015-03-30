@@ -155,7 +155,7 @@ public class SMSConnection {
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 			log.debug("channelInactive {}", ctx.channel());
 			fireConnectionStateListenerCallback(SMSConnectionState.NOT_CONNECTED_TO_BROKER);
-			reconnectAsync(reconnectDelay, reconnectDelayUnit);
+			reconnectAsync();
 		}
 
 		@Override
@@ -296,9 +296,13 @@ public class SMSConnection {
 					final boolean success = future.isSuccess();
 					log.debug("connect completed success {}", success);
 					if (!success) {
-						reconnectAsync(reconnectDelay, reconnectDelayUnit);
+						reconnectAsync();
 					}
 				});
+	}
+
+	private void reconnectAsync() {
+		reconnectAsync(reconnectDelay, reconnectDelayUnit);
 	}
 
 	private void reconnectAsync(long delay, TimeUnit delayUnit) {
