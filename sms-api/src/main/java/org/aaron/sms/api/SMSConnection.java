@@ -155,13 +155,13 @@ public class SMSConnection {
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 			log.debug("channelInactive {}", ctx.channel());
 			fireConnectionStateListenerCallback(SMSConnectionState.NOT_CONNECTED_TO_BROKER);
+			reconnectAsync(reconnectDelay, reconnectDelayUnit);
 		}
 
 		@Override
 		public void channelUnregistered(ChannelHandlerContext ctx)
 				throws Exception {
 			log.debug("channelUnregistered {}", ctx.channel());
-			reconnectAsync(reconnectDelay, reconnectDelayUnit);
 		}
 
 		@Override
@@ -291,7 +291,14 @@ public class SMSConnection {
 								SMSProtocol.BrokerToClientMessage
 										.getDefaultInstance()))
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort);
+						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort)
+				.addListener(future -> {
+					final boolean success = future.isSuccess();
+					log.debug("connect completed success {}", success);
+					if (!success) {
+						reconnectAsync(reconnectDelay, reconnectDelayUnit);
+					}
+				});
 	}
 
 	private void reconnectAsync(long delay, TimeUnit delayUnit) {
