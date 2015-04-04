@@ -21,7 +21,7 @@
 		<guava.version>18.0</guava.version>
 		<log4j.version>1.2.17</log4j.version>
 		<slf4j.version>1.7.10</slf4j.version>
-		<netty.version>4.0.26.Final</netty.version>
+		<netty.version>4.0.27.Final</netty.version>
 		<protobuf.version>2.6.1</protobuf.version>
 		<spring.version>4.1.6.RELEASE</spring.version>
 		<javassist.version>3.19.0-GA</javassist.version>
