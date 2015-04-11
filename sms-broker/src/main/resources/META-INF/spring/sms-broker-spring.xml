@@ -36,10 +36,19 @@
 	<bean
 		id="tcpServer"
 		class="org.aaron.sms.broker.SMSBrokerTCPServer"
+		init-method="init"
 		destroy-method="destroy"
 		c:topicContainer-ref="topicContainer"
 		c:listenAddress="0.0.0.0"
 		c:listenPort="10001" />
+
+	<bean
+		id="unixServer"
+		class="org.aaron.sms.broker.SMSBrokerUnixServer"
+		init-method="init"
+		destroy-method="destroy"
+		c:topicContainer-ref="topicContainer"
+		c:socketPath="/tmp/sms-unix-test" />
 
 	<bean
 		id="topicContainer"

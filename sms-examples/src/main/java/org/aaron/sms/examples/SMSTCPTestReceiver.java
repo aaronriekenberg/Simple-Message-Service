@@ -34,14 +34,14 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import org.aaron.sms.api.SMSConnection;
+import org.aaron.sms.api.SMSTCPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SMSTestReceiver {
+public class SMSTCPTestReceiver {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(SMSTestReceiver.class);
+			.getLogger(SMSTCPTestReceiver.class);
 
 	private static final ScheduledExecutorService executor = Executors
 			.newScheduledThreadPool(1);
@@ -50,14 +50,14 @@ public class SMSTestReceiver {
 
 	private final String topicName;
 
-	public SMSTestReceiver(String topicName) {
+	public SMSTCPTestReceiver(String topicName) {
 		this.topicName = checkNotNull(topicName);
 	}
 
 	public void start() {
 		try {
-			final SMSConnection smsConnection = new SMSConnection("127.0.0.1",
-					10001);
+			final SMSTCPConnection smsConnection = new SMSTCPConnection(
+					"127.0.0.1", 10001);
 
 			executor.scheduleAtFixedRate(
 					() -> log.info(topicName
@@ -87,7 +87,7 @@ public class SMSTestReceiver {
 		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);
 
 		IntStream.range(0, NUM_RECEIVERS).mapToObj(i -> "test.topic." + i)
-				.map(SMSTestReceiver::new).forEach(SMSTestReceiver::start);
+				.map(SMSTCPTestReceiver::new).forEach(SMSTCPTestReceiver::start);
 
 		while (true) {
 			try {

@@ -28,73 +28,74 @@ package org.aaron.sms.examples;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import java.util.List;
-import java.util.stream.Collectors;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
-import org.aaron.sms.api.SMSConnection;
+import org.aaron.sms.api.SMSUnixConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.protobuf.ByteString;
-
-public class SMSTestSender implements Runnable {
+public class SMSUnixTestReceiver {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(SMSTestSender.class);
+			.getLogger(SMSUnixTestReceiver.class);
+
+	private static final ScheduledExecutorService executor = Executors
+			.newScheduledThreadPool(1);
+
+	private final AtomicInteger messagesReceived = new AtomicInteger(0);
 
 	private final String topicName;
 
-	public SMSTestSender(String topicName) {
+	public SMSUnixTestReceiver(String topicName) {
 		this.topicName = checkNotNull(topicName);
 	}
 
-	@Override
-	public void run() {
+	public void start() {
 		try {
-			final SMSConnection smsConnection = new SMSConnection("127.0.0.1",
-					10001);
+			final SMSUnixConnection smsConnection = new SMSUnixConnection(
+					"/tmp/sms-unix-test");
+
+			executor.scheduleAtFixedRate(
+					() -> log.info(topicName
+							+ " messages received last second = "
+							+ messagesReceived.getAndSet(0)), 1, 1,
+					TimeUnit.SECONDS);
 
 			smsConnection.registerConnectionStateListener(newState -> log.info(
-					"connection state changed {}", newState));
+					"connection state changed {} {}", newState, topicName));
+
+			smsConnection.subscribeToTopic(topicName, message -> {
+				log.debug("handleIncomingMessage topic {} length {}",
+						topicName, message.size());
+				messagesReceived.getAndIncrement();
+			});
 
 			smsConnection.start();
 
-			final ByteString buffer = ByteString
-					.copyFrom(new byte[MESSAGE_SIZE_BYTES]);
-			while (true) {
-				smsConnection.writeToTopic(topicName, buffer);
-				Thread.sleep(SLEEP_BETWEEN_SENDS_MS);
-			}
 		} catch (Exception e) {
-			log.warn("main", e);
+			log.warn("start", e);
 		}
 	}
 
-	private static final int NUM_SENDERS = 50;
-
-	private static final int MESSAGE_SIZE_BYTES = 5_000;
-
-	private static final long SLEEP_BETWEEN_SENDS_MS = 5;
+	private static final int NUM_RECEIVERS = 50;
 
 	public static void main(String[] args) {
-		log.info("NUM_SENDERS = {}", NUM_SENDERS);
-		log.info("MESSAGE_SIZE_BYTES = {}", MESSAGE_SIZE_BYTES);
-		log.info("SLEEP_BETWEEN_SENDS_MS = {}", SLEEP_BETWEEN_SENDS_MS);
+		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);
 
-		final List<Thread> threadList = IntStream.range(0, NUM_SENDERS)
-				.mapToObj(i -> "test.topic." + i).map(SMSTestSender::new)
-				.map(Thread::new).collect(Collectors.toList());
+		IntStream.range(0, NUM_RECEIVERS).mapToObj(i -> "test.topic." + i)
+				.map(SMSUnixTestReceiver::new)
+				.forEach(SMSUnixTestReceiver::start);
 
-		threadList.forEach(Thread::start);
-
-		threadList.forEach(t -> {
+		while (true) {
 			try {
-				t.join();
+				Thread.sleep(1000);
 			} catch (Exception e) {
-				log.warn("join", e);
+				log.warn("main", e);
 			}
-		});
-
+		}
 	}
 }

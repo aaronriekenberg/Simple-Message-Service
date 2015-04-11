@@ -26,51 +26,46 @@ package org.aaron.sms.broker;
  * #L%
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerDomainSocketChannel;
+import io.netty.channel.unix.DomainSocketAddress;
 
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
-import com.google.common.base.Preconditions;
+public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
-public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
+	private final EventLoopGroup bossGroup = new EpollEventLoopGroup();
 
-	private final EventLoopGroup bossGroup = new NioEventLoopGroup();
+	private final EventLoopGroup workerGroup = new EpollEventLoopGroup();
 
-	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
+	private final String socketPath;
 
-	private final String listenAddress;
-
-	private final int listenPort;
-
-	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
-			String listenAddress, int listenPort) {
+	public SMSBrokerUnixServer(SMSTopicContainer topicContainer,
+			String socketPath) {
 		super(topicContainer);
 
-		this.listenAddress = Preconditions.checkNotNull(listenAddress,
-				"listenAddress is null");
-
-		Preconditions.checkArgument(listenPort > 0, "listenPort must be > 0");
-		this.listenPort = listenPort;
+		this.socketPath = checkNotNull(socketPath, "socketPath is null");
 	}
 
 	@Override
 	protected Channel doBootstrap() {
 		final ServerBootstrap b = new ServerBootstrap();
 		b.group(bossGroup, workerGroup)
-				.channel(NioServerSocketChannel.class)
+				.channel(EpollServerDomainSocketChannel.class)
 				.childHandler(
 						new SMSProtocolChannelInitializer(ServerHandler::new,
 								SMSProtocol.ClientToBrokerMessage
 										.getDefaultInstance()))
 				.option(ChannelOption.SO_REUSEADDR, true);
 
-		final Channel serverChannel = b.bind(listenAddress, listenPort)
+		final Channel serverChannel = b
+				.bind(new DomainSocketAddress(socketPath))
 				.syncUninterruptibly().channel();
 		return serverChannel;
 	}
@@ -80,4 +75,5 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 		bossGroup.shutdownGracefully();
 		workerGroup.shutdownGracefully();
 	}
+
 }

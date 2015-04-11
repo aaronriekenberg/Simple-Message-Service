@@ -31,6 +31,8 @@ import io.netty.channel.Channel;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +43,8 @@ class SMSTopic {
 
 	private final DefaultChannelGroup channelGroup = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
+
+	private final AtomicLong messagesSent = new AtomicLong(0);
 
 	public SMSTopic(String topicName) {
 		checkNotNull(topicName, "topicName is null");
@@ -61,6 +65,8 @@ class SMSTopic {
 
 	public void write(SMSProtocol.BrokerToClientMessage message) {
 		checkNotNull(message, "message is null");
+
+		messagesSent.getAndIncrement();
 
 		channelGroup.writeAndFlush(message);
 	}

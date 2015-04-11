@@ -29,14 +29,11 @@ package org.aaron.sms.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
-import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioSocketChannel;
 import io.netty.util.concurrent.GlobalEventExecutor;
 import io.netty.util.internal.logging.InternalLoggerFactory;
 import io.netty.util.internal.logging.Slf4JLoggerFactory;
@@ -48,7 +45,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType;
 import org.slf4j.Logger;
@@ -56,31 +52,10 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 
-/**
- * SMSConnection represents a single client connection to an SMS Broker (a TCP
- * socket connection).
- * 
- * SMSConnection asynchronously attempts to connect to the SMS Broker when
- * start() is called.
- * 
- * If the connection to the SMS Broker is lost, SMSConnection automatically
- * attempts to reconnect. When the connection is reestablished to the SMS
- * Broker, subscriptions to all topics are reestablished automatically.
- * 
- * While there is no active connection to the SMS Broker, all calls to
- * writeToTopic will silently discard messages. It is the user's responsibility
- * to manage this if necessary.
- * 
- * This class is safe for use by multiple concurrent threads.
- */
-public class SMSConnection {
+public abstract class AbstractSMSConnection {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(SMSConnection.class);
-
-	private static final Integer CONNECT_TIMEOUT_MS = 1_000;
-
-	private static final EventLoopGroup EVENT_LOOP_GROUP = new NioEventLoopGroup();
+			.getLogger(AbstractSMSConnection.class);
 
 	private final DefaultChannelGroup allChannels = new DefaultChannelGroup(
 			GlobalEventExecutor.INSTANCE);
@@ -106,15 +81,11 @@ public class SMSConnection {
 
 	private final ReentrantReadWriteLock destroyLock = new ReentrantReadWriteLock();
 
-	private final String brokerAddress;
-
-	private final int brokerPort;
-
 	private final long reconnectDelay;
 
 	private final TimeUnit reconnectDelayUnit;
 
-	private class ClientHandler extends
+	protected class ClientHandler extends
 			SimpleChannelInboundHandler<SMSProtocol.BrokerToClientMessage> {
 
 		public ClientHandler() {
@@ -155,13 +126,13 @@ public class SMSConnection {
 		public void channelInactive(ChannelHandlerContext ctx) throws Exception {
 			log.debug("channelInactive {}", ctx.channel());
 			fireConnectionStateListenerCallback(SMSConnectionState.NOT_CONNECTED_TO_BROKER);
+			reconnectAsync();
 		}
 
 		@Override
 		public void channelUnregistered(ChannelHandlerContext ctx)
 				throws Exception {
 			log.debug("channelUnregistered {}", ctx.channel());
-			reconnectAsync();
 		}
 
 		@Override
@@ -188,36 +159,8 @@ public class SMSConnection {
 		}
 	}
 
-	/**
-	 * Constructor method
-	 * 
-	 * @param serverAddress
-	 *            Broker address
-	 * @param serverPort
-	 */
-	public SMSConnection(String brokerAddress, int brokerPort) {
-		this(brokerAddress, brokerPort, 1, TimeUnit.SECONDS);
-	}
-
-	/**
-	 * Constructor method
-	 * 
-	 * @param serverAddress
-	 *            Broker address
-	 * @param serverPort
-	 * @param reconnect
-	 *            delay reconnect delay time
-	 * @param reconnect
-	 *            delay unit reconnect delay time unit
-	 */
-	public SMSConnection(String brokerAddress, int brokerPort,
-			long reconnectDelay, TimeUnit reconnectDelayUnit) {
-		this.brokerAddress = checkNotNull(brokerAddress,
-				"brokerAddress is null");
-
-		checkArgument(brokerPort > 0, "brokerPort must be positive");
-		this.brokerPort = brokerPort;
-
+	public AbstractSMSConnection(long reconnectDelay,
+			TimeUnit reconnectDelayUnit) {
 		checkArgument(reconnectDelay > 0, "reconnectDelay must be positive");
 		this.reconnectDelay = reconnectDelay;
 
@@ -278,21 +221,24 @@ public class SMSConnection {
 		return (connectionState.get() == ConnectionState.RUNNING);
 	}
 
+	protected abstract ChannelFuture doBootstrapConnection();
+
 	private void bootstrapConnection() {
 		if (!isStarted()) {
 			return;
 		}
 
-		new Bootstrap()
-				.group(EVENT_LOOP_GROUP)
-				.channel(NioSocketChannel.class)
-				.handler(
-						new SMSProtocolChannelInitializer(ClientHandler::new,
-								SMSProtocol.BrokerToClientMessage
-										.getDefaultInstance()))
-				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort);
+		final ChannelFuture future = doBootstrapConnection();
+		future.addListener(f -> {
+			final boolean success = f.isSuccess();
+			log.debug("connect success {}", success);
+			if (!success) {
+				reconnectAsync();
+			}
+		});
 	}
+
+	protected abstract EventLoopGroup getEventLoopGroup();
 
 	private void reconnectAsync() {
 		reconnectAsync(reconnectDelay, reconnectDelayUnit);
@@ -303,8 +249,8 @@ public class SMSConnection {
 			return;
 		}
 
-		EVENT_LOOP_GROUP
-				.schedule(() -> bootstrapConnection(), delay, delayUnit);
+		getEventLoopGroup().schedule(() -> bootstrapConnection(), delay,
+				delayUnit);
 	}
 
 	private void resubscribeToTopics() {

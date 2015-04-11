@@ -33,9 +33,13 @@ public class SMSBrokerMain {
 	public static void main(String[] args) {
 		try (final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				"META-INF/spring/sms-broker-spring.xml")) {
-			final SMSBrokerTCPServer brokerTCPServer = context
-					.getBean(SMSBrokerTCPServer.class);
-			brokerTCPServer.awaitDestroyedUninterruptible();
+			while (true) {
+				try {
+					Thread.sleep(60 * 1000L);
+				} catch (InterruptedException e) {
+
+				}
+			}
 		}
 	}
 
