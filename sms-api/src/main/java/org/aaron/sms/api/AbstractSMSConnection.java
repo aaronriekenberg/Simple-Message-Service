@@ -29,8 +29,10 @@ package org.aaron.sms.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.DefaultChannelGroup;
@@ -45,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType;
 import org.slf4j.Logger;
@@ -85,7 +88,7 @@ public abstract class AbstractSMSConnection {
 
 	private final TimeUnit reconnectDelayUnit;
 
-	protected class ClientHandler extends
+	private class ClientHandler extends
 			SimpleChannelInboundHandler<SMSProtocol.BrokerToClientMessage> {
 
 		public ClientHandler() {
@@ -221,14 +224,18 @@ public abstract class AbstractSMSConnection {
 		return (connectionState.get() == ConnectionState.RUNNING);
 	}
 
-	protected abstract ChannelFuture doBootstrapConnection();
+	protected abstract ChannelFuture doBootstrapConnection(
+			ChannelInitializer<Channel> channelInitializer);
 
 	private void bootstrapConnection() {
 		if (!isStarted()) {
 			return;
 		}
 
-		final ChannelFuture future = doBootstrapConnection();
+		final ChannelInitializer<Channel> channelInitializer = new SMSProtocolChannelInitializer(
+				ClientHandler::new,
+				SMSProtocol.BrokerToClientMessage.getDefaultInstance());
+		final ChannelFuture future = doBootstrapConnection(channelInitializer);
 		future.addListener(f -> {
 			final boolean success = f.isSuccess();
 			log.debug("connect success {}", success);

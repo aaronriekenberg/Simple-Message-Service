@@ -29,16 +29,15 @@ package org.aaron.sms.api;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.concurrent.TimeUnit;
-
-import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
-import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
 /**
  * SMSTCPConnection represents a single client connection to an SMS Broker (a
@@ -101,14 +100,12 @@ public class SMSTCPConnection extends AbstractSMSConnection {
 	}
 
 	@Override
-	protected ChannelFuture doBootstrapConnection() {
+	protected ChannelFuture doBootstrapConnection(
+			ChannelInitializer<Channel> channelInitializer) {
 		return new Bootstrap()
 				.group(NIO_EVENT_LOOP_GROUP)
 				.channel(NioSocketChannel.class)
-				.handler(
-						new SMSProtocolChannelInitializer(ClientHandler::new,
-								SMSProtocol.BrokerToClientMessage
-										.getDefaultInstance()))
+				.handler(channelInitializer)
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
 						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort);
 	}

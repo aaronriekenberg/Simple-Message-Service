@@ -28,13 +28,12 @@ package org.aaron.sms.broker;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
-
-import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
-import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
 import com.google.common.base.Preconditions;
 
@@ -60,19 +59,12 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 	}
 
 	@Override
-	protected Channel doBootstrap() {
+	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup)
-				.channel(NioServerSocketChannel.class)
-				.childHandler(
-						new SMSProtocolChannelInitializer(ServerHandler::new,
-								SMSProtocol.ClientToBrokerMessage
-										.getDefaultInstance()))
+		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
-
-		final Channel serverChannel = b.bind(listenAddress, listenPort)
-				.syncUninterruptibly().channel();
-		return serverChannel;
+		return b.bind(listenAddress, listenPort);
 	}
 
 	@Override

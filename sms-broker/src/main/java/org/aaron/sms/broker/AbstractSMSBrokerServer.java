@@ -28,7 +28,9 @@ package org.aaron.sms.broker;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -39,6 +41,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType;
 import org.slf4j.Logger;
@@ -60,7 +63,7 @@ public abstract class AbstractSMSBrokerServer {
 
 	private final SMSTopicContainer topicContainer;
 
-	protected class ServerHandler extends
+	private class ServerHandler extends
 			SimpleChannelInboundHandler<SMSProtocol.ClientToBrokerMessage> {
 
 		@Override
@@ -126,15 +129,21 @@ public abstract class AbstractSMSBrokerServer {
 				"topicContainer is null");
 	}
 
-	protected abstract Channel doBootstrap();
+	protected abstract ChannelFuture doBootstrap(
+			ChannelInitializer<Channel> childHandler);
 
 	public void init() {
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-		final Channel serverChannel = doBootstrap();
+		final ChannelInitializer<Channel> childHandler = new SMSProtocolChannelInitializer(
+				ServerHandler::new,
+				SMSProtocol.ClientToBrokerMessage.getDefaultInstance());
 
+		final ChannelFuture channelFuture = doBootstrap(childHandler);
+
+		final Channel serverChannel = channelFuture.syncUninterruptibly()
+				.channel();
 		allChannels.add(serverChannel);
-
 		log.info("listening on {}", serverChannel.localAddress());
 	}
 

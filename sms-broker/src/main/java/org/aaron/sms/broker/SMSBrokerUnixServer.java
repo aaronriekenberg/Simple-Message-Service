@@ -29,14 +29,13 @@ package org.aaron.sms.broker;
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 import io.netty.channel.unix.DomainSocketAddress;
-
-import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
-import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
 public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
@@ -54,20 +53,13 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 	}
 
 	@Override
-	protected Channel doBootstrap() {
+	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
 		b.group(bossGroup, workerGroup)
 				.channel(EpollServerDomainSocketChannel.class)
-				.childHandler(
-						new SMSProtocolChannelInitializer(ServerHandler::new,
-								SMSProtocol.ClientToBrokerMessage
-										.getDefaultInstance()))
+				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
-
-		final Channel serverChannel = b
-				.bind(new DomainSocketAddress(socketPath))
-				.syncUninterruptibly().channel();
-		return serverChannel;
+		return b.bind(new DomainSocketAddress(socketPath));
 	}
 
 	@Override

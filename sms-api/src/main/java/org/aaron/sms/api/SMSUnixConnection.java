@@ -28,16 +28,15 @@ package org.aaron.sms.api;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.unix.DomainSocketAddress;
 
 import java.util.concurrent.TimeUnit;
-
-import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
-import org.aaron.sms.protocol.protobuf.SMSProtocol;
 
 /**
  * SMSUnixConnection represents a single client connection to an SMS Broker (a
@@ -91,14 +90,11 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 	}
 
 	@Override
-	protected ChannelFuture doBootstrapConnection() {
-		return new Bootstrap()
-				.group(EPOLL_EVENT_LOOP_GROUP)
+	protected ChannelFuture doBootstrapConnection(
+			ChannelInitializer<Channel> channelInitializer) {
+		return new Bootstrap().group(EPOLL_EVENT_LOOP_GROUP)
 				.channel(EpollDomainSocketChannel.class)
-				.handler(
-						new SMSProtocolChannelInitializer(ClientHandler::new,
-								SMSProtocol.BrokerToClientMessage
-										.getDefaultInstance()))
+				.handler(channelInitializer)
 				.connect(new DomainSocketAddress(brokerSocketPath));
 	}
 
