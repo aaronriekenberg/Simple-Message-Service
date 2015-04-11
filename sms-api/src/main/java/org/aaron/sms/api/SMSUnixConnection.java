@@ -29,7 +29,6 @@ package org.aaron.sms.api;
 import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
@@ -58,8 +57,6 @@ import org.aaron.sms.protocol.protobuf.SMSProtocol;
  * This class is safe for use by multiple concurrent threads.
  */
 public class SMSUnixConnection extends AbstractSMSConnection {
-
-	private static final Integer CONNECT_TIMEOUT_MS = 1_000;
 
 	private static final EpollEventLoopGroup EPOLL_EVENT_LOOP_GROUP = new EpollEventLoopGroup();
 
@@ -102,8 +99,6 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 						new SMSProtocolChannelInitializer(ClientHandler::new,
 								SMSProtocol.BrokerToClientMessage
 										.getDefaultInstance()))
-				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
-						CONNECT_TIMEOUT_MS)
 				.connect(new DomainSocketAddress(brokerSocketPath));
 	}
 
