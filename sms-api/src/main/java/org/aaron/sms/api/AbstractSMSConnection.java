@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 
-public abstract class AbstractSMSConnection {
+public abstract class AbstractSMSConnection implements SMSConnection {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(AbstractSMSConnection.class);
@@ -178,11 +178,6 @@ public abstract class AbstractSMSConnection {
 				expectedState, localState);
 	}
 
-	/**
-	 * Register an SMSConnectionStateListener for this connection.
-	 * 
-	 * @param listener
-	 */
 	public void registerConnectionStateListener(
 			SMSConnectionStateListener listener) {
 		checkNotNull(listener, "listener is null");
@@ -190,11 +185,6 @@ public abstract class AbstractSMSConnection {
 		connectionStateListeners.add(listener);
 	}
 
-	/**
-	 * Unregister an SMSConnectionStateListener for this connection.
-	 * 
-	 * @param listener
-	 */
 	public void unregisterConnectionStateListener(
 			SMSConnectionStateListener listener) {
 		checkNotNull(listener, "listener is null");
@@ -202,10 +192,7 @@ public abstract class AbstractSMSConnection {
 		connectionStateListeners.remove(listener);
 	}
 
-	/**
-	 * Start the SMSConnection. Initiates a connection attempt to the SMS
-	 * Broker.
-	 */
+	@Override
 	public void start() {
 		checkState(connectionState.compareAndSet(ConnectionState.NOT_STARTED,
 				ConnectionState.RUNNING), "Invalid state for start");
@@ -215,11 +202,7 @@ public abstract class AbstractSMSConnection {
 		reconnectAsync(0, TimeUnit.SECONDS);
 	}
 
-	/**
-	 * Is the SMSConnection started?
-	 * 
-	 * @return true if started, false otherwise
-	 */
+	@Override
 	public boolean isStarted() {
 		return (connectionState.get() == ConnectionState.RUNNING);
 	}
@@ -276,14 +259,7 @@ public abstract class AbstractSMSConnection {
 		connectedChannels.flush();
 	}
 
-	/**
-	 * Subscribe to a topic to begin receiving messages from it.
-	 * 
-	 * @param topicName
-	 *            topic name
-	 * @param messageListener
-	 *            message listener
-	 */
+	@Override
 	public void subscribeToTopic(String topicName,
 			SMSMessageListener messageListener) {
 		checkNotNull(topicName, "topicName is null");
@@ -300,12 +276,7 @@ public abstract class AbstractSMSConnection {
 		}
 	}
 
-	/**
-	 * Unsubscribe from a topic to stop receiving messages from it
-	 * 
-	 * @param topicName
-	 *            topic name
-	 */
+	@Override
 	public void unsubscribeFromTopic(String topicName) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
@@ -320,17 +291,7 @@ public abstract class AbstractSMSConnection {
 		}
 	}
 
-	/**
-	 * Write a message to a topic asynchronously.
-	 * 
-	 * If this SMSConnection is not currently connected to an SMS Broker, the
-	 * message will be silently dropped.
-	 * 
-	 * @param topicName
-	 *            topic name
-	 * @param message
-	 *            message payload
-	 */
+	@Override
 	public void writeToTopic(String topicName, ByteString message) {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
@@ -344,15 +305,7 @@ public abstract class AbstractSMSConnection {
 				.setTopicName(topicName).setMessagePayload(message));
 	}
 
-	/**
-	 * Destroy this SMSConnection. Close the connection to the SMS Broker and
-	 * destroy all resources.
-	 * 
-	 * This SMSConnection must not be used after destroy is called.
-	 * 
-	 * It is the user's responsibility to call destroy on all SMSConnections
-	 * created.
-	 */
+	@Override
 	public void destroy() {
 		destroyLock.writeLock().lock();
 		try {

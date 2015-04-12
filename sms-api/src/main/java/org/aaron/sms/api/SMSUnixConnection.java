@@ -39,21 +39,10 @@ import io.netty.channel.unix.DomainSocketAddress;
 import java.util.concurrent.TimeUnit;
 
 /**
- * SMSUnixConnection represents a single client connection to an SMS Broker (a
- * unix domain socket connection).
+ * TCP version of SMSConnection.
  * 
- * SMSUnixConnection asynchronously attempts to connect to the SMS Broker when
- * start() is called.
- * 
- * If the connection to the SMS Broker is lost, SMSUnixConnection automatically
- * attempts to reconnect. When the connection is reestablished to the SMS
- * Broker, subscriptions to all topics are reestablished automatically.
- * 
- * While there is no active connection to the SMS Broker, all calls to
- * writeToTopic will silently discard messages. It is the user's responsibility
- * to manage this if necessary.
- * 
- * This class is safe for use by multiple concurrent threads.
+ * This version uses Unix Domain sockets and works on Linux only. It supports
+ * local connections to the broker only.
  */
 public class SMSUnixConnection extends AbstractSMSConnection {
 

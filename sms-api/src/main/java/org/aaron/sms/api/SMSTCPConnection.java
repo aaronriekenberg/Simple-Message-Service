@@ -40,21 +40,10 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 import java.util.concurrent.TimeUnit;
 
 /**
- * SMSTCPConnection represents a single client connection to an SMS Broker (a
- * TCP socket connection).
+ * TCP version of SMSConnection.
  * 
- * SMSTCPConnection asynchronously attempts to connect to the SMS Broker when
- * start() is called.
- * 
- * If the connection to the SMS Broker is lost, SMSTCPConnection automatically
- * attempts to reconnect. When the connection is reestablished to the SMS
- * Broker, subscriptions to all topics are reestablished automatically.
- * 
- * While there is no active connection to the SMS Broker, all calls to
- * writeToTopic will silently discard messages. It is the user's responsibility
- * to manage this if necessary.
- * 
- * This class is safe for use by multiple concurrent threads.
+ * This version uses NIO and works on all platforms. It supports remote network
+ * connections to the broker.
  */
 public class SMSTCPConnection extends AbstractSMSConnection {
 
