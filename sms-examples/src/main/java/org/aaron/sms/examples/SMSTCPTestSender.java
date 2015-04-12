@@ -75,7 +75,7 @@ public class SMSTCPTestSender implements Runnable {
 
 	private static final int MESSAGE_SIZE_BYTES = 5_000;
 
-	private static final long SLEEP_BETWEEN_SENDS_MS = 5;
+	private static final long SLEEP_BETWEEN_SENDS_MS = 1;
 
 	public static void main(String[] args) {
 		log.info("NUM_SENDERS = {}", NUM_SENDERS);
