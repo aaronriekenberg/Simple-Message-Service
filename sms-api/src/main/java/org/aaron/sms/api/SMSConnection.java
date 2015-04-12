@@ -47,17 +47,20 @@ import com.google.protobuf.ByteString;
 public interface SMSConnection {
 
 	/**
-	 * Start the SMSConnection. Initiates a connection attempt to the SMS
-	 * Broker.
+	 * Register a listener for connection state changes.
+	 * 
+	 * @param listener
 	 */
-	public void start();
+	public void registerConnectionStateListener(
+			SMSConnectionStateListener listener);
 
 	/**
-	 * Is the SMSConnection started?
+	 * Unregister a listener for connection state changes.
 	 * 
-	 * @return true if started, false otherwise
+	 * @param listener
 	 */
-	public boolean isStarted();
+	public void unregisterConnectionStateListener(
+			SMSConnectionStateListener listener);
 
 	/**
 	 * Subscribe to a topic to begin receiving messages from it.
@@ -77,6 +80,19 @@ public interface SMSConnection {
 	 *            topic name
 	 */
 	public void unsubscribeFromTopic(String topicName);
+
+	/**
+	 * Start the SMSConnection. Initiates a connection attempt to the SMS
+	 * Broker.
+	 */
+	public void start();
+
+	/**
+	 * Is the SMSConnection started?
+	 * 
+	 * @return true if started, false otherwise
+	 */
+	public boolean isStarted();
 
 	/**
 	 * Write a message to a topic asynchronously.

@@ -171,13 +171,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 				"reconnectDelayUnit is null");
 	}
 
-	private void assertState(ConnectionState expectedState) {
-		final ConnectionState localState = connectionState.get();
-		checkState(localState == expectedState,
-				"Expected current state = %s, actual current state = %s",
-				expectedState, localState);
-	}
-
+	@Override
 	public void registerConnectionStateListener(
 			SMSConnectionStateListener listener) {
 		checkNotNull(listener, "listener is null");
@@ -185,6 +179,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 		connectionStateListeners.add(listener);
 	}
 
+	@Override
 	public void unregisterConnectionStateListener(
 			SMSConnectionStateListener listener) {
 		checkNotNull(listener, "listener is null");
@@ -296,7 +291,6 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 		checkNotNull(topicName, "topicName is null");
 		checkArgument(topicName.length() > 0, "topicName is empty");
 		checkNotNull(message, "message is null");
-		assertState(ConnectionState.RUNNING);
 
 		connectedChannels.writeAndFlush(SMSProtocol.ClientToBrokerMessage
 				.newBuilder()
