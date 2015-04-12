@@ -31,7 +31,6 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
@@ -39,9 +38,7 @@ import com.google.common.base.Preconditions;
 
 public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
-	private final EventLoopGroup bossGroup = new NioEventLoopGroup();
-
-	private final EventLoopGroup workerGroup = new NioEventLoopGroup();
+	private final NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
 
 	private final String listenAddress;
 
@@ -61,7 +58,7 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 	@Override
 	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup).channel(NioServerSocketChannel.class)
+		b.group(nioEventLoopGroup).channel(NioServerSocketChannel.class)
 				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
 		return b.bind(listenAddress, listenPort);
@@ -69,7 +66,6 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
 	@Override
 	protected void doDestroy() {
-		bossGroup.shutdownGracefully();
-		workerGroup.shutdownGracefully();
+		nioEventLoopGroup.shutdownGracefully();
 	}
 }

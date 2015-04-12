@@ -32,16 +32,13 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
-import io.netty.channel.EventLoopGroup;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 import io.netty.channel.unix.DomainSocketAddress;
 
 public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
-	private final EventLoopGroup bossGroup = new EpollEventLoopGroup();
-
-	private final EventLoopGroup workerGroup = new EpollEventLoopGroup();
+	private final EpollEventLoopGroup epollEventLoopGroup = new EpollEventLoopGroup();
 
 	private final String socketPath;
 
@@ -55,7 +52,7 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 	@Override
 	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(bossGroup, workerGroup)
+		b.group(epollEventLoopGroup)
 				.channel(EpollServerDomainSocketChannel.class)
 				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
@@ -64,8 +61,7 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
 	@Override
 	protected void doDestroy() {
-		bossGroup.shutdownGracefully();
-		workerGroup.shutdownGracefully();
+		epollEventLoopGroup.shutdownGracefully();
 	}
 
 }
