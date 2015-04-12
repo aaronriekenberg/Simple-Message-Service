@@ -26,59 +26,25 @@ package org.aaron.sms.examples;
  * #L%
  */
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.IntStream;
 
+import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSTCPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SMSTCPTestReceiver {
+public class SMSTCPTestReceiver extends AbstractTestReceiver {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSTCPTestReceiver.class);
 
-	private static final ScheduledExecutorService executor = Executors
-			.newScheduledThreadPool(1);
-
-	private final AtomicInteger messagesReceived = new AtomicInteger(0);
-
-	private final String topicName;
-
 	public SMSTCPTestReceiver(String topicName) {
-		this.topicName = checkNotNull(topicName);
+		super(topicName);
 	}
 
-	public void start() {
-		try {
-			final SMSTCPConnection smsConnection = new SMSTCPConnection(
-					"127.0.0.1", 10001);
-
-			executor.scheduleAtFixedRate(
-					() -> log.info(topicName
-							+ " messages received last second = "
-							+ messagesReceived.getAndSet(0)), 1, 1,
-					TimeUnit.SECONDS);
-
-			smsConnection.registerConnectionStateListener(newState -> log.info(
-					"connection state changed {}", newState));
-
-			smsConnection.subscribeToTopic(topicName, message -> {
-				log.debug("handleIncomingMessage topic {} length {}",
-						topicName, message.size());
-				messagesReceived.getAndIncrement();
-			});
-
-			smsConnection.start();
-
-		} catch (Exception e) {
-			log.warn("start", e);
-		}
+	@Override
+	protected SMSConnection createConnection() {
+		return new SMSTCPConnection("127.0.0.1", 10001);
 	}
 
 	private static final int NUM_RECEIVERS = 50;
@@ -87,7 +53,8 @@ public class SMSTCPTestReceiver {
 		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);
 
 		IntStream.range(0, NUM_RECEIVERS).mapToObj(i -> "test.topic." + i)
-				.map(SMSTCPTestReceiver::new).forEach(SMSTCPTestReceiver::start);
+				.map(SMSTCPTestReceiver::new)
+				.forEach(SMSTCPTestReceiver::start);
 
 		while (true) {
 			try {
@@ -97,4 +64,5 @@ public class SMSTCPTestReceiver {
 			}
 		}
 	}
+
 }

@@ -4,7 +4,7 @@ package org.aaron.sms.examples;
  * #%L
  * Simple Message Service Examples
  * %%
- * Copyright (C) 2013 Aaron Riekenberg
+ * Copyright (C) 2013 - 2015 Aaron Riekenberg
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,43 +26,53 @@ package org.aaron.sms.examples;
  * #L%
  */
 
-import java.util.stream.IntStream;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.aaron.sms.api.SMSConnection;
-import org.aaron.sms.api.SMSUnixConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SMSUnixTestReceiver extends AbstractTestReceiver {
+import com.google.protobuf.ByteString;
+
+public abstract class AbstractTestSender implements Runnable {
 
 	private static final Logger log = LoggerFactory
-			.getLogger(SMSUnixTestReceiver.class);
+			.getLogger(AbstractTestSender.class);
 
-	public SMSUnixTestReceiver(String topicName) {
-		super(topicName);
+	private final String topicName;
+
+	private final int messageSizeBytes;
+
+	private final long sleepBetweenSendsMS;
+
+	public AbstractTestSender(String topicName, int messageSizeBytes,
+			long sleepBetweenSendsMS) {
+		this.topicName = checkNotNull(topicName);
+		this.messageSizeBytes = messageSizeBytes;
+		this.sleepBetweenSendsMS = sleepBetweenSendsMS;
 	}
 
 	@Override
-	protected SMSConnection createConnection() {
-		return new SMSUnixConnection("/tmp/sms-unix-socket");
-	}
+	public void run() {
+		try {
+			final SMSConnection smsConnection = createConnection();
 
-	private static final int NUM_RECEIVERS = 50;
+			smsConnection.registerConnectionStateListener(newState -> log.info(
+					"connection state changed {}", newState));
 
-	public static void main(String[] args) {
-		log.info("NUM_RECEIVERS = {}", NUM_RECEIVERS);
+			smsConnection.start();
 
-		IntStream.range(0, NUM_RECEIVERS).mapToObj(i -> "test.topic." + i)
-				.map(SMSUnixTestReceiver::new)
-				.forEach(SMSUnixTestReceiver::start);
-
-		while (true) {
-			try {
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				log.warn("main", e);
+			final ByteString buffer = ByteString
+					.copyFrom(new byte[messageSizeBytes]);
+			while (true) {
+				smsConnection.writeToTopic(topicName, buffer);
+				Thread.sleep(sleepBetweenSendsMS);
 			}
+		} catch (Exception e) {
+			log.warn("main", e);
 		}
 	}
+
+	protected abstract SMSConnection createConnection();
 
 }

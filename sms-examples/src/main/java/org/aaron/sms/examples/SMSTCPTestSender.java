@@ -26,49 +26,27 @@ package org.aaron.sms.examples;
  * #L%
  */
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSTCPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.protobuf.ByteString;
-
-public class SMSTCPTestSender implements Runnable {
+public class SMSTCPTestSender extends AbstractTestSender {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSTCPTestSender.class);
 
-	private final String topicName;
-
 	public SMSTCPTestSender(String topicName) {
-		this.topicName = checkNotNull(topicName);
+		super(topicName, MESSAGE_SIZE_BYTES, SLEEP_BETWEEN_SENDS_MS);
 	}
 
 	@Override
-	public void run() {
-		try {
-			final SMSTCPConnection smsConnection = new SMSTCPConnection(
-					"127.0.0.1", 10001);
-
-			smsConnection.registerConnectionStateListener(newState -> log.info(
-					"connection state changed {}", newState));
-
-			smsConnection.start();
-
-			final ByteString buffer = ByteString
-					.copyFrom(new byte[MESSAGE_SIZE_BYTES]);
-			while (true) {
-				smsConnection.writeToTopic(topicName, buffer);
-				Thread.sleep(SLEEP_BETWEEN_SENDS_MS);
-			}
-		} catch (Exception e) {
-			log.warn("main", e);
-		}
+	protected SMSConnection createConnection() {
+		return new SMSTCPConnection("127.0.0.1", 10001);
 	}
 
 	private static final int NUM_SENDERS = 50;
@@ -95,6 +73,6 @@ public class SMSTCPTestSender implements Runnable {
 				log.warn("join", e);
 			}
 		});
-
 	}
+
 }

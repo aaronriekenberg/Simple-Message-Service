@@ -26,49 +26,27 @@ package org.aaron.sms.examples;
  * #L%
  */
 
-import static com.google.common.base.Preconditions.checkNotNull;
-
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSUnixConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.protobuf.ByteString;
-
-public class SMSUnixTestSender implements Runnable {
+public class SMSUnixTestSender extends AbstractTestSender {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(SMSUnixTestSender.class);
 
-	private final String topicName;
-
 	public SMSUnixTestSender(String topicName) {
-		this.topicName = checkNotNull(topicName);
+		super(topicName, MESSAGE_SIZE_BYTES, SLEEP_BETWEEN_SENDS_MS);
 	}
 
 	@Override
-	public void run() {
-		try {
-			final SMSUnixConnection smsConnection = new SMSUnixConnection(
-					"/tmp/sms-unix-socket");
-
-			smsConnection.registerConnectionStateListener(newState -> log.info(
-					"connection state changed {} {}", newState, topicName));
-
-			smsConnection.start();
-
-			final ByteString buffer = ByteString
-					.copyFrom(new byte[MESSAGE_SIZE_BYTES]);
-			while (true) {
-				smsConnection.writeToTopic(topicName, buffer);
-				Thread.sleep(SLEEP_BETWEEN_SENDS_MS);
-			}
-		} catch (Exception e) {
-			log.warn("main", e);
-		}
+	protected SMSConnection createConnection() {
+		return new SMSUnixConnection("/tmp/sms-unix-socket");
 	}
 
 	private static final int NUM_SENDERS = 50;
