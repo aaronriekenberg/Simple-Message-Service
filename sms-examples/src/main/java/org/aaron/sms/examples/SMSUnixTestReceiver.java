@@ -57,7 +57,7 @@ public class SMSUnixTestReceiver {
 	public void start() {
 		try {
 			final SMSUnixConnection smsConnection = new SMSUnixConnection(
-					"/tmp/sms-unix-test");
+					"/tmp/sms-unix-socket");
 
 			executor.scheduleAtFixedRate(
 					() -> log.info(topicName

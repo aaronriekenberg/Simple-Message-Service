@@ -48,7 +48,7 @@
 		init-method="init"
 		destroy-method="destroy"
 		c:topicContainer-ref="topicContainer"
-		c:socketPath="/tmp/sms-unix-test" />
+		c:socketPath="/tmp/sms-unix-socket" />
 
 	<bean
 		id="topicContainer"

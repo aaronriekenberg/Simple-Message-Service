@@ -53,7 +53,7 @@ public class SMSUnixTestSender implements Runnable {
 	public void run() {
 		try {
 			final SMSUnixConnection smsConnection = new SMSUnixConnection(
-					"/tmp/sms-unix-test");
+					"/tmp/sms-unix-socket");
 
 			smsConnection.registerConnectionStateListener(newState -> log.info(
 					"connection state changed {} {}", newState, topicName));
