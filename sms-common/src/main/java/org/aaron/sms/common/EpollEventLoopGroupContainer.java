@@ -29,8 +29,12 @@ package org.aaron.sms.common;
 import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 
+import java.util.NoSuchElementException;
 import java.util.Optional;
 
+/**
+ * Container for a singleton EpollEventLoopGroup.
+ */
 public class EpollEventLoopGroupContainer {
 
 	private static final Optional<EpollEventLoopGroup> EVENT_LOOP_GROUP;
@@ -47,10 +51,23 @@ public class EpollEventLoopGroupContainer {
 
 	}
 
+	/**
+	 * Is the EpollEventLoopGroup available?
+	 * 
+	 * @return true if EpollEventLoopGroup is available, false otherwise.
+	 */
 	public static boolean isPresent() {
 		return EVENT_LOOP_GROUP.isPresent();
 	}
 
+	/**
+	 * Get the EpollEventLoopGroup.
+	 * 
+	 * @return EpollEventLoopGroup
+	 * @throws NoSuchElementException
+	 *             if EpollEventLoopGroup is not available - probably due to not
+	 *             running on Linux.
+	 */
 	public static EpollEventLoopGroup get() {
 		return EVENT_LOOP_GROUP.get();
 	}
