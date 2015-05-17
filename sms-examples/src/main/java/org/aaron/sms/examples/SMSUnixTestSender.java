@@ -26,6 +26,7 @@ package org.aaron.sms.examples;
  * #L%
  */
 
+import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -46,7 +47,7 @@ public class SMSUnixTestSender extends AbstractTestSender {
 
 	@Override
 	protected SMSConnection createConnection() {
-		return new SMSUnixConnection("/tmp/sms-unix-socket");
+		return new SMSUnixConnection(Paths.get("/tmp", "sms-unix-socket"));
 	}
 
 	private static final int NUM_SENDERS = 50;

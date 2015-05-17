@@ -36,6 +36,7 @@ import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.unix.DomainSocketAddress;
 
+import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -48,7 +49,7 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 
 	private static final EpollEventLoopGroup EPOLL_EVENT_LOOP_GROUP = new EpollEventLoopGroup();
 
-	private final String brokerSocketPath;
+	private final Path brokerSocketPath;
 
 	/**
 	 * Constructor method
@@ -56,7 +57,7 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 	 * @param brokerSocketPath
 	 *            Broker socket path
 	 */
-	public SMSUnixConnection(String brokerSocketPath) {
+	public SMSUnixConnection(Path brokerSocketPath) {
 		this(brokerSocketPath, 1, TimeUnit.SECONDS);
 	}
 
@@ -70,7 +71,7 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 	 * @param reconnect
 	 *            delay unit reconnect delay time unit
 	 */
-	public SMSUnixConnection(String brokerSocketPath, long reconnectDelay,
+	public SMSUnixConnection(Path brokerSocketPath, long reconnectDelay,
 			TimeUnit reconnectDelayUnit) {
 		super(reconnectDelay, reconnectDelayUnit);
 
@@ -84,7 +85,7 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 		return new Bootstrap().group(EPOLL_EVENT_LOOP_GROUP)
 				.channel(EpollDomainSocketChannel.class)
 				.handler(channelInitializer)
-				.connect(new DomainSocketAddress(brokerSocketPath));
+				.connect(new DomainSocketAddress(brokerSocketPath.toFile()));
 	}
 
 	@Override
