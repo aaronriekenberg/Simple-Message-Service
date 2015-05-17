@@ -46,8 +46,8 @@ import java.util.concurrent.TimeUnit;
 /**
  * TCP version of SMSConnection.
  * 
- * This version uses NIO and works on all platforms. It supports remote network
- * connections to the broker.
+ * This version uses epoll if available and nio if not. It and works on all
+ * platforms and supports remote network connections to the broker.
  */
 public class SMSTCPConnection extends AbstractSMSConnection {
 
