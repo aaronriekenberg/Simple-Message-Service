@@ -39,6 +39,8 @@ import io.netty.channel.unix.DomainSocketAddress;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
+import org.aaron.sms.common.EpollEventLoopGroupContainer;
+
 /**
  * TCP version of SMSConnection.
  * 
@@ -47,7 +49,7 @@ import java.util.concurrent.TimeUnit;
  */
 public class SMSUnixConnection extends AbstractSMSConnection {
 
-	private static final EpollEventLoopGroup EPOLL_EVENT_LOOP_GROUP = EpollEventLoopGroupContainer
+	private static final EpollEventLoopGroup EVENT_LOOP_GROUP = EpollEventLoopGroupContainer
 			.get();
 
 	private final Path brokerSocketPath;
@@ -83,7 +85,7 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 	@Override
 	protected ChannelFuture doBootstrapConnection(
 			ChannelInitializer<Channel> channelInitializer) {
-		return new Bootstrap().group(EPOLL_EVENT_LOOP_GROUP)
+		return new Bootstrap().group(EVENT_LOOP_GROUP)
 				.channel(EpollDomainSocketChannel.class)
 				.handler(channelInitializer)
 				.connect(new DomainSocketAddress(brokerSocketPath.toFile()));
@@ -91,7 +93,7 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 
 	@Override
 	protected EventLoopGroup getEventLoopGroup() {
-		return EPOLL_EVENT_LOOP_GROUP;
+		return EVENT_LOOP_GROUP;
 	}
 
 }

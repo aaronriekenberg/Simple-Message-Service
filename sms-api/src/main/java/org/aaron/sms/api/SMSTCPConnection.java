@@ -41,6 +41,8 @@ import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.concurrent.TimeUnit;
 
+import org.aaron.sms.common.EpollEventLoopGroupContainer;
+
 /**
  * TCP version of SMSConnection.
  * 

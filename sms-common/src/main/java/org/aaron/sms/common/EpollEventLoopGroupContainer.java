@@ -1,4 +1,4 @@
-package org.aaron.sms.api;
+package org.aaron.sms.common;
 
 /*
  * #%L
@@ -31,7 +31,7 @@ import io.netty.channel.epoll.EpollEventLoopGroup;
 
 import java.util.Optional;
 
-class EpollEventLoopGroupContainer {
+public class EpollEventLoopGroupContainer {
 
 	private static final Optional<EpollEventLoopGroup> EVENT_LOOP_GROUP;
 
