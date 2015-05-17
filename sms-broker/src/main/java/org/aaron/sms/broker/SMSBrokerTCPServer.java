@@ -31,6 +31,11 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.ServerChannel;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 
@@ -38,11 +43,13 @@ import com.google.common.base.Preconditions;
 
 public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
-	private final NioEventLoopGroup nioEventLoopGroup = new NioEventLoopGroup();
-
 	private final String listenAddress;
 
 	private final int listenPort;
+
+	private final EventLoopGroup eventLoopGroup;
+
+	private final Class<? extends ServerChannel> serverChannelClass;
 
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
 			String listenAddress, int listenPort) {
@@ -53,12 +60,20 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
 		Preconditions.checkArgument(listenPort > 0, "listenPort must be > 0");
 		this.listenPort = listenPort;
+
+		if (Epoll.isAvailable()) {
+			eventLoopGroup = new EpollEventLoopGroup();
+			serverChannelClass = EpollServerSocketChannel.class;
+		} else {
+			eventLoopGroup = new NioEventLoopGroup();
+			serverChannelClass = NioServerSocketChannel.class;
+		}
 	}
 
 	@Override
 	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(nioEventLoopGroup).channel(NioServerSocketChannel.class)
+		b.group(eventLoopGroup).channel(serverChannelClass)
 				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
 		return b.bind(listenAddress, listenPort);
@@ -66,6 +81,6 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
 	@Override
 	protected void doDestroy() {
-		nioEventLoopGroup.shutdownGracefully();
+		eventLoopGroup.shutdownGracefully();
 	}
 }

@@ -34,7 +34,11 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
+import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
+import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.concurrent.TimeUnit;
@@ -47,9 +51,21 @@ import java.util.concurrent.TimeUnit;
  */
 public class SMSTCPConnection extends AbstractSMSConnection {
 
-	private static final Integer CONNECT_TIMEOUT_MS = 1_000;
+	private static final EventLoopGroup EVENT_LOOP_GROUP;
 
-	private static final NioEventLoopGroup NIO_EVENT_LOOP_GROUP = new NioEventLoopGroup();
+	private static final Class<? extends SocketChannel> SOCKET_CHANNEL_CLASS;
+
+	static {
+		if (Epoll.isAvailable()) {
+			EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+			SOCKET_CHANNEL_CLASS = EpollSocketChannel.class;
+		} else {
+			EVENT_LOOP_GROUP = new NioEventLoopGroup();
+			SOCKET_CHANNEL_CLASS = NioSocketChannel.class;
+		}
+	}
+
+	private static final Integer CONNECT_TIMEOUT_MS = 5_000;
 
 	private final String brokerAddress;
 
@@ -92,8 +108,8 @@ public class SMSTCPConnection extends AbstractSMSConnection {
 	protected ChannelFuture doBootstrapConnection(
 			ChannelInitializer<Channel> channelInitializer) {
 		return new Bootstrap()
-				.group(NIO_EVENT_LOOP_GROUP)
-				.channel(NioSocketChannel.class)
+				.group(EVENT_LOOP_GROUP)
+				.channel(SOCKET_CHANNEL_CLASS)
 				.handler(channelInitializer)
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
 						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort);
@@ -101,7 +117,7 @@ public class SMSTCPConnection extends AbstractSMSConnection {
 
 	@Override
 	protected EventLoopGroup getEventLoopGroup() {
-		return NIO_EVENT_LOOP_GROUP;
+		return EVENT_LOOP_GROUP;
 	}
 
 }
