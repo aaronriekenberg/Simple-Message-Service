@@ -47,7 +47,8 @@ import java.util.concurrent.TimeUnit;
  */
 public class SMSUnixConnection extends AbstractSMSConnection {
 
-	private static final EpollEventLoopGroup EPOLL_EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+	private static final EpollEventLoopGroup EPOLL_EVENT_LOOP_GROUP = EpollEventLoopGroupContainer
+			.get();
 
 	private final Path brokerSocketPath;
 

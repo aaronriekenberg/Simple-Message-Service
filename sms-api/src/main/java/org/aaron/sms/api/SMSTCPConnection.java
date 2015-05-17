@@ -34,8 +34,6 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
@@ -56,8 +54,8 @@ public class SMSTCPConnection extends AbstractSMSConnection {
 	private static final Class<? extends SocketChannel> SOCKET_CHANNEL_CLASS;
 
 	static {
-		if (Epoll.isAvailable()) {
-			EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+		if (EpollEventLoopGroupContainer.isPresent()) {
+			EVENT_LOOP_GROUP = EpollEventLoopGroupContainer.get();
 			SOCKET_CHANNEL_CLASS = EpollSocketChannel.class;
 		} else {
 			EVENT_LOOP_GROUP = new NioEventLoopGroup();

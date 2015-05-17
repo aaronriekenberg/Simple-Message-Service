@@ -39,7 +39,8 @@ import io.netty.channel.unix.DomainSocketAddress;
 
 public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
-	private final EpollEventLoopGroup eventLoopGroup = new EpollEventLoopGroup();
+	private final EpollEventLoopGroup eventLoopGroup = EpollEventLoopGroupContainer
+			.get();
 
 	private final String socketPath;
 

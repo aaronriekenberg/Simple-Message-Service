@@ -33,8 +33,6 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
-import io.netty.channel.epoll.Epoll;
-import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.epoll.EpollServerSocketChannel;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
@@ -61,8 +59,8 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 		Preconditions.checkArgument(listenPort > 0, "listenPort must be > 0");
 		this.listenPort = listenPort;
 
-		if (Epoll.isAvailable()) {
-			eventLoopGroup = new EpollEventLoopGroup();
+		if (EpollEventLoopGroupContainer.isPresent()) {
+			eventLoopGroup = EpollEventLoopGroupContainer.get();
 			serverChannelClass = EpollServerSocketChannel.class;
 		} else {
 			eventLoopGroup = new NioEventLoopGroup();
