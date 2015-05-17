@@ -71,6 +71,11 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 	}
 
 	@Override
+	protected EventLoopGroup getEventLoopGroup() {
+		return eventLoopGroup;
+	}
+
+	@Override
 	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
 		b.group(eventLoopGroup).channel(serverChannelClass)
@@ -83,4 +88,5 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 	protected void doDestroy() {
 		eventLoopGroup.shutdownGracefully();
 	}
+
 }

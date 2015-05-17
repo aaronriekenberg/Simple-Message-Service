@@ -31,6 +31,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.SimpleChannelInboundHandler;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.util.concurrent.GlobalEventExecutor;
@@ -129,6 +130,8 @@ public abstract class AbstractSMSBrokerServer {
 				"topicContainer is null");
 	}
 
+	protected abstract EventLoopGroup getEventLoopGroup();
+
 	protected abstract ChannelFuture doBootstrap(
 			ChannelInitializer<Channel> childHandler);
 
@@ -144,7 +147,8 @@ public abstract class AbstractSMSBrokerServer {
 		final Channel serverChannel = channelFuture.syncUninterruptibly()
 				.channel();
 		allChannels.add(serverChannel);
-		log.info("listening on {}", serverChannel.localAddress());
+		log.info("listening on {} ({})", serverChannel.localAddress(),
+				getEventLoopGroup().getClass().getSimpleName());
 	}
 
 	protected abstract void doDestroy();
