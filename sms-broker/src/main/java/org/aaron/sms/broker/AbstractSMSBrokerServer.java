@@ -147,8 +147,9 @@ public abstract class AbstractSMSBrokerServer {
 		final Channel serverChannel = channelFuture.syncUninterruptibly()
 				.channel();
 		allChannels.add(serverChannel);
+
 		log.info("listening on {} ({})", serverChannel.localAddress(),
-				getEventLoopGroup().getClass().getSimpleName());
+				getEventLoopGroup());
 	}
 
 	protected abstract void doDestroy();
