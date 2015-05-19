@@ -34,14 +34,10 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.SocketChannel;
-import io.netty.channel.socket.nio.NioSocketChannel;
 
 import java.util.concurrent.TimeUnit;
 
-import org.aaron.sms.common.EpollEventLoopGroupContainer;
+import org.aaron.sms.common.TCPEventLoopGroupContainer;
 
 /**
  * TCP version of SMSConnection.
@@ -50,20 +46,6 @@ import org.aaron.sms.common.EpollEventLoopGroupContainer;
  * platforms and supports remote network connections to the broker.
  */
 public class SMSTCPConnection extends AbstractSMSConnection {
-
-	private static final EventLoopGroup EVENT_LOOP_GROUP;
-
-	private static final Class<? extends SocketChannel> SOCKET_CHANNEL_CLASS;
-
-	static {
-		if (EpollEventLoopGroupContainer.isPresent()) {
-			EVENT_LOOP_GROUP = EpollEventLoopGroupContainer.get();
-			SOCKET_CHANNEL_CLASS = EpollSocketChannel.class;
-		} else {
-			EVENT_LOOP_GROUP = new NioEventLoopGroup();
-			SOCKET_CHANNEL_CLASS = NioSocketChannel.class;
-		}
-	}
 
 	private static final Integer CONNECT_TIMEOUT_MS = 5_000;
 
@@ -108,8 +90,8 @@ public class SMSTCPConnection extends AbstractSMSConnection {
 	protected ChannelFuture doBootstrapConnection(
 			ChannelInitializer<Channel> channelInitializer) {
 		return new Bootstrap()
-				.group(EVENT_LOOP_GROUP)
-				.channel(SOCKET_CHANNEL_CLASS)
+				.group(getEventLoopGroup())
+				.channel(TCPEventLoopGroupContainer.getClientChannelClass())
 				.handler(channelInitializer)
 				.option(ChannelOption.CONNECT_TIMEOUT_MILLIS,
 						CONNECT_TIMEOUT_MS).connect(brokerAddress, brokerPort);
@@ -117,7 +99,7 @@ public class SMSTCPConnection extends AbstractSMSConnection {
 
 	@Override
 	protected EventLoopGroup getEventLoopGroup() {
-		return EVENT_LOOP_GROUP;
+		return TCPEventLoopGroupContainer.getEventLoopGroup();
 	}
 
 }

@@ -32,12 +32,8 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.ServerChannel;
-import io.netty.channel.epoll.EpollServerSocketChannel;
-import io.netty.channel.nio.NioEventLoopGroup;
-import io.netty.channel.socket.nio.NioServerSocketChannel;
 
-import org.aaron.sms.common.EpollEventLoopGroupContainer;
+import org.aaron.sms.common.TCPEventLoopGroupContainer;
 
 import com.google.common.base.Preconditions;
 
@@ -46,10 +42,6 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 	private final String listenAddress;
 
 	private final int listenPort;
-
-	private final EventLoopGroup eventLoopGroup;
-
-	private final Class<? extends ServerChannel> serverChannelClass;
 
 	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
 			String listenAddress, int listenPort) {
@@ -60,25 +52,18 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
 		Preconditions.checkArgument(listenPort > 0, "listenPort must be > 0");
 		this.listenPort = listenPort;
-
-		if (EpollEventLoopGroupContainer.isPresent()) {
-			eventLoopGroup = EpollEventLoopGroupContainer.get();
-			serverChannelClass = EpollServerSocketChannel.class;
-		} else {
-			eventLoopGroup = new NioEventLoopGroup();
-			serverChannelClass = NioServerSocketChannel.class;
-		}
 	}
 
 	@Override
 	protected EventLoopGroup getEventLoopGroup() {
-		return eventLoopGroup;
+		return TCPEventLoopGroupContainer.getEventLoopGroup();
 	}
 
 	@Override
 	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(eventLoopGroup).channel(serverChannelClass)
+		b.group(getEventLoopGroup())
+				.channel(TCPEventLoopGroupContainer.getServerChannelClass())
 				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
 		return b.bind(listenAddress, listenPort);
@@ -86,7 +71,7 @@ public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
 	@Override
 	protected void doDestroy() {
-		eventLoopGroup.shutdownGracefully();
+
 	}
 
 }

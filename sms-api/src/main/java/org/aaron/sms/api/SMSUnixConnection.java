@@ -32,14 +32,12 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollDomainSocketChannel;
-import io.netty.channel.epoll.EpollEventLoopGroup;
 import io.netty.channel.unix.DomainSocketAddress;
 
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
-import org.aaron.sms.common.EpollEventLoopGroupContainer;
+import org.aaron.sms.common.UnixEventLoopGroupContainer;
 
 /**
  * TCP version of SMSConnection.
@@ -48,9 +46,6 @@ import org.aaron.sms.common.EpollEventLoopGroupContainer;
  * local connections to the broker only.
  */
 public class SMSUnixConnection extends AbstractSMSConnection {
-
-	private static final EpollEventLoopGroup EVENT_LOOP_GROUP = EpollEventLoopGroupContainer
-			.get();
 
 	private final Path brokerSocketPath;
 
@@ -85,15 +80,15 @@ public class SMSUnixConnection extends AbstractSMSConnection {
 	@Override
 	protected ChannelFuture doBootstrapConnection(
 			ChannelInitializer<Channel> channelInitializer) {
-		return new Bootstrap().group(EVENT_LOOP_GROUP)
-				.channel(EpollDomainSocketChannel.class)
+		return new Bootstrap().group(getEventLoopGroup())
+				.channel(UnixEventLoopGroupContainer.getClientChannelClass())
 				.handler(channelInitializer)
 				.connect(new DomainSocketAddress(brokerSocketPath.toFile()));
 	}
 
 	@Override
 	protected EventLoopGroup getEventLoopGroup() {
-		return EVENT_LOOP_GROUP;
+		return UnixEventLoopGroupContainer.getEventLoopGroup();
 	}
 
 }

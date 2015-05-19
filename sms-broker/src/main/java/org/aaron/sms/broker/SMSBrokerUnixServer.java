@@ -33,16 +33,11 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
-import io.netty.channel.epoll.EpollEventLoopGroup;
-import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 import io.netty.channel.unix.DomainSocketAddress;
 
-import org.aaron.sms.common.EpollEventLoopGroupContainer;
+import org.aaron.sms.common.UnixEventLoopGroupContainer;
 
 public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
-
-	private final EpollEventLoopGroup eventLoopGroup = EpollEventLoopGroupContainer
-			.get();
 
 	private final String socketPath;
 
@@ -55,13 +50,14 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
 	@Override
 	protected EventLoopGroup getEventLoopGroup() {
-		return eventLoopGroup;
+		return UnixEventLoopGroupContainer.getEventLoopGroup();
 	}
 
 	@Override
 	protected ChannelFuture doBootstrap(ChannelInitializer<Channel> childHandler) {
 		final ServerBootstrap b = new ServerBootstrap();
-		b.group(eventLoopGroup).channel(EpollServerDomainSocketChannel.class)
+		b.group(getEventLoopGroup())
+				.channel(UnixEventLoopGroupContainer.getServerChannelClass())
 				.childHandler(childHandler)
 				.option(ChannelOption.SO_REUSEADDR, true);
 		return b.bind(new DomainSocketAddress(socketPath));
@@ -69,7 +65,7 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
 	@Override
 	protected void doDestroy() {
-		eventLoopGroup.shutdownGracefully();
+
 	}
 
 }

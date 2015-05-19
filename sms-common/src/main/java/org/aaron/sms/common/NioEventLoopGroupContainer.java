@@ -26,13 +26,13 @@ package org.aaron.sms.common;
  * #L%
  */
 
-import io.netty.channel.epoll.EpollEventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
 
-class EpollEventLoopGroupContainer {
+class NioEventLoopGroupContainer {
 
-	public static final EpollEventLoopGroup EVENT_LOOP_GROUP = new EpollEventLoopGroup();
+	public static final NioEventLoopGroup EVENT_LOOP_GROUP = new NioEventLoopGroup();
 
-	private EpollEventLoopGroupContainer() {
+	private NioEventLoopGroupContainer() {
 
 	}
 
