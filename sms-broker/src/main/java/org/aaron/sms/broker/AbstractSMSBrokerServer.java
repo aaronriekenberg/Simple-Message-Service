@@ -48,6 +48,8 @@ import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerT
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.util.concurrent.Uninterruptibles;
+
 public abstract class AbstractSMSBrokerServer {
 
 	private static final Logger log = LoggerFactory
@@ -183,11 +185,7 @@ public abstract class AbstractSMSBrokerServer {
 
 	public void awaitDestroyedUninterruptible() {
 		while (!isDestroyed()) {
-			try {
-				awaitDestroyed();
-			} catch (InterruptedException e) {
-				log.warn("awaitDestroyedUninterruptible interrupted", e);
-			}
+			Uninterruptibles.awaitUninterruptibly(destroyedLatch);
 		}
 	}
 

@@ -26,7 +26,11 @@ package org.aaron.sms.broker;
  * #L%
  */
 
+import java.util.concurrent.TimeUnit;
+
 import org.springframework.context.support.ClassPathXmlApplicationContext;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 public class SMSBrokerMain {
 
@@ -34,11 +38,7 @@ public class SMSBrokerMain {
 		try (final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
 				"META-INF/spring/sms-broker-spring.xml")) {
 			while (true) {
-				try {
-					Thread.sleep(60 * 1000L);
-				} catch (InterruptedException e) {
-
-				}
+				Uninterruptibles.sleepUninterruptibly(60, TimeUnit.SECONDS);
 			}
 		}
 	}
