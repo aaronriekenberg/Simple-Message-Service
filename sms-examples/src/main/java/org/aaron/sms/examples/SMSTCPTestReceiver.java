@@ -26,12 +26,15 @@ package org.aaron.sms.examples;
  * #L%
  */
 
+import java.util.concurrent.TimeUnit;
 import java.util.stream.IntStream;
 
 import org.aaron.sms.api.SMSConnection;
 import org.aaron.sms.api.SMSTCPConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.util.concurrent.Uninterruptibles;
 
 public class SMSTCPTestReceiver extends AbstractTestReceiver {
 
@@ -57,11 +60,7 @@ public class SMSTCPTestReceiver extends AbstractTestReceiver {
 				.forEach(SMSTCPTestReceiver::start);
 
 		while (true) {
-			try {
-				Thread.sleep(1000);
-			} catch (Exception e) {
-				log.warn("main", e);
-			}
+			Uninterruptibles.sleepUninterruptibly(60, TimeUnit.SECONDS);
 		}
 	}
 

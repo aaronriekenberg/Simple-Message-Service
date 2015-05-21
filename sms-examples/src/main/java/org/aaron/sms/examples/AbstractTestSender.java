@@ -69,7 +69,7 @@ public abstract class AbstractTestSender implements Runnable {
 				Thread.sleep(sleepBetweenSendsMS);
 			}
 		} catch (Exception e) {
-			log.warn("main", e);
+			log.warn("run", e);
 		}
 	}
 

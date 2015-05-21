@@ -36,6 +36,8 @@ import org.aaron.sms.api.SMSUnixConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.util.concurrent.Uninterruptibles;
+
 public class SMSUnixTestSender extends AbstractTestSender {
 
 	private static final Logger log = LoggerFactory
@@ -67,13 +69,6 @@ public class SMSUnixTestSender extends AbstractTestSender {
 
 		threadList.forEach(Thread::start);
 
-		threadList.forEach(t -> {
-			try {
-				t.join();
-			} catch (Exception e) {
-				log.warn("join", e);
-			}
-		});
-
+		threadList.forEach(Uninterruptibles::joinUninterruptibly);
 	}
 }
