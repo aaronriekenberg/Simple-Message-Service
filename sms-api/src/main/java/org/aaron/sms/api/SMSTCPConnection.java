@@ -37,7 +37,7 @@ import io.netty.channel.EventLoopGroup;
 
 import java.util.concurrent.TimeUnit;
 
-import org.aaron.sms.common.TCPEventLoopGroupContainer;
+import org.aaron.sms.common.eventloop.TCPEventLoopGroupContainer;
 
 /**
  * TCP version of SMSConnection.

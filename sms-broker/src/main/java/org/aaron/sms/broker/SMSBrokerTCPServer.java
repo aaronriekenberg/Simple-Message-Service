@@ -33,7 +33,7 @@ import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 
-import org.aaron.sms.common.TCPEventLoopGroupContainer;
+import org.aaron.sms.common.eventloop.TCPEventLoopGroupContainer;
 
 import com.google.common.base.Preconditions;
 

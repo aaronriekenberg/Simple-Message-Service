@@ -1,4 +1,4 @@
-package org.aaron.sms.common;
+package org.aaron.sms.common.util;
 
 /*
  * #%L
@@ -26,14 +26,34 @@ package org.aaron.sms.common;
  * #L%
  */
 
-import io.netty.channel.nio.NioEventLoopGroup;
+import static com.google.common.base.Preconditions.checkNotNull;
 
-class NioEventLoopGroupContainer {
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-	public static final NioEventLoopGroup EVENT_LOOP_GROUP = new NioEventLoopGroup();
+public class FunctionalReentrantReadWriteLock extends ReentrantReadWriteLock {
 
-	private NioEventLoopGroupContainer() {
+	private static final long serialVersionUID = 1L;
 
+	public void doInReadLock(Runnable r) {
+		checkNotNull(r, "r is null");
+
+		readLock().lock();
+		try {
+			r.run();
+		} finally {
+			readLock().unlock();
+		}
+	}
+
+	public void doInWriteLock(Runnable r) {
+		checkNotNull(r, "r is null");
+
+		writeLock().lock();
+		try {
+			r.run();
+		} finally {
+			writeLock().unlock();
+		}
 	}
 
 }

@@ -37,7 +37,7 @@ import io.netty.channel.unix.DomainSocketAddress;
 import java.nio.file.Path;
 import java.util.concurrent.TimeUnit;
 
-import org.aaron.sms.common.UnixEventLoopGroupContainer;
+import org.aaron.sms.common.eventloop.UnixEventLoopGroupContainer;
 
 /**
  * TCP version of SMSConnection.

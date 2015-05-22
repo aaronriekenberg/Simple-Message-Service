@@ -41,7 +41,7 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.aaron.sms.common.FunctionalReentrantReadWriteLock;
+import org.aaron.sms.common.util.FunctionalReentrantReadWriteLock;
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType;

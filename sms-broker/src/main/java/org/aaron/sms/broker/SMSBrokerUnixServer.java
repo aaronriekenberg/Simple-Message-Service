@@ -35,7 +35,7 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.unix.DomainSocketAddress;
 
-import org.aaron.sms.common.UnixEventLoopGroupContainer;
+import org.aaron.sms.common.eventloop.UnixEventLoopGroupContainer;
 
 public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 

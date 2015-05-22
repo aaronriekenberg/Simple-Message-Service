@@ -1,4 +1,4 @@
-package org.aaron.sms.common;
+package org.aaron.sms.common.eventloop;
 
 /*
  * #%L
