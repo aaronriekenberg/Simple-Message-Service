@@ -47,6 +47,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.aaron.sms.common.LockUtils;
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType;
@@ -105,16 +106,13 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 			 * calling destroy() between connectionState.get() and
 			 * allChannels.add() below.
 			 */
-			destroyLock.readLock().lock();
-			try {
+			LockUtils.doInReadLock(destroyLock, () -> {
 				if (connectionState.get() == ConnectionState.DESTROYED) {
 					ctx.channel().close();
 				} else {
 					allChannels.add(ctx.channel());
 				}
-			} finally {
-				destroyLock.readLock().unlock();
-			}
+			});
 		}
 
 		@Override
@@ -301,8 +299,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 
 	@Override
 	public void destroy() {
-		destroyLock.writeLock().lock();
-		try {
+		LockUtils.doInWriteLock(destroyLock, () -> {
 			if (connectionState.compareAndSet(ConnectionState.RUNNING,
 					ConnectionState.DESTROYED)) {
 
@@ -313,9 +310,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 				allChannels.close();
 
 			}
-		} finally {
-			destroyLock.writeLock().unlock();
-		}
+		});
 	}
 
 	private void handleBrokerTopicMessagePublish(

@@ -42,6 +42,7 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.aaron.sms.common.LockUtils;
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType;
@@ -79,16 +80,13 @@ public abstract class AbstractSMSBrokerServer {
 			 * calling destroy() between destroyed.get() and allChannels.add()
 			 * below.
 			 */
-			destroyLock.readLock().lock();
-			try {
+			LockUtils.doInReadLock(destroyLock, () -> {
 				if (destroyed.get()) {
 					ctx.channel().close();
 				} else {
 					allChannels.add(ctx.channel());
 				}
-			} finally {
-				destroyLock.readLock().unlock();
-			}
+			});
 		}
 
 		@Override
@@ -159,8 +157,7 @@ public abstract class AbstractSMSBrokerServer {
 	public void destroy() {
 		log.info("destroy");
 
-		destroyLock.writeLock().lock();
-		try {
+		LockUtils.doInWriteLock(destroyLock, () -> {
 			if (destroyed.compareAndSet(false, true)) {
 
 				allChannels.close();
@@ -170,9 +167,7 @@ public abstract class AbstractSMSBrokerServer {
 				destroyedLatch.countDown();
 
 			}
-		} finally {
-			destroyLock.writeLock().unlock();
-		}
+		});
 	}
 
 	public boolean isDestroyed() {
