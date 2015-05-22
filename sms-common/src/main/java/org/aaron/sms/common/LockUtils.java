@@ -26,6 +26,8 @@ package org.aaron.sms.common;
  * #L%
  */
 
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class LockUtils {
@@ -35,6 +37,9 @@ public class LockUtils {
 	}
 
 	public static void doInReadLock(ReentrantReadWriteLock lock, Runnable r) {
+		checkNotNull(lock, "lock is null");
+		checkNotNull(r, "r is null");
+
 		lock.readLock().lock();
 		try {
 			r.run();
@@ -44,6 +49,9 @@ public class LockUtils {
 	}
 
 	public static void doInWriteLock(ReentrantReadWriteLock lock, Runnable r) {
+		checkNotNull(lock, "lock is null");
+		checkNotNull(r, "r is null");
+
 		lock.writeLock().lock();
 		try {
 			r.run();
