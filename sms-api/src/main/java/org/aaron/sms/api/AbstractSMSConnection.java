@@ -45,9 +45,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.aaron.sms.common.LockUtils;
+import org.aaron.sms.common.FunctionalReentrantReadWriteLock;
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.ClientToBrokerMessage.ClientToBrokerMessageType;
@@ -83,7 +82,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 	private final Set<SMSConnectionStateListener> connectionStateListeners = Collections
 			.newSetFromMap(new ConcurrentHashMap<>());
 
-	private final ReentrantReadWriteLock destroyLock = new ReentrantReadWriteLock();
+	private final FunctionalReentrantReadWriteLock destroyLock = new FunctionalReentrantReadWriteLock();
 
 	private final long reconnectDelay;
 
@@ -106,7 +105,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 			 * calling destroy() between connectionState.get() and
 			 * allChannels.add() below.
 			 */
-			LockUtils.doInReadLock(destroyLock, () -> {
+			destroyLock.doInReadLock(() -> {
 				if (connectionState.get() == ConnectionState.DESTROYED) {
 					ctx.channel().close();
 				} else {
@@ -299,7 +298,7 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 
 	@Override
 	public void destroy() {
-		LockUtils.doInWriteLock(destroyLock, () -> {
+		destroyLock.doInWriteLock(() -> {
 			if (connectionState.compareAndSet(ConnectionState.RUNNING,
 					ConnectionState.DESTROYED)) {
 

@@ -30,33 +30,29 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class LockUtils {
+public class FunctionalReentrantReadWriteLock extends ReentrantReadWriteLock {
 
-	private LockUtils() {
+	private static final long serialVersionUID = 1L;
 
-	}
-
-	public static void doInReadLock(ReentrantReadWriteLock lock, Runnable r) {
-		checkNotNull(lock, "lock is null");
+	public void doInReadLock(Runnable r) {
 		checkNotNull(r, "r is null");
 
-		lock.readLock().lock();
+		readLock().lock();
 		try {
 			r.run();
 		} finally {
-			lock.readLock().unlock();
+			readLock().unlock();
 		}
 	}
 
-	public static void doInWriteLock(ReentrantReadWriteLock lock, Runnable r) {
-		checkNotNull(lock, "lock is null");
+	public void doInWriteLock(Runnable r) {
 		checkNotNull(r, "r is null");
 
-		lock.writeLock().lock();
+		writeLock().lock();
 		try {
 			r.run();
 		} finally {
-			lock.writeLock().unlock();
+			writeLock().unlock();
 		}
 	}
 

@@ -40,9 +40,8 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.aaron.sms.common.LockUtils;
+import org.aaron.sms.common.FunctionalReentrantReadWriteLock;
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
 import org.aaron.sms.protocol.protobuf.SMSProtocol.BrokerToClientMessage.BrokerToClientMessageType;
@@ -63,7 +62,7 @@ public abstract class AbstractSMSBrokerServer {
 
 	private final CountDownLatch destroyedLatch = new CountDownLatch(1);
 
-	private final ReentrantReadWriteLock destroyLock = new ReentrantReadWriteLock();
+	private final FunctionalReentrantReadWriteLock destroyLock = new FunctionalReentrantReadWriteLock();
 
 	private final SMSTopicContainer topicContainer;
 
@@ -80,7 +79,7 @@ public abstract class AbstractSMSBrokerServer {
 			 * calling destroy() between destroyed.get() and allChannels.add()
 			 * below.
 			 */
-			LockUtils.doInReadLock(destroyLock, () -> {
+			destroyLock.doInReadLock(() -> {
 				if (destroyed.get()) {
 					ctx.channel().close();
 				} else {
@@ -157,7 +156,7 @@ public abstract class AbstractSMSBrokerServer {
 	public void destroy() {
 		log.info("destroy");
 
-		LockUtils.doInWriteLock(destroyLock, () -> {
+		destroyLock.doInWriteLock(() -> {
 			if (destroyed.compareAndSet(false, true)) {
 
 				allChannels.close();
