@@ -47,7 +47,8 @@ public class UnixEventLoopGroupContainer {
 			CLIENT_CHANNEL_CLASS = EpollDomainSocketChannel.class;
 			SERVER_CHANNEL_CLASS = EpollServerDomainSocketChannel.class;
 		} else {
-			throw new IllegalStateException("Epoll is not available");
+			throw new IllegalStateException("Epoll is not available",
+					Epoll.unavailabilityCause());
 		}
 	}
 
