@@ -242,12 +242,14 @@ public abstract class AbstractSMSConnection implements SMSConnection {
 
 		log.debug("resubscribeToTopics {}", subscribedTopicToListener);
 		subscribedTopicToListener
-				.forEach((topicName, listener) -> connectedChannels
-						.write(SMSProtocol.ClientToBrokerMessage
-								.newBuilder()
-								.setMessageType(
-										ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
-								.setTopicName(topicName)));
+				.keySet()
+				.forEach(
+						topicName -> connectedChannels
+								.write(SMSProtocol.ClientToBrokerMessage
+										.newBuilder()
+										.setMessageType(
+												ClientToBrokerMessageType.CLIENT_SUBSCRIBE_TO_TOPIC)
+										.setTopicName(topicName)));
 		connectedChannels.flush();
 	}
 
