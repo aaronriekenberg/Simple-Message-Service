@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
-public abstract class AbstractSMSBrokerServer {
+abstract class AbstractSMSBrokerServer {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(AbstractSMSBrokerServer.class);

@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 
 import com.google.protobuf.ByteString;
 
-public abstract class AbstractSMSConnection implements SMSConnection {
+abstract class AbstractSMSConnection implements SMSConnection {
 
 	private static final Logger log = LoggerFactory
 			.getLogger(AbstractSMSConnection.class);
