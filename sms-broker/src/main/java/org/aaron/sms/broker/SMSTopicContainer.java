@@ -31,6 +31,9 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import java.util.concurrent.ConcurrentHashMap;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,10 +44,12 @@ public class SMSTopicContainer {
 
 	private final ConcurrentHashMap<String, SMSTopic> topicNameToInfo = new ConcurrentHashMap<>();
 
-	public SMSTopicContainer() {
-		log.info("construct SMSTopicContainer {}", this);
+	@PostConstruct
+	public void init() {
+		log.info("init SMSTopicContainer ({})", this);
 	}
 
+	@PreDestroy
 	public void destroy() {
 		log.info("destroy");
 	}
