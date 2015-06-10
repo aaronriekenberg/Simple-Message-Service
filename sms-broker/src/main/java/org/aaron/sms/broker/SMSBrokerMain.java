@@ -28,15 +28,15 @@ package org.aaron.sms.broker;
 
 import java.util.concurrent.TimeUnit;
 
-import org.springframework.context.support.ClassPathXmlApplicationContext;
+import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import com.google.common.util.concurrent.Uninterruptibles;
 
 public class SMSBrokerMain {
 
 	public static void main(String[] args) {
-		try (final ClassPathXmlApplicationContext context = new ClassPathXmlApplicationContext(
-				"META-INF/spring/sms-broker-spring.xml")) {
+		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
+				SMSBrokerConfig.class)) {
 			while (true) {
 				Uninterruptibles.sleepUninterruptibly(60, TimeUnit.SECONDS);
 			}

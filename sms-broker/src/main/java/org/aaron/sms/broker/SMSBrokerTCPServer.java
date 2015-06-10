@@ -34,24 +34,18 @@ import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 
 import org.aaron.sms.common.eventloop.TCPEventLoopGroupContainer;
-
-import com.google.common.base.Preconditions;
+import org.springframework.beans.factory.annotation.Value;
 
 public class SMSBrokerTCPServer extends AbstractSMSBrokerServer {
 
-	private final String listenAddress;
+	@Value("${smsbroker.tcp.listen_address}")
+	private String listenAddress;
 
-	private final int listenPort;
+	@Value("${smsbroker.tcp.listen_port}")
+	private int listenPort;
 
-	public SMSBrokerTCPServer(SMSTopicContainer topicContainer,
-			String listenAddress, int listenPort) {
+	public SMSBrokerTCPServer(SMSTopicContainer topicContainer) {
 		super(topicContainer);
-
-		this.listenAddress = Preconditions.checkNotNull(listenAddress,
-				"listenAddress is null");
-
-		Preconditions.checkArgument(listenPort > 0, "listenPort must be > 0");
-		this.listenPort = listenPort;
 	}
 
 	@Override

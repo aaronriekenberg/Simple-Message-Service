@@ -41,6 +41,9 @@ import io.netty.util.internal.logging.Slf4JLoggerFactory;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
+
 import org.aaron.sms.common.util.FunctionalReentrantReadWriteLock;
 import org.aaron.sms.protocol.SMSProtocolChannelInitializer;
 import org.aaron.sms.protocol.protobuf.SMSProtocol;
@@ -134,6 +137,7 @@ abstract class AbstractSMSBrokerServer {
 	protected abstract ChannelFuture doBootstrap(
 			ChannelInitializer<Channel> childHandler);
 
+	@PostConstruct
 	public void init() {
 		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
@@ -153,6 +157,7 @@ abstract class AbstractSMSBrokerServer {
 
 	protected abstract void doDestroy();
 
+	@PreDestroy
 	public void destroy() {
 		log.info("destroy");
 

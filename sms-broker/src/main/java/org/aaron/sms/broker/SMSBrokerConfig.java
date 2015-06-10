@@ -4,7 +4,7 @@ package org.aaron.sms.broker;
  * #%L
  * Simple Message Service Broker
  * %%
- * Copyright (C) 2013 Aaron Riekenberg
+ * Copyright (C) 2013 - 2015 Aaron Riekenberg
  * %%
  * Permission is hereby granted, free of charge, to any person obtaining a copy
  * of this software and associated documentation files (the "Software"), to deal
@@ -26,33 +26,32 @@ package org.aaron.sms.broker;
  * #L%
  */
 
-import static com.google.common.base.Preconditions.checkArgument;
-import static com.google.common.base.Preconditions.checkNotNull;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 
-import java.util.concurrent.ConcurrentHashMap;
+@Configuration
+@PropertySource("classpath:sms-broker.properties")
+public class SMSBrokerConfig {
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-public class SMSTopicContainer {
-
-	private static final Logger log = LoggerFactory
-			.getLogger(SMSTopicContainer.class);
-
-	private final ConcurrentHashMap<String, SMSTopic> topicNameToInfo = new ConcurrentHashMap<>();
-
-	public SMSTopicContainer() {
-		log.info("construct SMSTopicContainer {}", this);
+	@Bean
+	public static PropertySourcesPlaceholderConfigurer propertySourcesPlaceholderConfigurer() {
+		return new PropertySourcesPlaceholderConfigurer();
 	}
 
-	public void destroy() {
-		log.info("destroy");
+	@Bean
+	public SMSTopicContainer smsTopicContainer() {
+		return new SMSTopicContainer();
 	}
 
-	public SMSTopic getTopic(String topicName) {
-		checkNotNull(topicName, "topicName is null");
-		checkArgument(topicName.length() > 0, "topicName is empty");
+	@Bean
+	public SMSBrokerTCPServer smsBrokerTCPServer() {
+		return new SMSBrokerTCPServer(smsTopicContainer());
+	}
 
-		return topicNameToInfo.computeIfAbsent(topicName, SMSTopic::new);
+	@Bean
+	public SMSBrokerUnixServer smsBrokerUnixServer() {
+		return new SMSBrokerUnixServer(smsTopicContainer());
 	}
 }

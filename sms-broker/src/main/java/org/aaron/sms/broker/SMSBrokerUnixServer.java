@@ -26,7 +26,6 @@ package org.aaron.sms.broker;
  * #L%
  */
 
-import static com.google.common.base.Preconditions.checkNotNull;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -36,16 +35,15 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.unix.DomainSocketAddress;
 
 import org.aaron.sms.common.eventloop.UnixEventLoopGroupContainer;
+import org.springframework.beans.factory.annotation.Value;
 
 public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 
-	private final String socketPath;
+	@Value("${smsbroker.unix.listen_path}")
+	private String socketPath;
 
-	public SMSBrokerUnixServer(SMSTopicContainer topicContainer,
-			String socketPath) {
+	public SMSBrokerUnixServer(SMSTopicContainer topicContainer) {
 		super(topicContainer);
-
-		this.socketPath = checkNotNull(socketPath, "socketPath is null");
 	}
 
 	@Override
