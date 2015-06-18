@@ -38,7 +38,7 @@ public class SMSBrokerMain {
 		try (AnnotationConfigApplicationContext context = new AnnotationConfigApplicationContext(
 				SMSBrokerConfig.class)) {
 			while (true) {
-				Uninterruptibles.sleepUninterruptibly(60, TimeUnit.SECONDS);
+				Uninterruptibles.sleepUninterruptibly(1, TimeUnit.MINUTES);
 			}
 		}
 	}
