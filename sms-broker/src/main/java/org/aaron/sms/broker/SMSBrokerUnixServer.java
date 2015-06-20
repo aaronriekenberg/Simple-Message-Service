@@ -32,6 +32,7 @@ import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.unix.DomainSocketAddress;
 
 import org.aaron.sms.common.eventloop.UnixEventLoopGroupContainer;
@@ -64,6 +65,11 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 	@Override
 	protected void doDestroy() {
 
+	}
+
+	@Override
+	protected boolean isAvailable() {
+		return Epoll.isAvailable();
 	}
 
 }

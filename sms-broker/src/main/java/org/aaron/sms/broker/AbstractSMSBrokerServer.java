@@ -139,23 +139,32 @@ abstract class AbstractSMSBrokerServer {
 
 	@PostConstruct
 	public void init() {
-		InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
+		if (isAvailable()) {
+			InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
-		final ChannelInitializer<Channel> childHandler = new SMSProtocolChannelInitializer(
-				ServerHandler::new,
-				SMSProtocol.ClientToBrokerMessage.getDefaultInstance());
+			final ChannelInitializer<Channel> childHandler = new SMSProtocolChannelInitializer(
+					ServerHandler::new,
+					SMSProtocol.ClientToBrokerMessage.getDefaultInstance());
 
-		final ChannelFuture channelFuture = doBootstrap(childHandler);
+			final ChannelFuture channelFuture = doBootstrap(childHandler);
 
-		final Channel serverChannel = channelFuture.syncUninterruptibly()
-				.channel();
-		allChannels.add(serverChannel);
+			final Channel serverChannel = channelFuture.syncUninterruptibly()
+					.channel();
+			allChannels.add(serverChannel);
 
-		log.info("listening on {} ({})", serverChannel.localAddress(),
-				getEventLoopGroup());
+			log.info("listening on {} ({})", serverChannel.localAddress(),
+					getEventLoopGroup());
+		} else {
+			log.warn("Not available, not staring server {}", getClass()
+					.getSimpleName());
+		}
 	}
 
 	protected abstract void doDestroy();
+
+	protected boolean isAvailable() {
+		return true;
+	}
 
 	@PreDestroy
 	public void destroy() {
