@@ -42,7 +42,7 @@ public class UnixEventLoopGroupContainer {
 	private static final Class<? extends ServerChannel> SERVER_CHANNEL_CLASS;
 
 	static {
-		if (Epoll.isAvailable()) {
+		if (isAvailable()) {
 			EVENT_LOOP_GROUP = EpollEventLoopGroupContainer.EVENT_LOOP_GROUP;
 			CLIENT_CHANNEL_CLASS = EpollDomainSocketChannel.class;
 			SERVER_CHANNEL_CLASS = EpollServerDomainSocketChannel.class;
@@ -66,6 +66,10 @@ public class UnixEventLoopGroupContainer {
 
 	public static Class<? extends ServerChannel> getServerChannelClass() {
 		return SERVER_CHANNEL_CLASS;
+	}
+
+	public static boolean isAvailable() {
+		return Epoll.isAvailable();
 	}
 
 }
