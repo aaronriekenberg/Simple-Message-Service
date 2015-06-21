@@ -132,6 +132,10 @@ abstract class AbstractSMSBrokerServer {
 				"topicContainer is null");
 	}
 
+	protected boolean isAvailable() {
+		return true;
+	}
+
 	protected abstract EventLoopGroup getEventLoopGroup();
 
 	protected abstract ChannelFuture doBootstrap(
@@ -161,10 +165,6 @@ abstract class AbstractSMSBrokerServer {
 	}
 
 	protected abstract void doDestroy();
-
-	protected boolean isAvailable() {
-		return true;
-	}
 
 	@PreDestroy
 	public void destroy() {

@@ -47,6 +47,11 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 	}
 
 	@Override
+	protected boolean isAvailable() {
+		return UnixEventLoopGroupContainer.isAvailable();
+	}
+
+	@Override
 	protected EventLoopGroup getEventLoopGroup() {
 		return UnixEventLoopGroupContainer.getEventLoopGroup();
 	}
@@ -64,11 +69,6 @@ public class SMSBrokerUnixServer extends AbstractSMSBrokerServer {
 	@Override
 	protected void doDestroy() {
 
-	}
-
-	@Override
-	protected boolean isAvailable() {
-		return UnixEventLoopGroupContainer.isAvailable();
 	}
 
 }
