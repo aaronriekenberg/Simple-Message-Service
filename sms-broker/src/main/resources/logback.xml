@@ -1,9 +1,9 @@
-<?xml version="1.0" encoding="UTF-8" ?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   #%L
   Simple Message Service Broker
   %%
-  Copyright (C) 2013 Aaron Riekenberg
+  Copyright (C) 2013 - 2015 Aaron Riekenberg
   %%
   Permission is hereby granted, free of charge, to any person obtaining a copy
   of this software and associated documentation files (the "Software"), to deal
@@ -25,25 +25,20 @@
   #L%
   -->
 
-<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
 
-<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+<configuration>
+
 	<appender
-		name="console"
-		class="org.apache.log4j.ConsoleAppender">
-		<param
-			name="Target"
-			value="System.out" />
-		<layout class="org.apache.log4j.PatternLayout">
-			<param
-				name="ConversionPattern"
-				value="%d{ABSOLUTE} {%t} %-5p %c{1} - %m%n" />
-		</layout>
+		name="STDOUT"
+		class="ch.qos.logback.core.ConsoleAppender">
+    <!-- encoders are assigned the type ch.qos.logback.classic.encoder.PatternLayoutEncoder by default -->
+		<encoder>
+			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{5} - %msg%n</pattern>
+		</encoder>
 	</appender>
 
-	<root>
-		<priority value="info" />
-		<appender-ref ref="console" />
+	<root level="INFO">
+		<appender-ref ref="STDOUT" />
 	</root>
 
-</log4j:configuration>
+</configuration>
