@@ -37,8 +37,14 @@
 		</encoder>
 	</appender>
 
-	<root level="INFO">
+	<appender
+		name="ASYNC"
+		class="ch.qos.logback.classic.AsyncAppender">
 		<appender-ref ref="STDOUT" />
+	</appender>
+
+	<root level="INFO">
+		<appender-ref ref="ASYNC" />
 	</root>
 
 </configuration>
