@@ -29,6 +29,7 @@ package org.aaron.sms.common.eventloop;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
+import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 
@@ -41,7 +42,7 @@ public class UnixEventLoopGroupContainer {
 	private static final Class<? extends ServerChannel> SERVER_CHANNEL_CLASS;
 
 	static {
-		if (isAvailable()) {
+		if (Epoll.isAvailable()) {
 			EVENT_LOOP_GROUP = EpollEventLoopGroupContainer.EVENT_LOOP_GROUP;
 			CLIENT_CHANNEL_CLASS = EpollDomainSocketChannel.class;
 			SERVER_CHANNEL_CLASS = EpollServerDomainSocketChannel.class;
