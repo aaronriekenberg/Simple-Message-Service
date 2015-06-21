@@ -143,7 +143,10 @@ abstract class AbstractSMSBrokerServer {
 
 	@PostConstruct
 	public void init() {
-		if (isAvailable()) {
+		if (!isAvailable()) {
+			log.warn("{} is not available, not staring server", getClass()
+					.getSimpleName());
+		} else {
 			InternalLoggerFactory.setDefaultFactory(new Slf4JLoggerFactory());
 
 			final ChannelInitializer<Channel> childHandler = new SMSProtocolChannelInitializer(
@@ -158,9 +161,6 @@ abstract class AbstractSMSBrokerServer {
 
 			log.info("listening on {} ({})", serverChannel.localAddress(),
 					getEventLoopGroup());
-		} else {
-			log.warn("Not available, not staring server {}", getClass()
-					.getSimpleName());
 		}
 	}
 

@@ -29,7 +29,6 @@ package org.aaron.sms.common.eventloop;
 import io.netty.channel.Channel;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.ServerChannel;
-import io.netty.channel.epoll.Epoll;
 import io.netty.channel.epoll.EpollDomainSocketChannel;
 import io.netty.channel.epoll.EpollServerDomainSocketChannel;
 
@@ -47,8 +46,9 @@ public class UnixEventLoopGroupContainer {
 			CLIENT_CHANNEL_CLASS = EpollDomainSocketChannel.class;
 			SERVER_CHANNEL_CLASS = EpollServerDomainSocketChannel.class;
 		} else {
-			throw new IllegalStateException("Epoll is not available",
-					Epoll.unavailabilityCause());
+			EVENT_LOOP_GROUP = null;
+			CLIENT_CHANNEL_CLASS = null;
+			SERVER_CHANNEL_CLASS = null;
 		}
 	}
 
@@ -69,7 +69,7 @@ public class UnixEventLoopGroupContainer {
 	}
 
 	public static boolean isAvailable() {
-		return Epoll.isAvailable();
+		return (EVENT_LOOP_GROUP != null);
 	}
 
 }
